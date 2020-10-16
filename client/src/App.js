@@ -45,6 +45,11 @@ class App extends Component {
     //         console.log(this.state.clicked)
     //     }
     // }
+    checkLink = (link) => {
+        if(link.length > 150) {
+            return link.slice(0, 150) + '...'
+        }
+    }
 
     render() {
         return (
