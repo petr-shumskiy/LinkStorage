@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 // import {Switch, Route} from 'react-router-dom';
 import Header from './components/Header/Header';
 // import Main from './pages/Main/Main';
+import Folder from './pages/folders/folders'
+
 
 class App extends Component {
     state = {
@@ -51,6 +53,7 @@ class App extends Component {
                 // onClickHandler={this.onClickHandler}
                 userData={this.state.userData}
             />
+            <Folder />
             {/* <button onClick={this.onClickHandler}>Click</button> */}
             {/* <Main 
                 linkData={this.state.linkData}

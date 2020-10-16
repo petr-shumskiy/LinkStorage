@@ -1,0 +1,16 @@
+
+.folderList {
+  margin-top: 10px;
+}
+.folderList li {
+  text-decoration: none;
+  color: black;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.folderList a {
+  color: black;
+  margin-left: 5px;
+ }
