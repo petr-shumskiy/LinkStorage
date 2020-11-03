@@ -6,6 +6,21 @@ class Aside extends Component {
   state = {
       
   }
+  handleClick = (event) => {
+    switch (event.target.closest('li').getAttribute('id')){
+      case 'folder':
+        document.querySelectorAll('.page').forEach((page) => {
+          if (page.classList.contains('folders-section')) {
+            page.classList.add('visible')
+          } else {
+            page.classList.remove('visible')
+          }
+        })
+      break
+    }
+      
+    
+  }
 
   handleChange = (event) => {
     
@@ -30,7 +45,7 @@ class Aside extends Component {
               <PriceIcon />
               <h3 className="aside-menu">Tags</h3>
             </li>
-            <li className="aside-links">
+            <li id="folder" className="aside-links" onClick={this.handleClick}>
               <FolderIcon />
               <h3 className="aside-menu">Folder</h3>
             </li>
