@@ -1,0 +1,26 @@
+.aside-container{
+  display: inline-block;
+  width: 30%;
+}
+
+.aside-inner{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  border: 1px solid black;
+}
+.aside-links{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 0 10px 10px;
+}
+
+.aside-links svg{
+  
+}
+
+.aside-menu{
+  margin-left: 10px;
+}
