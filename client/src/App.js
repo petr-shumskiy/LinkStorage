@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 // import {Switch, Route} from 'react-router-dom';
 import Header from './components/Header/Header';
 // import Main from './pages/Main/Main';
-import Folder from './pages/folders/folders'
+import Folder from './components/pages/folders/Folders'
 
 
 class App extends Component {

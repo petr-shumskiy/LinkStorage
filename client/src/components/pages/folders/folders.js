@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import AddFolder from '../../components/AddFolder/AddFolder'
-import FolderList from '../../components/FolderList/folderList'
+import AddFolder from '../../AddFolder/AddFolder'
+import FolderList from '../../FolderList/folderList'
 import './folders.css';
 
 class Folders extends Component {
