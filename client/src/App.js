@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 // import {Switch, Route} from 'react-router-dom';
 import Header from './components/Header/Header';
 // import Main from './pages/Main/Main';
-import Folder from './components/pages/folders/Folders'
+import Folder from './components/pages/folders/folders';
+import Aside from './components/Aside/Aside'
+
 
 
 class App extends Component {
@@ -58,6 +60,7 @@ class App extends Component {
                 // onClickHandler={this.onClickHandler}
                 userData={this.state.userData}
             />
+            <Aside />
             <Folder />
             {/* <button onClick={this.onClickHandler}>Click</button> */}
             {/* <Main 

@@ -18,6 +18,7 @@ class Folders extends Component {
     })
   }
   handleSubmit = () => {
+    if (this.state.input === '') return
     this.setState(state => ({
       folders: state.folders.concat(state.input)
     }))
@@ -28,7 +29,7 @@ class Folders extends Component {
   
   render() {
     return (
-        <section className="folders-section">
+        <section className="folders-section page">
           <AddFolder 
             addFolderClick={this.addFolderClick}
             inputValue={this.state.input}
