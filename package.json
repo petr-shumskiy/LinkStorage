@@ -8,7 +8,7 @@
     "server": "nodemon index.js",
     "client": "npm run start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "devTest": "timeout -s SIGINT 6s concurrently 'npm run server' 'npm run client'"
+    "devTest": "timeout -s SIGKILL 6s concurrently 'npm run server' 'npm run client'"
   },
   "keywords": [
     "node",
