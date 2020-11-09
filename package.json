@@ -4,10 +4,12 @@
   "description": "link-storage-app",
   "main": "app.js",
   "scripts": {
+    "test": "echo \"there aren't tests yet\"",
     "start": "node index.js",
     "server": "nodemon index.js",
     "client": "npm run start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "devTest": "timeout --preserve-status -s INT 20s concurrently 'npm run start' 'npm run client'"
   },
   "keywords": [
     "node",

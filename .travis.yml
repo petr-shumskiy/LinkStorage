@@ -1,9 +1,23 @@
-sudo: false
+os:
+  - linux
+
+dist:
+  - xenial
 
 language: node_js
-node_js:
-  - 14
 
-branches:
-  only:
-    - master
+node_js:
+  - "stable"
+
+cache:
+  directories:
+    - $HOME/node_modules
+    - $HOME/client/node_modules
+
+install:
+  - npm install
+  - cd client && npm install && cd ../
+
+script:
+  - npm test
+  - npm run devTest
