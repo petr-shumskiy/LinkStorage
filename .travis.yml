@@ -15,4 +15,4 @@ install:
 
 script:
   - npm test
-  - npm run dev
+  - npm run devTest
