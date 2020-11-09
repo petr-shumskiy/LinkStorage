@@ -4,6 +4,7 @@
   "description": "link-storage-app",
   "main": "app.js",
   "scripts": {
+    "test": "echo 'there aren't tests yes'",
     "start": "node index.js",
     "server": "nodemon index.js",
     "client": "npm run start --prefix client",
