@@ -6,4 +6,4 @@ const app = express()
 
 //   })
 
-module.exports = app
+module.exports = App
