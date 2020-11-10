@@ -8,7 +8,7 @@ const itemSchema = new Schema({
   websiteLogo: { type: String },
   home: { type: Boolean },
   liked: { type: Boolean },
-  archived:{ type: Boolean }
+  archived: { type: Boolean }
 })
 
 const folderSchema = new Schema({
