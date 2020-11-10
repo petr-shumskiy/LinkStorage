@@ -4,7 +4,7 @@
   "description": "link-storage-app",
   "main": "app.js",
   "scripts": {
-    "eslint": "npx eslint --fix . && cd client && npx eslint --fix ./src",
+    "eslint": "npx eslint . && cd client && npx eslint ./src",
     "test": "echo \"there aren't tests yet\"",
     "start": "node index.js",
     "server": "nodemon index.js",
@@ -26,7 +26,6 @@
     "mongoose": "^5.10.8"
   },
   "devDependencies": {
-    "@craco/craco": "^5.8.0",
     "concurrently": "^5.3.0",
     "eslint": "^7.13.0",
     "eslint-config-standard": "^16.0.1",
