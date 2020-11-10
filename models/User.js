@@ -15,7 +15,7 @@ const itemSchema = new Schema({
 
 const folderSchema = new Schema({
     name: {type: String, required: true},
-    item: [itemSchema]
+    items: [itemSchema]
 })
 
 const userSchema = new Schema({
