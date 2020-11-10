@@ -19,4 +19,4 @@ const folderList = (props) => {
   )
 }
 
-export default FolderList
+export default folderList
