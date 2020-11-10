@@ -1,17 +1,17 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React from 'react'
+import { Link } from 'react-router-dom'
 import Account from '../Account/Account'
 
-import {SearchIcon, PlusIcon} from '../../icons';
-import './Header.css';
+import { SearchIcon, PlusIcon } from '../../icons'
+import './Header.css'
 
 const header = (props) => {
-    return (
+  return (
         <header className="header">
             <div className="header__logo">
                 <Link to="/main">
                     LinkStorage
-                </Link> 
+                </Link>
             </div>
             <div className="header__params">
                 <div className="header__search">
@@ -26,13 +26,13 @@ const header = (props) => {
                         <PlusIcon />
                     </button>
                 </div>
-                <Account 
+                <Account
                     // onClickHandler = {props.onClickHandler}
                     userData = {props.userData}
                 />
             </div>
         </header>
-    )
+  )
 }
 
 export default header

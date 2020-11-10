@@ -19,5 +19,4 @@ install:
   - cd client && npm install && cd ../
 
 script:
-  - npm test
-  - npm run devTest
+  - npm run eslint && npm test && npm run devTest
