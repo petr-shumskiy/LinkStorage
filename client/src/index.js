@@ -6,15 +6,15 @@ import AppStart from './AppStart'
 import * as serviceWorker from './serviceWorker'
 // import { BrowserRouter as Router } from 'react-router-dom'
 import thunk from 'redux-thunk'
-import { applyMiddleware, compose, createStore } from 'redux'
+import { applyMiddleware, createStore } from 'redux'
 import { rootReducer } from './redux/rootReducer'
 import { Provider } from 'react-redux'
+import { composeWithDevTools } from 'redux-devtools-extension'
 
-const store = createStore(rootReducer, compose(
+const store = createStore(rootReducer, composeWithDevTools(
   applyMiddleware(
     thunk
-  ),
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
 ))
 const appStart = (
   <Provider store={store}>
