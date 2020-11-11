@@ -1,4 +1,5 @@
-const Schema = require('mongoose')
+const mongoose = require('mongoose')
+const { Schema, model } = mongoose
 
 const itemSchema = new Schema({
   title: { type: String },
@@ -24,4 +25,4 @@ const userSchema = new Schema({
   items: [itemSchema]
 })
 
-module.exports('User', userSchema)
+module.exports = model('User', userSchema)
