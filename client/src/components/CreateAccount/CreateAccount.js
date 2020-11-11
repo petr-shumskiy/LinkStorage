@@ -1,57 +1,57 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import './signIn.css'
+import './createAccount.css'
 import { connect } from 'react-redux'
 import { loginUser } from '../../redux/action'
 
-class SignIn extends React.Component {
+class CreateAccount extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      email: '',
-      password: ''
+      newEmail: '',
+      newPassword: ''
     }
   }
 
-    submitHandler = (event) => {
-      event.preventDefault()
-      const { email, password } = this.state
-      if (!email.trim()) {
-        return
-      }
-
-      const user = {
-        email,
-        password
-      }
-
-      console.log(user)
-      this.props.loginUser(user)
-
-      // this.setState({ email: '', password: ''})
+  submitHandler = (event) => {
+    event.preventDefault()
+    const { newEmail, newPassword } = this.state
+    if (!newEmail.trim()) {
+      return
     }
 
-    changeInputHandler = (event) => {
-      event.persist()
-      this.setState((prev) => ({
-        ...prev,
-        ...{
-          [event.target.name]: event.target.value
-        }
-      }))
+    const user = {
+      newEmail,
+      newPassword
     }
 
-    render() {
-      return (
+    console.log(user)
+    this.props.loginUser(user)
+
+    // this.setState({ email: '', password: ''})
+  }
+
+  changeInputHandler = (event) => {
+    event.persist()
+    this.setState((prev) => ({
+      ...prev,
+      ...{
+        [event.target.name]: event.target.value
+      }
+    }))
+  }
+
+  render() {
+    return (
         <React.Fragment>
-          {(this.props.show === 'signIn') && (
+          {(this.props.show === 'createAccount') && (
             <div className="signIn-popup">
               <div className="signIn-container">
 
                 <div className="signIn-header">
-                  <h4>Sign In</h4>
+                  <h4>Create an Account</h4>
                   <div className="close-icon"
-                  onClick={() => { this.props.onHideSignIn() }}
+                  onClick={() => { this.props.onHideCreateAccount() }}
                   >x</div>
                 </div>
 
@@ -63,26 +63,26 @@ class SignIn extends React.Component {
                       <input
                       className="signIn-input"
                       type="text"
-                      id="email"
-                      value={this.state.email}
-                      name="email"
+                      id="newEmail"
+                      value={this.state.newEmail}
+                      name="newEmail"
                       onChange={this.changeInputHandler}
                       />
                     </div>
 
                     <div className="mail-form">
-                      <label className="signIn-label" htmlFor="password">Password</label>
+                      <label className="signIn-label" htmlFor="newPassword">Password</label>
                       <input className="signIn-input"
-                      type="password"
-                      id="password"
-                      value={this.state.password}
-                      name="password"
+                      type="Password"
+                      id="newPassword"
+                      value={this.state.newPassword}
+                      name="newPassword"
                       onChange={this.changeInputHandler}
                       />
                     </div>
 
                     <div className="submit-block">
-                      <button className="submitBtn" type="submit">Sign In</button>
+                      <button className="submitBtn" type="submit">Create Account</button>
                     </div>
 
                   </form>
@@ -92,12 +92,12 @@ class SignIn extends React.Component {
             </div>
           )}
         </React.Fragment>
-      )
-    }
+    )
+  }
 }
 
 const mapDispatchToProps = {
   loginUser
 }
 
-export default connect(null, mapDispatchToProps)(SignIn)
+export default connect(null, mapDispatchToProps)(CreateAccount)

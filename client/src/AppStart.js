@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 // import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
 import './appStart.css'
+import CreateAccount from './components/CreateAccount/CreateAccount'
 import SignIn from './components/SignIn/SignIn'
 
 class AppStart extends Component {
@@ -8,8 +9,8 @@ class AppStart extends Component {
     showModal: false
   }
 
-  getModal = () => {
-    this.setState({ showModal: true })
+  getModal = (value) => {
+    this.setState({ showModal: value })
   };
 
   hideModal = () => {
@@ -26,20 +27,25 @@ class AppStart extends Component {
         <div className="signIn">
           <button
             className="signInBtn"
-            onClick={() => this.getModal()}>Sign In
+            onClick={() => this.getModal('signIn')}>Sign In
           </button>
           <SignIn
             show={this.state.showModal}
-            onHide={this.hideModal}
+            onHideSignIn={this.hideModal}
+          />
+          <CreateAccount
+            show={this.state.showModal}
+            onHideCreateAccount={this.hideModal}
           />
         </div>
       </header>
       <div className="createAccount">
-        <button className="createAccBtn">Create an Account</button>
+        <button
+          className="createAccBtn"
+          onClick={() => this.getModal('createAccount')}>Create an Account
+        </button>
       </div>
-      <div >
 
-      </div>
     </main>
     )
   }
