@@ -1,9 +1,14 @@
 const express = require('express')
-// const authRoutes = require('./routes/auth')
 const app = express()
+const mongoose = require('mongoose')
+const keys = require('./config/keys')
 
-// app.use('/', function (req, res) {
+mongoose.connect(keys.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
-//   })
+const db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error:'))
+db.once('open', function () {
+  console.log('MongoDB connected')
+})
 
 module.exports = app
