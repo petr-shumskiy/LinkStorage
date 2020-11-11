@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import App from './App'
+// import App from './App'
 import AppStart from './AppStart'
 import * as serviceWorker from './serviceWorker'
-import { BrowserRouter as Router } from 'react-router-dom'
+// import { BrowserRouter as Router } from 'react-router-dom'
 import thunk from 'redux-thunk'
 import { applyMiddleware, compose, createStore } from 'redux'
 import { rootReducer } from './redux/rootReducer'
@@ -21,14 +21,13 @@ const appStart = (
     <AppStart />
   </Provider>
 )
-
-const app = (
+/* const app = (
   <React.StrictMode>
     <Router>
       <App />
     </Router>
   </React.StrictMode>
-)
+) */
 
 ReactDOM.render(
   appStart,

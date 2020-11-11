@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react'
 import './signIn.css'
 import { connect } from 'react-redux'
@@ -27,7 +28,7 @@ class SignIn extends React.Component {
       console.log(user)
       this.props.loginUser(user)
 
-      //this.setState({ email: '', password: ''})
+      // this.setState({ email: '', password: ''})
     }
 
     changeInputHandler = (event) => {
