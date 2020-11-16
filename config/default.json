@@ -1,0 +1,14 @@
+{
+  "serverPort": "5000",
+  "mongoUsername": "linkStorage",
+  "mongoPassword": "PencyKi2LhL42iMB",
+  "mongoURI": "mongodb+srv://linkStorage:PencyKi2LhL42iMB@linkstorage.7u6f2.mongodb.net/LinkStorage?retryWrites=true&w=majority",
+  "mongoOptions": {
+    "useNewUrlParser": true,
+    "useUnifiedTopology": true
+  },
+  "jwtSecret": "Ujfmw;Ofgbl",
+  "mailGunApiKey": "9752e779d886f3e76790e47212ad956a-ba042922-bed5553d",
+  "domain": "sandbox88c1ec80771f430988c0e2b6798078b9.mailgun.org",
+  "clientUrl": "http://localhost:5000"
+}
