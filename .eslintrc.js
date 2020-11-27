@@ -6,14 +6,19 @@ module.exports = {
     es2021: true,
     mocha: true
   },
-  extends: [
-    'standard'
-  ],
+  extends: ['standard'],
   parserOptions: {
     ecmaVersion: 12
   },
   ignorePatterns: ['client'],
   rules: {
-    'space-before-function-paren': ['error', 'never']
+    'space-before-function-paren': [
+      'error',
+      {
+        anonymous: 'always',
+        named: 'never',
+        asyncArrow: 'always'
+      }
+    ]
   }
 }
