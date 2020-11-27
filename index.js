@@ -3,11 +3,12 @@ const mongoose = require('mongoose')
 const config = require('config')
 const app = express()
 const bodyParser = require('body-parser')
+require('dotenv').config()
 
 const authRouter = require('./routes/authRoutes')
 
 const PORT = config.get('serverPort')
-const MONGO_URI = config.get('mongoURI')
+const MONGO_URI = process.env.MONGO_URI
 const MONGO_OPTIONS = config.get('mongoOptions')
 
 app.use(bodyParser.json())
@@ -15,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use('/api/auth', authRouter)
 
-const start = async() => {
+const start = async () => {
   try {
     await mongoose.connect(MONGO_URI, MONGO_OPTIONS)
 
