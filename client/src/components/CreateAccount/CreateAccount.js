@@ -1,103 +1,93 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import './createAccount.css'
 import { connect } from 'react-redux'
-import { loginUser } from '../../redux/action'
+import { Field, Form, reduxForm } from 'redux-form'
+import './createAccount.css'
+import {
+  sendRegistrationData,
+  showRegistrationModal
+} from '../../redux/userReducer'
 
-class CreateAccount extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      newEmail: '',
-      newPassword: ''
-    }
+const CreateAccount = ({
+  showRegistrationModal,
+  showRegistration,
+  handleSubmit
+}) => {
+  if (!showRegistration) {
+    return null
   }
-
-  submitHandler = (event) => {
-    event.preventDefault()
-    const { newEmail, newPassword } = this.state
-    if (!newEmail.trim()) {
-      return
-    }
-
-    const user = {
-      newEmail,
-      newPassword
-    }
-
-    console.log(user)
-    this.props.loginUser(user)
-
-    // this.setState({ email: '', password: ''})
-  }
-
-  changeInputHandler = (event) => {
-    event.persist()
-    this.setState((prev) => ({
-      ...prev,
-      ...{
-        [event.target.name]: event.target.value
-      }
-    }))
-  }
-
-  render() {
-    return (
-        <React.Fragment>
-          {(this.props.show === 'createAccount') && (
-            <div className="signIn-popup">
-              <div className="signIn-container">
-
-                <div className="signIn-header">
-                  <h4>Create an Account</h4>
-                  <div className="close-icon"
-                  onClick={() => { this.props.onHideCreateAccount() }}
-                  >x</div>
-                </div>
-
-                <div className="form-container">
-                  <form onSubmit={this.submitHandler} method="post">
-
-                    <div className="mail-form">
-                      <label className="signIn-label" htmlFor="email">Email</label>
-                      <input
-                      className="signIn-input"
-                      type="text"
-                      id="newEmail"
-                      value={this.state.newEmail}
-                      name="newEmail"
-                      onChange={this.changeInputHandler}
-                      />
-                    </div>
-
-                    <div className="mail-form">
-                      <label className="signIn-label" htmlFor="newPassword">Password</label>
-                      <input className="signIn-input"
-                      type="Password"
-                      id="newPassword"
-                      value={this.state.newPassword}
-                      name="newPassword"
-                      onChange={this.changeInputHandler}
-                      />
-                    </div>
-
-                    <div className="submit-block">
-                      <button className="submitBtn" type="submit">Create Account</button>
-                    </div>
-
-                  </form>
-                </div>
-
-              </div>
+  return (
+    <>
+      (
+      <div className='signIn-popup'>
+        <div className='signIn-container'>
+          <div className='signIn-header'>
+            <h4>Create an Account</h4>
+            <div
+              className='close-icon'
+              onClick={() => showRegistrationModal(false)}
+            >
+              x
             </div>
-          )}
-        </React.Fragment>
-    )
+          </div>
+
+          <div className='form-container'>
+            <Form onSubmit={handleSubmit}>
+              <div className='mail-form'>
+                <label className='signIn-label' htmlFor='email'>
+                  Email
+                </label>
+                <Field
+                  component='input'
+                  name='email'
+                  id='email'
+                  type='text'
+                  className='signIn-input'
+                />
+              </div>
+
+              <div className='mail-form'>
+                <label className='signIn-label' htmlFor='password'>
+                  Password
+                </label>
+                <Field
+                  component='input'
+                  className='signIn-input'
+                  type='password'
+                  id='pssword'
+                  name='password'
+                />
+              </div>
+
+              <div className='submit-block'>
+                <button className='submitBtn' type='submit'>
+                  Create Account
+                </button>
+              </div>
+            </Form>
+          </div>
+        </div>
+      </div>
+      )
+    </>
+  )
+}
+
+const CreateAccountReduxForm = reduxForm({ form: 'registration' })(
+  CreateAccount
+)
+const createAccountContainer = (props) => {
+  const submitHandler = (formData) => {
+    console.log(formData)
+    props.sendRegistrationData(formData)
   }
+  return <CreateAccountReduxForm onSubmit={submitHandler} {...props} />
 }
+const mapStateToProps = ({ user }) => ({
+  showRegistration: user.showRegistration
+})
 
-const mapDispatchToProps = {
-  loginUser
-}
-
-export default connect(null, mapDispatchToProps)(CreateAccount)
+export default connect(mapStateToProps, {
+  showRegistrationModal,
+  sendRegistrationData
+})(createAccountContainer)

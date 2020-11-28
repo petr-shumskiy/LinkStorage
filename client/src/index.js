@@ -4,21 +4,20 @@ import './index.css'
 // import App from './App'
 import AppStart from './AppStart'
 import * as serviceWorker from './serviceWorker'
-// import { BrowserRouter as Router } from 'react-router-dom'
-import thunk from 'redux-thunk'
-import { applyMiddleware, createStore } from 'redux'
-import { rootReducer } from './redux/rootReducer'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
-import { composeWithDevTools } from 'redux-devtools-extension'
+import { store } from './redux/store'
+import Confirmation from './Confirmation'
 
-const store = createStore(rootReducer, composeWithDevTools(
-  applyMiddleware(
-    thunk
-  )
-))
+window.store = store
+
+// FIXME change logic from show/unshow to routing (/login /register)
 const appStart = (
   <Provider store={store}>
-    <AppStart />
+    <Router>
+      <Route path='/auth/:token' exact render={() => <Confirmation />} />
+      <Route path='/' exact render={() => <AppStart />} />
+    </Router>
   </Provider>
 )
 /* const app = (
@@ -29,9 +28,6 @@ const appStart = (
   </React.StrictMode>
 ) */
 
-ReactDOM.render(
-  appStart,
-  document.getElementById('root')
-)
+ReactDOM.render(appStart, document.getElementById('root'))
 
 serviceWorker.unregister()
