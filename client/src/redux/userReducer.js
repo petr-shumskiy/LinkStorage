@@ -29,11 +29,12 @@ export const userReducer = (state = initialState, { type, payload }) => {
       }
     case LOGIN_USER:
       return { ...state, user: payload }
-    case SET_TOKEN:
+    case SET_TOKEN: {
       return {
         ...state,
         token: payload.token
       }
+    }
     case LOG_OUT:
       return {
         ...state,
@@ -74,7 +75,6 @@ export const logOut = () => {
 
 export const sendRegistrationData = (data) => (dispatch) => {
   // FIXME refactor with async/await
-  console.log(data)
   return API.sendRegistrationData(data).then(() =>
     dispatch(showRegistrationModal(false))
   )
@@ -84,7 +84,15 @@ export const sendSignInData = (data) => (dispatch) => {
   return API.sendSignInData(data).then(({ data }) => {
     dispatch(setToken(data.token))
     localStorage.setItem('token', data.token)
-    console.log(data.token)
     // dispatch(showSignInModal(false))
+  })
+}
+
+export const validateEmail = (confirmationToken) => (dispatch) => {
+  return API.sendConfirmationRequest(confirmationToken).then((res) => {
+    if (res === 200) {
+      dispatch(setToken(confirmationToken))
+      localStorage.setItem('token', confirmationToken)
+    }
   })
 }

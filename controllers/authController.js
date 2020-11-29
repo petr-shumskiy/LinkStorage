@@ -3,7 +3,6 @@ const User = require('../models/User')
 const mailgun = require('mailgun-js')
 const jwt = require('jsonwebtoken')
 const config = require('config')
-const axios = require('axios')
 const bcrypt = require('bcryptjs')
 
 const CLIENT_URL = config.get('clientUrl')
@@ -21,7 +20,9 @@ exports.registration = async (req, res) => {
         .status(400)
         .json({ message: constants.REGISTRATION_ERROR_USER_EXISTS })
     }
-
+    const hashedPassword = await bcrypt.hash(password, 1)
+    const newUser = new User({ email, password: hashedPassword })
+    await newUser.save()
     const activationToken = jwt.sign({ email, password }, JWT_SECRET, {
       expiresIn: '10min'
     })
@@ -33,7 +34,7 @@ exports.registration = async (req, res) => {
         subject: 'Activation link',
         html: `
       <h2>Please click on given link to activate your account</h2>
-      <a href="${CLIENT_URL}/api/auth/validate-email/${activationToken}"><button>confirm email</button></a>
+      <a href="${CLIENT_URL}/reg-confirmation/${activationToken}"><button>confirm email</button></a>
       `
       })
     } catch (e) {
@@ -51,19 +52,13 @@ exports.registration = async (req, res) => {
 exports.validateEmail = async (req, res) => {
   try {
     const { token } = req.params
-    console.log(token)
-    const { email, password } = jwt.verify(token, JWT_SECRET)
-    const hashedPassword = await bcrypt.hash(password, 1)
-    const user = new User({ email, password: hashedPassword })
-    await user.save()
-    //  authorization after successful registration
-    return await axios.post('http://localhost:5000/api/auth/login', {
-      email,
-      password,
-      isConfirmation: true
-    })
+    const { email } = jwt.verify(token, JWT_SECRET)
+    await User.findOneAndUpdate({ email }, { isEmailConfirmed: true })
+    return res
+      .status(200)
+      .json({ message: constants.REGISTRATION_SUCCESS_CONFIRMED_EMAIL })
   } catch (error) {
-    console.log(error.response || error)
+    console.log(error)
     return res
       .status(400)
       .json({ message: constants.REGISTRATION_ERROR_EMAIL_CONFIRMATION })

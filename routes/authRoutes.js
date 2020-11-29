@@ -8,7 +8,7 @@ router.post(
   validateRegistrationData,
   authController.registration
 )
-router.get('/validate-email/:token', authController.validateEmail)
+router.post('/validate-email/:token', authController.validateEmail)
 router.post('/login', authController.login)
 
 module.exports = router

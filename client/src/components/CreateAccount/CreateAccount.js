@@ -78,7 +78,6 @@ const CreateAccountReduxForm = reduxForm({ form: 'registration' })(
 )
 const createAccountContainer = (props) => {
   const submitHandler = (formData) => {
-    console.log(formData)
     props.sendRegistrationData(formData)
   }
   return <CreateAccountReduxForm onSubmit={submitHandler} {...props} />

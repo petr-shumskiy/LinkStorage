@@ -13,12 +13,16 @@ window.store = store
 
 // FIXME change logic from show/unshow to routing (/login /register)
 const appStart = (
-  <Provider store={store}>
-    <Router>
-      <Route path='/auth/:token' exact render={() => <Confirmation />} />
+  <Router>
+    <Provider store={store}>
       <Route path='/' exact render={() => <AppStart />} />
-    </Router>
-  </Provider>
+      <Route
+        path='/reg-confirmation/:confirmationToken'
+        exact
+        render={() => <Confirmation />}
+      />
+    </Provider>
+  </Router>
 )
 /* const app = (
   <React.StrictMode>

@@ -21,7 +21,7 @@ const userSchema = new Schema({
   name: { type: String },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  isEmailConfirmed: { type: Boolean, required: false },
+  isEmailConfirmed: { type: Boolean, required: true, default: false },
   folders: [folderSchema],
   items: [itemSchema]
 })
