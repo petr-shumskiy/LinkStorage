@@ -4,10 +4,8 @@ const request = require('supertest')(app)
 const constants = require('../constants')
 const mongoose = require('mongoose')
 const config = require('config')
-const User = require('../models/User')
-const MONGO_URI = process.env.MONGO_URI
+const MONGO_URI = config.get('mongoURI')
 const MONGO_OPTIONS = config.get('mongoOptions')
-
 const AUTH_PATH = '/api/auth'
 
 describe('post registration', async () => {
@@ -132,10 +130,6 @@ describe('post registration', async () => {
   ]
 
   describe('registration with existing email gives error', () => {
-    before(async () => {
-      await User.insertMany(existsUsers)
-    })
-
     existsUsers.forEach(({ email, password }) => {
       it(`${email}`, async () => {
         const response = await request
