@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import './appStart.css'
 import CreateAccount from './components/CreateAccount/CreateAccount'
 import SignIn from './components/SignIn/SignIn'
+import Main from './components/pages/Main/Main'
 import {
   showRegistrationModal,
   showSignInModal,
@@ -22,12 +23,7 @@ const AppStart = ({
 }) => {
   if (token || localStorage.getItem('token')) {
     return (
-      <>
-        <div>
-          <h1>Authorized</h1>
-        </div>
-        <button onClick={logOut}>log out</button>
-      </>
+      <Main />
     )
   }
   return (
