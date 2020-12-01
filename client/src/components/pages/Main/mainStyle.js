@@ -4,7 +4,8 @@ const drawerWidth = 240
 
 const navMenuStyle = makeStyles((theme) => ({
   root: {
-    display: 'flex'
+    display: 'flex',
+    width: '100%'
   },
   grow: {
     flexGrow: 1
@@ -19,7 +20,9 @@ const navMenuStyle = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth
-    }
+    },
+    color: 'black',
+    backgroundColor: 'white'
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -34,7 +37,7 @@ const navMenuStyle = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3)
+    padding: theme.spacing(1)
   },
   title: {
     display: 'none',
@@ -100,7 +103,7 @@ const navMenuStyle = makeStyles((theme) => ({
     }
   },
   addFolderBtn: {
-    margin: '0 50px'
+    minWidth: '85px'
   }
 }))
 

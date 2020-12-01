@@ -6,7 +6,8 @@ import {
   SHOW_REGISTRATION,
   SET_TOKEN,
   LOG_OUT,
-  LOAD_LINK_DATA
+  LOAD_LINK_DATA,
+  SET_LINK_TYPE
 } from './types'
 
 const initialState = {
@@ -14,7 +15,8 @@ const initialState = {
   showSignIn: false,
   email: null,
   token: null,
-  linksData: []
+  linksData: [],
+  linkType: ''
 }
 
 export const userReducer = (state = initialState, { type, payload }) => {
@@ -35,6 +37,12 @@ export const userReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         token: payload.token
+      }
+    }
+    case SET_LINK_TYPE: {
+      return {
+        ...state,
+        linkType: payload.linkType
       }
     }
     case LOG_OUT:
@@ -70,6 +78,13 @@ export const setToken = (token) => ({
   type: SET_TOKEN,
   payload: {
     token
+  }
+})
+
+export const setCurrentLinkType = (linkType) => ({
+  type: SET_LINK_TYPE,
+  payload: {
+    linkType
   }
 })
 
@@ -115,7 +130,6 @@ export const validateEmail = (confirmationToken) => (dispatch) => {
 export const takeLinkData = () => (dispatch) => {
   // FIXME refactor with async/await
   return API.takeLinkData().then((res) => {
-    console.log('res', res)
     dispatch(loadLinkData(res))
   })
 }

@@ -1,51 +1,20 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card'
-import CardMedia from '@material-ui/core/CardMedia'
-import CardContent from '@material-ui/core/CardContent'
-import IconButton from '@material-ui/core/IconButton'
-import Typography from '@material-ui/core/Typography'
-import SkipPreviousIcon from '@material-ui/icons/SkipPrevious'
-import PlayArrowIcon from '@material-ui/icons/PlayArrow'
-import SkipNextIcon from '@material-ui/icons/SkipNext'
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex'
-  },
-  details: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '70%'
-  },
-  content: {
-    flex: '1 0 auto'
-  },
-  cover: {
-    width: '30%'
-  },
-  controls: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
-  },
-  playIcon: {
-    height: 38,
-    width: 38
-  }
-}))
+import {
+  CardMedia,
+  Link,
+  CardContent,
+  IconButton,
+  Typography
+} from '@material-ui/core'
+import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
+import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
+import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
+import cardStyle from './cardStyle'
 
 const Cards = (data) => {
-  console.log(data)
-  const classes = useStyles()
-  const theme = useTheme()
-  const [expanded, setExpanded] = React.useState(false)
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded)
-  }
+  const classes = cardStyle()
 
   return (
     <Card className={classes.root}>
@@ -54,22 +23,24 @@ const Cards = (data) => {
           <Typography component="h5" variant="h5">
             {data.title}
           </Typography>
-          <Typography variant="subtitle1" color="textSecondary">
+          <Typography className={classes.text} variant="subtitle2" color="textSecondary">
           {data.text}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
-          {data.url}
+            <Link >
+              {data.url}
+            </Link>
           </Typography>
         </CardContent>
         <div className={classes.controls}>
-          <IconButton aria-label="previous">
-            {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
+          <IconButton>
+            <FavoriteBorderOutlinedIcon />
           </IconButton>
-          <IconButton aria-label="play/pause">
-            <PlayArrowIcon className={classes.playIcon} />
+          <IconButton>
+            <ArchiveOutlinedIcon />
           </IconButton>
-          <IconButton aria-label="next">
-            {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}
+          <IconButton>
+            <VideoLibrarySharpIcon />
           </IconButton>
         </div>
       </div>

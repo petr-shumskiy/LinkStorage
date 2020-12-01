@@ -30,10 +30,11 @@ import {
 import { useTheme } from '@material-ui/core/styles'
 import mainStyle from './mainStyle'
 import { connect } from 'react-redux'
-import { logOut, takeLinkData } from './../../../redux/userReducer'
+import { logOut, takeLinkData, setCurrentLinkType } from './../../../redux/userReducer'
 import Cards from './../../Card/Cards'
+import cardType from './../../Card/cardType'
 
-const Main = ({ logOut, linksData, takeLinkData }) => {
+const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType }) => {
   const window = undefined
   const classes = mainStyle()
   const theme = useTheme()
@@ -47,10 +48,9 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
     setMobileOpen(!mobileOpen)
   }
 
-  const loadLinkData = () => {
-    console.log('work')
+  const loadLinkData = (cardType) => {
+    setCurrentLinkType(cardType)
     takeLinkData()
-    console.log(linksData)
   }
 
   const drawer = (
@@ -62,25 +62,25 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
       </div>
       <Divider />
       <List>
-        <ListItem button key={'Home'} onClick={loadLinkData}>
+        <ListItem button key={'Home'} onClick={() => loadLinkData(cardType.home)}>
           <ListItemIcon>
             <HomeOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary={'Home'} />
         </ListItem>
-        <ListItem button key={'Liked'}>
+        <ListItem button key={'Liked'} onClick={() => loadLinkData(cardType.liked)}>
           <ListItemIcon>
             <FavoriteBorderOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary={'Liked'} />
         </ListItem>
-        <ListItem button key={'Archive'}>
+        <ListItem button key={'Archive'} onClick={() => loadLinkData(cardType.archive)}>
           <ListItemIcon>
             <ArchiveOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary={'Archive'} />
         </ListItem>
-        <ListItem button key={'Videos'}>
+        <ListItem button key={'Videos'} onClick={() => loadLinkData(cardType.video)}>
           <ListItemIcon>
             <VideoLibrarySharpIcon />
           </ListItemIcon>
@@ -152,11 +152,10 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
       <MenuItem onClick={() => logOut()}>Log out</MenuItem>
     </Menu>
   )
-  console.log(linksData)
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position='fixed' className={classes.appBar} color="transparent" background="default" >
+      <AppBar position='fixed' className={classes.appBar}>
         <Toolbar>
           <IconButton
             color='inherit'
@@ -243,15 +242,18 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {linksData.map(({ id, title, text, url, type, img }) => (
-          <Cards
+        {linksData.map(({ id, title, text, url, type, img }) => {
+          if (type === linkType) {
+            return <Cards
             text={text}
             title={title}
             url={url}
             typeCard={type}
             img={img}
             key={id} />
-        ))}
+          }
+          return null
+        })}
       </main>
     </div>
   )
@@ -259,17 +261,21 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
 
 const mapStateToProps = ({ user }) => ({
   token: user.token,
-  linksData: user.linksData
+  linksData: user.linksData,
+  linkType: user.linkType
 })
 
 export default connect(mapStateToProps, {
   logOut,
-  takeLinkData
+  takeLinkData,
+  setCurrentLinkType
 })(Main)
 
 Main.propTypes = {
   token: propTypes.string,
+  linkType: propTypes.string,
   logOut: propTypes.func,
   takeLinkData: propTypes.func,
-  linksData: propTypes.array
+  linksData: propTypes.array,
+  setCurrentLinkType: propTypes.func
 }
