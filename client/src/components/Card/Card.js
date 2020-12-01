@@ -2,18 +2,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-const CreateAccount = ({
-  linksData
-}) => {
-  return (
-    <div>
-      {linksData}
-    </div>
-  )
+const Card = ({ text }) => {
+  return <h5>{text}</h5>
 }
 const mapStateToProps = ({ user }) => ({
   linksData: user.linksData
 })
 
-export default connect(mapStateToProps, {
-})(CreateAccount)
+export default connect(mapStateToProps, {})(Card)

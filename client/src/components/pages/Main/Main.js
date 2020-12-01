@@ -152,6 +152,7 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
       <MenuItem onClick={() => logOut()}>Log out</MenuItem>
     </Menu>
   )
+  console.log(linksData)
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -242,7 +243,9 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Card data={linksData} />
+        {linksData.map(({ id, title }) => (
+          <Card text={title} key={id} />
+        ))}
       </main>
     </div>
   )
