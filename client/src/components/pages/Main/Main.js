@@ -1,17 +1,7 @@
 import React from 'react'
 import propTypes from 'prop-types'
-import AppBar from '@material-ui/core/AppBar'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import Divider from '@material-ui/core/Divider'
-import Drawer from '@material-ui/core/Drawer'
-import Hidden from '@material-ui/core/Hidden'
-import IconButton from '@material-ui/core/IconButton'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
 import { AccountCircle } from '@material-ui/icons/'
-import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
+import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'
 import FolderOpenIcon from '@material-ui/icons/FolderOpen'
 import MoreIcon from '@material-ui/icons/MoreVert'
 import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
@@ -19,23 +9,31 @@ import SearchIcon from '@material-ui/icons/Search'
 import MenuIcon from '@material-ui/icons/Menu'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-import InputBase from '@material-ui/core/InputBase'
+import {
+  AppBar,
+  Button,
+  CssBaseline,
+  Divider,
+  Drawer,
+  Hidden,
+  IconButton,
+  InputBase,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography
+} from '@material-ui/core'
 import { useTheme } from '@material-ui/core/styles'
-import { Button } from '@material-ui/core'
-import MenuItem from '@material-ui/core/MenuItem'
-import Menu from '@material-ui/core/Menu'
 import mainStyle from './mainStyle'
 import { connect } from 'react-redux'
 import { logOut, takeLinkData } from './../../../redux/userReducer'
 import Card from './../../Card/Card'
 
-const Main = ({
-  logOut,
-  linksData,
-  takeLinkData
-}) => {
+const Main = ({ logOut, linksData, takeLinkData }) => {
   const window = undefined
   const classes = mainStyle()
   const theme = useTheme()
@@ -58,26 +56,34 @@ const Main = ({
   const drawer = (
     <div>
       <div className={classes.toolbar}>
-      <Typography className={classes.logo} variant="h6" noWrap>
-            LinkStorage
-      </Typography>
+        <Typography className={classes.logo} variant='h6' noWrap>
+          LinkStorage
+        </Typography>
       </div>
       <Divider />
       <List>
         <ListItem button key={'Home'} onClick={loadLinkData}>
-          <ListItemIcon><HomeOutlinedIcon /></ListItemIcon>
+          <ListItemIcon>
+            <HomeOutlinedIcon />
+          </ListItemIcon>
           <ListItemText primary={'Home'} />
         </ListItem>
         <ListItem button key={'Liked'}>
-          <ListItemIcon><FavoriteBorderOutlinedIcon /></ListItemIcon>
+          <ListItemIcon>
+            <FavoriteBorderOutlinedIcon />
+          </ListItemIcon>
           <ListItemText primary={'Liked'} />
         </ListItem>
         <ListItem button key={'Archive'}>
-          <ListItemIcon><ArchiveOutlinedIcon /></ListItemIcon>
+          <ListItemIcon>
+            <ArchiveOutlinedIcon />
+          </ListItemIcon>
           <ListItemText primary={'Archive'} />
         </ListItem>
         <ListItem button key={'Videos'}>
-          <ListItemIcon><VideoLibrarySharpIcon /></ListItemIcon>
+          <ListItemIcon>
+            <VideoLibrarySharpIcon />
+          </ListItemIcon>
           <ListItemText primary={'Videos'} />
         </ListItem>
       </List>
@@ -85,17 +91,19 @@ const Main = ({
       <List>
         {['Folder'].map((text, index) => (
           <ListItem button key={text}>
-            <ListItemIcon><FolderOpenIcon /></ListItemIcon>
+            <ListItemIcon>
+              <FolderOpenIcon />
+            </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}
       </List>
       <Button className={classes.addFolderBtn}>Add Folder</Button>
-
     </div>
   )
 
-  const container = window !== undefined ? () => window().document.body : undefined
+  const container =
+    window !== undefined ? () => window().document.body : undefined
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget)
@@ -144,16 +152,15 @@ const Main = ({
       <MenuItem onClick={() => logOut()}>Log out</MenuItem>
     </Menu>
   )
-
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar position='fixed' className={classes.appBar}>
         <Toolbar>
           <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
+            color='inherit'
+            aria-label='open drawer'
+            edge='start'
             onClick={handleDrawerToggle}
             className={classes.menuButton}
           >
@@ -164,7 +171,7 @@ const Main = ({
               <SearchIcon />
             </div>
             <InputBase
-              placeholder="Search…"
+              placeholder='Search…'
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput
@@ -176,23 +183,23 @@ const Main = ({
           <Button className={classes.addFolderBtn}>Add Link</Button>
           <div className={classes.sectionDesktop}>
             <IconButton
-              edge="end"
-              aria-label="account of current user"
+              edge='end'
+              aria-label='account of current user'
               aria-controls={menuId}
-              aria-haspopup="true"
+              aria-haspopup='true'
               onClick={handleProfileMenuOpen}
-              color="inherit"
+              color='inherit'
             >
               <AccountCircle />
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>
             <IconButton
-              aria-label="show more"
+              aria-label='show more'
               aria-controls={mobileMenuId}
-              aria-haspopup="true"
+              aria-haspopup='true'
               onClick={handleMobileMenuOpen}
-              color="inherit"
+              color='inherit'
             >
               <MoreIcon />
             </IconButton>
@@ -202,12 +209,12 @@ const Main = ({
       {renderMobileMenu}
       {renderMenu}
 
-      <nav className={classes.drawer} aria-label="mailbox folders">
+      <nav className={classes.drawer} aria-label='mailbox folders'>
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
+        <Hidden smUp implementation='css'>
           <Drawer
             container={container}
-            variant="temporary"
+            variant='temporary'
             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={mobileOpen}
             onClose={handleDrawerToggle}
@@ -221,12 +228,12 @@ const Main = ({
             {drawer}
           </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden xsDown implementation='css'>
           <Drawer
             classes={{
               paper: classes.drawerPaper
             }}
-            variant="permanent"
+            variant='permanent'
             open
           >
             {drawer}
@@ -235,7 +242,7 @@ const Main = ({
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-          <Card data={linksData} />
+        <Card data={linksData} />
       </main>
     </div>
   )

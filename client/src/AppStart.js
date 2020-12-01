@@ -22,9 +22,7 @@ const AppStart = ({
   location
 }) => {
   if (token || localStorage.getItem('token')) {
-    return (
-      <Main />
-    )
+    return <Main />
   }
   return (
     <main className='start-page'>

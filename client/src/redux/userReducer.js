@@ -45,7 +45,7 @@ export const userReducer = (state = initialState, { type, payload }) => {
     case LOAD_LINK_DATA:
       return {
         ...state,
-        linksData: payload.data
+        linksData: payload.linksData
       }
     default:
       return state
@@ -115,8 +115,7 @@ export const validateEmail = (confirmationToken) => (dispatch) => {
 export const takeLinkData = () => (dispatch) => {
   // FIXME refactor with async/await
   return API.takeLinkData().then((res) => {
+    console.log('res', res)
     dispatch(loadLinkData(res))
-    console.log('reduser', res)
-  }
-  )
+  })
 }
