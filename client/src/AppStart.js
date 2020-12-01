@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 // import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
-import './appStart.css'
 import CreateAccount from './components/CreateAccount/CreateAccount'
 import SignIn from './components/SignIn/SignIn'
 import Main from './components/pages/Main/Main'
@@ -11,6 +10,8 @@ import {
   logOut
 } from './redux/userReducer'
 import propTypes from 'prop-types'
+import { Button, Typography } from '@material-ui/core'
+import authStyle from './appStartStyles'
 
 const AppStart = ({
   token,
@@ -24,28 +25,32 @@ const AppStart = ({
   if (token || localStorage.getItem('token')) {
     return <Main />
   }
+
+  const classes = authStyle()
+
   return (
-    <main className='start-page'>
-      <header className='start-header'>
-        <div className='logo'>
-          <span>Link</span>
+    <main>
+      <header className={classes.startHeader}>
+        <div className={classes.logo}>
+          <span className={classes.logo_first}>Link</span>
           <span>Storage</span>
         </div>
-        <div className='signIn'>
-          <button className='signInBtn' onClick={() => showSignInModal(true)}>
-            Sign In
-          </button>
-          <SignIn show={showSignIn} />
-          <CreateAccount show={showRegistration} />
+        <div className={classes.signInBtn}>
+          <Button onClick={() => showSignInModal(true)}>
+            <Typography component='span'>Sign In</Typography>
+          </Button>
+          <SignIn />
+          <CreateAccount />
         </div>
       </header>
-      <div className='createAccount'>
-        <button
-          className='createAccBtn'
+      <div className={classes.createAccount}>
+        <Button
+          variant='contained'
+          className={classes.createAccBtn}
           onClick={() => showRegistrationModal(true)}
         >
-          Create an Account
-        </button>
+          <Typography component='span'>Create an Account</Typography>
+        </Button>
       </div>
     </main>
   )

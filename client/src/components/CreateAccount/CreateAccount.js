@@ -2,11 +2,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Field, Form, reduxForm } from 'redux-form'
-import './createAccount.css'
 import {
   sendRegistrationData,
   showRegistrationModal
 } from '../../redux/userReducer'
+import { CssBaseline, IconButton, Modal, Typography } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
 
 const CreateAccount = ({
   showRegistrationModal,
@@ -17,18 +18,19 @@ const CreateAccount = ({
     return null
   }
   return (
-    <>
-      (
-      <div className='signIn-popup'>
-        <div className='signIn-container'>
+    <CssBaseline>
+      <Modal
+        open={showRegistration}
+        onClose={() => showRegistrationModal(false)}
+      >
+        <div className='signIn-container' style={{ outline: 0 }}>
           <div className='signIn-header'>
-            <h4>Create an Account</h4>
-            <div
-              className='close-icon'
-              onClick={() => showRegistrationModal(false)}
-            >
-              x
-            </div>
+            <Typography component='h2' variant='h4'>
+              Create an Account
+            </Typography>
+            <IconButton onClick={() => showRegistrationModal(false)}>
+              <CloseIcon />
+            </IconButton>
           </div>
 
           <div className='form-container'>
@@ -67,21 +69,21 @@ const CreateAccount = ({
             </Form>
           </div>
         </div>
-      </div>
-      )
-    </>
+      </Modal>
+    </CssBaseline>
   )
 }
-
 const CreateAccountReduxForm = reduxForm({ form: 'registration' })(
   CreateAccount
 )
+
 const createAccountContainer = (props) => {
   const submitHandler = (formData) => {
     props.sendRegistrationData(formData)
   }
   return <CreateAccountReduxForm onSubmit={submitHandler} {...props} />
 }
+
 const mapStateToProps = ({ user }) => ({
   showRegistration: user.showRegistration
 })

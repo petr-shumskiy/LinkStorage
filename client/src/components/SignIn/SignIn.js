@@ -4,74 +4,135 @@ import './signIn.css'
 import { connect } from 'react-redux'
 import { Field, Form, reduxForm } from 'redux-form'
 import { showSignInModal, sendSignInData } from '../../redux/userReducer'
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  Container,
+  CssBaseline,
+  FormControlLabel,
+  makeStyles,
+  Modal,
+  TextField,
+  Typography
+} from '@material-ui/core'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
-const SignIn = reduxForm({ form: 'signIn' })(
-  ({ showSignIn, showSignInModal, handleSubmit }) => {
-    if (!showSignIn) {
-      return null
+const StyledEmailField = ({ input }) => {
+  return (
+    <TextField
+      variant='outlined'
+      margin='normal'
+      required
+      fullWidth
+      id='email'
+      label='Email Address'
+      name='email'
+      autoComplete='email'
+      autoFocus
+      onChange={input.onChange}
+      value={input.value}
+    />
+  )
+}
+
+const StyledPassField = ({ input }) => {
+  return (
+    <TextField
+      variant='outlined'
+      margin='normal'
+      required
+      fullWidth
+      name='password'
+      label='Password'
+      type='password'
+      id='password'
+      autoComplete='current-password'
+      onChange={input.onChange}
+      value={input.value}
+    />
+  )
+}
+
+const RememberMe = () => {
+  return (
+    <FormControlLabel
+      control={<Checkbox value='remember' color='primary' />}
+      label='Remember me'
+    />
+  )
+}
+
+const SignIn = ({ showSignIn, showSignInModal, handleSubmit, ...props }) => {
+  const useStyles = makeStyles((theme) => ({
+    paper: {
+      marginTop: theme.spacing(16),
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    },
+    avatar: {
+      margin: theme.spacing(1),
+      backgroundColor: theme.palette.secondary.main
+    },
+    form: {
+      width: '100%', // Fix IE 11 issue.
+      marginTop: theme.spacing(1)
+    },
+    submit: {
+      margin: theme.spacing(3, 0, 2)
     }
+  }))
+  const classes = useStyles()
 
-    return (
-      <>
-        <div className='signIn-popup'>
-          <div className='signIn-container'>
-            <div className='signIn-header'>
-              <h4>Sign In</h4>
-              <div
-                className='close-icon'
-                onClick={() => showSignInModal(false)}
+  return (
+    <CssBaseline>
+      <Modal open={showSignIn} onClose={() => showSignInModal(false)}>
+        <Container
+          component='main'
+          maxWidth='xs'
+          style={{ backgroundColor: 'white', outline: 0 }}
+        >
+          <CssBaseline />
+          <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component='h1' variant='h5'>
+              Sign in
+            </Typography>
+            <Form onSubmit={handleSubmit} className={classes.form}>
+              <Field component={StyledEmailField} name='email' />
+              <Field
+                component={StyledPassField}
+                name='password'
+                type='password'
+              />
+              <Field component={RememberMe} type='checkbox' name='isRemember' />
+              <Button
+                fullWidth
+                variant='contained'
+                color='primary'
+                className={classes.submit}
+                type='submit'
               >
-                x
-              </div>
-            </div>
-
-            <div className='form-container'>
-              <Form onSubmit={handleSubmit}>
-                <div className='mail-form'>
-                  <label className='signIn-label' htmlFor='email'>
-                    Email
-                  </label>
-                  <Field
-                    component='input'
-                    className='signIn-input'
-                    type='text'
-                    id='email'
-                    name='email'
-                  />
-                </div>
-
-                <div className='mail-form'>
-                  <label className='signIn-label' htmlFor='password'>
-                    Password
-                  </label>
-                  <Field
-                    component='input'
-                    className='signIn-input'
-                    type='password'
-                    id='password'
-                    name='password'
-                  />
-                </div>
-
-                <div className='submit-block'>
-                  <button className='submitBtn' type='submit'>
-                    Sign In
-                  </button>
-                </div>
-              </Form>
-            </div>
+                Sign In
+              </Button>
+            </Form>
           </div>
-        </div>
-      </>
-    )
-  }
-)
+        </Container>
+      </Modal>
+    </CssBaseline>
+  )
+}
+
+const SingInReduxForm = reduxForm({ form: 'signIn' })(SignIn)
 
 const SignInContainer = (props) => {
-  const onSubmit = (formData) => {
+  const submitHandler = (formData) => {
     props.sendSignInData(formData)
   }
-  return <SignIn onSubmit={onSubmit} {...props} />
+  return <SingInReduxForm onSubmit={submitHandler} {...props} />
 }
 
 const mapStateToProps = ({ user }) => ({

@@ -1,14 +1,4 @@
-.signIn-popup{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.657);
-  z-index: 10;
-}
-
-.signIn-container{
+.signIn-container {
   position: relative;
   top: 50%;
   left: 50%;
@@ -17,7 +7,7 @@
   height: auto;
   background-color: white;
 }
-.signIn-header{
+.signIn-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -26,7 +16,7 @@
   border-bottom: 1px solid #ddd;
 }
 
-.close-icon{
+.close-icon {
   font-size: 1.5rem;
   position: relative;
   top: -10px;
@@ -34,11 +24,11 @@
   cursor: pointer;
 }
 
-.form-container{
+.form-container {
   padding: 0 30px 20px;
 }
 
-.mail-form{
+.mail-form {
   margin-bottom: 10px;
   display: flex;
   flex-direction: row;
@@ -47,7 +37,7 @@
   box-sizing: border-box;
 }
 
-.signIn-label{
+.signIn-label {
   padding: 12px 0;
   margin-bottom: 5px;
   color: #666;
@@ -56,7 +46,7 @@
   width: 17%;
 }
 
-.signIn-input{
+.signIn-input {
   width: 64%;
   background-color: rgb(232, 240, 254);
   font-size: 16px;
@@ -67,18 +57,18 @@
   box-sizing: border-box;
 }
 
-.submit-block{
+.submit-block {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   width: 100%;
 }
 
-.submitBtn{
+.submitBtn {
   color: #fff;
   background: #222;
   font-size: 1rem;
-  padding: .9375rem 1.875rem 1rem;
+  padding: 0.9375rem 1.875rem 1rem;
   white-space: nowrap;
   min-width: 120px;
   border-radius: 4px;
@@ -86,8 +76,8 @@
   max-width: 100%;
 }
 
-@media (max-width: 600px){
-  .signIn-container{
+@media (max-width: 600px) {
+  .signIn-container {
     position: relative;
     top: 0;
     left: 0;
@@ -97,23 +87,22 @@
     background-color: white;
   }
 
-  .mail-form{
+  .mail-form {
     margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
   }
-  
-  .signIn-input{
+
+  .signIn-input {
     width: 100%;
   }
 
-  .submit-block{
+  .submit-block {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     width: 100%;
   }
-
 }
