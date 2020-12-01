@@ -31,7 +31,7 @@ import { useTheme } from '@material-ui/core/styles'
 import mainStyle from './mainStyle'
 import { connect } from 'react-redux'
 import { logOut, takeLinkData } from './../../../redux/userReducer'
-import Card from './../../Card/Card'
+import Cards from './../../Card/Cards'
 
 const Main = ({ logOut, linksData, takeLinkData }) => {
   const window = undefined
@@ -156,7 +156,7 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position='fixed' className={classes.appBar}>
+      <AppBar position='fixed' className={classes.appBar} color="transparent" background="default" >
         <Toolbar>
           <IconButton
             color='inherit'
@@ -243,8 +243,14 @@ const Main = ({ logOut, linksData, takeLinkData }) => {
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {linksData.map(({ id, title }) => (
-          <Card text={title} key={id} />
+        {linksData.map(({ id, title, text, url, type, img }) => (
+          <Cards
+            text={text}
+            title={title}
+            url={url}
+            typeCard={type}
+            img={img}
+            key={id} />
         ))}
       </main>
     </div>

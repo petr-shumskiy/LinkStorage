@@ -29,7 +29,7 @@ class _API {
   }
 
   takeLinkData = async (data) => {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    const response = await fetch('https://my-json-server.typicode.com/Gaziz666/demo/posts')
     return response.json()
   }
 }

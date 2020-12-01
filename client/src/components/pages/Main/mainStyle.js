@@ -18,9 +18,7 @@ const navMenuStyle = makeStyles((theme) => ({
   appBar: {
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-      backgroundColor: 'white',
-      color: 'black'
+      marginLeft: drawerWidth
     }
   },
   menuButton: {
