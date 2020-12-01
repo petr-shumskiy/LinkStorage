@@ -1,5 +1,6 @@
 import { post } from 'axios'
 const BASE_URL = 'http://localhost:5000/api/auth/'
+
 // FIXME catch errors
 class _API {
   sendRegistrationData = async (data) => {
@@ -25,6 +26,11 @@ class _API {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  takeLinkData = async (data) => {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    return response.json()
   }
 }
 

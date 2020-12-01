@@ -5,14 +5,16 @@ import {
   SHOW_SIGN_IN,
   SHOW_REGISTRATION,
   SET_TOKEN,
-  LOG_OUT
+  LOG_OUT,
+  LOAD_LINK_DATA
 } from './types'
 
 const initialState = {
   showRegistration: false,
   showSignIn: false,
   email: null,
-  token: null
+  token: null,
+  linksData: []
 }
 
 export const userReducer = (state = initialState, { type, payload }) => {
@@ -39,6 +41,11 @@ export const userReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         token: null
+      }
+    case LOAD_LINK_DATA:
+      return {
+        ...state,
+        linksData: payload.data
       }
     default:
       return state
@@ -73,12 +80,20 @@ export const logOut = () => {
   }
 }
 
+export const loadLinkData = (linksData) => ({
+  type: LOAD_LINK_DATA,
+  payload: {
+    linksData
+  }
+})
+
 export const sendRegistrationData = (data) => (dispatch) => {
   // FIXME refactor with async/await
   return API.sendRegistrationData(data).then(() =>
     dispatch(showRegistrationModal(false))
   )
 }
+
 export const sendSignInData = (data) => (dispatch) => {
   // FIXME refactor with async/await
   return API.sendSignInData(data).then(({ data }) => {
@@ -95,4 +110,13 @@ export const validateEmail = (confirmationToken) => (dispatch) => {
       localStorage.setItem('token', confirmationToken)
     }
   })
+}
+
+export const takeLinkData = () => (dispatch) => {
+  // FIXME refactor with async/await
+  return API.takeLinkData().then((res) => {
+    dispatch(loadLinkData(res))
+    console.log('reduser', res)
+  }
+  )
 }

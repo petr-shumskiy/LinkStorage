@@ -28,12 +28,13 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import mainStyle from './mainStyle'
 import { connect } from 'react-redux'
-import { logOut } from './../../../redux/userReducer'
+import { logOut, takeLinkData } from './../../../redux/userReducer'
+import Card from './../../Card/Card'
 
 const Main = ({
-  token,
   logOut,
-  location
+  linksData,
+  takeLinkData
 }) => {
   const window = undefined
   const classes = mainStyle()
@@ -48,6 +49,12 @@ const Main = ({
     setMobileOpen(!mobileOpen)
   }
 
+  const loadLinkData = () => {
+    console.log('work')
+    takeLinkData()
+    console.log(linksData)
+  }
+
   const drawer = (
     <div>
       <div className={classes.toolbar}>
@@ -57,7 +64,7 @@ const Main = ({
       </div>
       <Divider />
       <List>
-        <ListItem button key={'Home'}>
+        <ListItem button key={'Home'} onClick={loadLinkData}>
           <ListItemIcon><HomeOutlinedIcon /></ListItemIcon>
           <ListItemText primary={'Home'} />
         </ListItem>
@@ -118,7 +125,7 @@ const Main = ({
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Log out</MenuItem>
+      <MenuItem onClick={() => logOut()}>Log out</MenuItem>
     </Menu>
   )
 
@@ -133,12 +140,8 @@ const Main = ({
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <p>Account</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <p>Log out</p>
-      </MenuItem>
+      <MenuItem onClick={handleProfileMenuOpen}>Account</MenuItem>
+      <MenuItem onClick={() => logOut()}>Log out</MenuItem>
     </Menu>
   )
 
@@ -232,26 +235,25 @@ const Main = ({
       </nav>
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringil aliquam ultrices sagittis orci a.
-        </Typography>
+          <Card data={linksData} />
       </main>
     </div>
   )
 }
 
 const mapStateToProps = ({ user }) => ({
-  token: user.token
+  token: user.token,
+  linksData: user.linksData
 })
 
 export default connect(mapStateToProps, {
-  logOut
+  logOut,
+  takeLinkData
 })(Main)
 
 Main.propTypes = {
   token: propTypes.string,
-  logOut: propTypes.func
+  logOut: propTypes.func,
+  takeLinkData: propTypes.func,
+  linksData: propTypes.array
 }
