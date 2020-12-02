@@ -25,7 +25,9 @@ import {
   Menu,
   MenuItem,
   Toolbar,
-  Typography
+  Typography,
+  Modal,
+  Backdrop
 } from '@material-ui/core'
 import { useTheme } from '@material-ui/core/styles'
 import mainStyle from './mainStyle'
@@ -33,6 +35,7 @@ import { connect } from 'react-redux'
 import { logOut, takeLinkData, setCurrentLinkType } from './../../../redux/userReducer'
 import Cards from './../../Card/Cards'
 import cardType from './../../Card/cardType'
+import addLinkModal from './../../addLinkModal/addLinkModal'
 
 const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType }) => {
   const window = undefined
@@ -41,6 +44,7 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
+  const [modalOpen, setModalOpen] = React.useState(false)
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
 
@@ -121,6 +125,14 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
     handleMobileMenuClose()
   }
 
+  const handleModalOpen = () => {
+    setModalOpen(true)
+  }
+
+  const handleModalCLose = () => {
+    setModalOpen(false)
+  }
+
   const menuId = 'primary-search-account-menu'
   const renderMenu = (
     <Menu
@@ -180,7 +192,26 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
             />
           </div>
           <div className={classes.grow} />
-          <Button className={classes.addFolderBtn}>Add Link</Button>
+          <Button
+            className={classes.addFolderBtn}
+            type="button"
+            onClick={handleModalOpen}>
+              Add Link
+          </Button>
+          <Modal
+            open={modalOpen}
+            onClose={handleModalCLose}
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            className={classes.modal}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 300
+            }}
+          >
+            {addLinkModal()}
+          </Modal>
           <div className={classes.sectionDesktop}>
             <IconButton
               edge='end'
@@ -210,7 +241,6 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
       {renderMenu}
 
       <nav className={classes.drawer} aria-label='mailbox folders'>
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation='css'>
           <Drawer
             container={container}

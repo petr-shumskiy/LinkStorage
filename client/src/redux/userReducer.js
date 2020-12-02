@@ -118,6 +118,7 @@ export const sendSignInData = (data) => (dispatch) => {
   })
 }
 
+sendNewLink
 export const validateEmail = (confirmationToken) => (dispatch) => {
   return API.sendConfirmationRequest(confirmationToken).then((res) => {
     if (res === 200) {
@@ -131,5 +132,10 @@ export const takeLinkData = () => (dispatch) => {
   // FIXME refactor with async/await
   return API.takeLinkData().then((res) => {
     dispatch(loadLinkData(res))
+  })
+}
+
+export const sendNewLink = (data) => (dispatch) => {
+  return API.sendNewLink(data).then(({ data }) => {
   })
 }

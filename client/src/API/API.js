@@ -12,6 +12,15 @@ class _API {
     }
   }
 
+  sendNewLink = async (data) => {
+    try {
+      const response = await post(BASE_URL + 'newLink', data)
+      return response
+    } catch (error) {
+      console.log('', error)
+    }
+  }
+
   sendSignInData = async (data) => {
     const response = await post(BASE_URL + 'login', data)
     return response

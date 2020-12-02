@@ -104,6 +104,11 @@ const navMenuStyle = makeStyles((theme) => ({
   },
   addFolderBtn: {
     minWidth: '85px'
+  },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 }))
 
