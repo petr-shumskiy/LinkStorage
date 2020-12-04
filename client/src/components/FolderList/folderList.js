@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 import { FolderIcon } from '../../icons'
 
 import './folderList.css'
@@ -11,8 +12,9 @@ const folderList = (props) => {
           return (
             <li key={i}>
               <FolderIcon />
-              <a href="#">{item}</a>
-            </li>)
+              <NavLink to="#">{item}</NavLink>
+            </li>
+          )
         })}
       </ul>
     </div>

@@ -7,6 +7,7 @@ import {
   SET_TOKEN,
   LOG_OUT,
   LOAD_LINK_DATA,
+  SET_LINK_TYPE,
   TOGGLE_EMAIL_SENDED,
   TOGGLE_PROGRESS_SIGN_IN,
   TOGGLE_PROGRESS_SIGN_UP,
@@ -20,6 +21,7 @@ const initialState = {
   email: null,
   token: null,
   linksData: [],
+  linkType: '',
   signInRequestInProgress: false,
   signInRequestUpProgress: false
 }
@@ -47,6 +49,12 @@ export const userReducer = (state = initialState, { type, payload } = {}) => {
       return {
         ...state,
         token: payload.token
+      }
+    }
+    case SET_LINK_TYPE: {
+      return {
+        ...state,
+        linkType: payload.linkType
       }
     }
     case LOG_OUT:
@@ -92,6 +100,13 @@ export const setToken = (token) => ({
   type: SET_TOKEN,
   payload: {
     token
+  }
+})
+
+export const setCurrentLinkType = (linkType) => ({
+  type: SET_LINK_TYPE,
+  payload: {
+    linkType
   }
 })
 
@@ -168,6 +183,7 @@ export const sendSignInData = (data) => (dispatch) => {
     })
 }
 
+// sendNewLink
 export const validateEmail = (confirmationToken) => (dispatch) => {
   return API.sendConfirmationRequest(confirmationToken).then((res) => {
     if (res === 200) {
@@ -180,7 +196,10 @@ export const validateEmail = (confirmationToken) => (dispatch) => {
 export const takeLinkData = () => (dispatch) => {
   // FIXME refactor with async/await
   return API.takeLinkData().then((res) => {
-    console.log('res', res)
     dispatch(loadLinkData(res))
   })
+}
+
+export const sendNewLink = (data) => (dispatch) => {
+  return API.sendNewLink(data).then(({ data }) => {})
 }
