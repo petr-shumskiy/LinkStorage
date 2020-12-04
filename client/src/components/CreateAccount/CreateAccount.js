@@ -1,103 +1,153 @@
 /* eslint-disable react/prop-types */
 import React from 'react'
-import './createAccount.css'
 import { connect } from 'react-redux'
-import { loginUser } from '../../redux/action'
+import { Field, Form, reduxForm } from 'redux-form'
+import {
+  sendRegistrationData,
+  showRegistrationModal
+} from '../../redux/userReducer'
+import {
+  Avatar,
+  Button,
+  CircularProgress,
+  Container,
+  CssBaseline,
+  Dialog,
+  Fade,
+  Snackbar,
+  Tooltip,
+  Typography,
+  Zoom
+} from '@material-ui/core'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { authStyles } from '../authModalStyles'
+import { StyledEmailField, StyledPassField } from '../authStylesFields'
+import {
+  formRequired,
+  validateEmailForm,
+  validatePasswordForm
+} from '../../utils/validators'
 
-class CreateAccount extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      newEmail: '',
-      newPassword: ''
-    }
-  }
-
-  submitHandler = (event) => {
-    event.preventDefault()
-    const { newEmail, newPassword } = this.state
-    if (!newEmail.trim()) {
-      return
-    }
-
-    const user = {
-      newEmail,
-      newPassword
-    }
-
-    console.log(user)
-    this.props.loginUser(user)
-
-    // this.setState({ email: '', password: ''})
-  }
-
-  changeInputHandler = (event) => {
-    event.persist()
-    this.setState((prev) => ({
-      ...prev,
-      ...{
-        [event.target.name]: event.target.value
-      }
-    }))
-  }
-
-  render() {
-    return (
-        <React.Fragment>
-          {(this.props.show === 'createAccount') && (
-            <div className="signIn-popup">
-              <div className="signIn-container">
-
-                <div className="signIn-header">
-                  <h4>Create an Account</h4>
-                  <div className="close-icon"
-                  onClick={() => { this.props.onHideCreateAccount() }}
-                  >x</div>
-                </div>
-
-                <div className="form-container">
-                  <form onSubmit={this.submitHandler} method="post">
-
-                    <div className="mail-form">
-                      <label className="signIn-label" htmlFor="email">Email</label>
-                      <input
-                      className="signIn-input"
-                      type="text"
-                      id="newEmail"
-                      value={this.state.newEmail}
-                      name="newEmail"
-                      onChange={this.changeInputHandler}
-                      />
-                    </div>
-
-                    <div className="mail-form">
-                      <label className="signIn-label" htmlFor="newPassword">Password</label>
-                      <input className="signIn-input"
-                      type="Password"
-                      id="newPassword"
-                      value={this.state.newPassword}
-                      name="newPassword"
-                      onChange={this.changeInputHandler}
-                      />
-                    </div>
-
-                    <div className="submit-block">
-                      <button className="submitBtn" type="submit">Create Account</button>
-                    </div>
-
-                  </form>
-                </div>
-
-              </div>
+const CreateAccount = ({
+  showRegistrationModal,
+  showRegistration,
+  handleSubmit,
+  pristine,
+  valid,
+  error,
+  success,
+  signUpRequestInProgress
+}) => {
+  const classes = authStyles()
+  const isButtonDisabled = pristine || !valid || signUpRequestInProgress
+  return (
+    <Dialog
+      open={showRegistration}
+      onClose={() => showRegistrationModal(false)}
+    >
+      <Container component='main' maxWidth='xs' className={classes.main}>
+        <CssBaseline />
+        <div className={classes.paper}>
+          {error ? (
+            <div className={classes.additionalMessage}>
+              <Typography
+                component='h2'
+                variant='h6'
+                color='error'
+                align='center'
+              >
+                {error}
+              </Typography>
             </div>
-          )}
-        </React.Fragment>
-    )
+          ) : null}
+          <Avatar
+            className={
+              !error && success ? classes.avatarSuccess : classes.avatar
+            }
+          >
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component='h1' variant='h5'>
+            Sign up
+          </Typography>
+          <Form
+            onSubmit={handleSubmit}
+            className={!error && success ? classes.successForm : classes.form}
+          >
+            {!error && success ? null : (
+              <>
+                <Field
+                  component={StyledEmailField}
+                  name='email'
+                  validate={[validateEmailForm, formRequired]}
+                  className={classes.wrap}
+                />
+                <Field
+                  component={StyledPassField}
+                  name='password'
+                  validate={[validatePasswordForm, formRequired]}
+                />
+              </>
+            )}
+            {!error && success ? (
+              <Typography
+                component='h2'
+                variant='h6'
+                align='center'
+                color='primary'
+              >
+                Email was sent
+              </Typography>
+            ) : null}
+
+            {!error && success ? null : (
+              <Tooltip
+                title={
+                  isButtonDisabled ? 'input valid data' : 'create an account'
+                }
+                placement='top'
+                TransitionComponent={isButtonDisabled ? Zoom : Fade}
+              >
+                <span>
+                  <Button
+                    type='submit'
+                    fullWidth
+                    variant='contained'
+                    color='primary'
+                    className={classes.submit}
+                    disabled={isButtonDisabled}
+                  >
+                    {signUpRequestInProgress ? <CircularProgress /> : 'Sign Up'}
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
+          </Form>
+          <Snackbar></Snackbar>
+        </div>
+      </Container>
+    </Dialog>
+  )
+}
+const CreateAccountReduxForm = reduxForm({
+  form: 'registration',
+  touchOnChange: true
+})(CreateAccount)
+
+const createAccountContainer = (props) => {
+  const submitHandler = (formData) => {
+    props.sendRegistrationData(formData)
   }
+  return <CreateAccountReduxForm onSubmit={submitHandler} {...props} />
 }
 
-const mapDispatchToProps = {
-  loginUser
-}
+const mapStateToProps = ({ user }) => ({
+  showRegistration: user.showRegistration,
+  success: user.isEmailSended,
+  signUpRequestInProgress: user.signUpRequestInProgress
+})
 
-export default connect(null, mapDispatchToProps)(CreateAccount)
+export default connect(mapStateToProps, {
+  showRegistrationModal,
+  sendRegistrationData
+})(createAccountContainer)

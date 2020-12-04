@@ -3,7 +3,6 @@ const User = require('../models/User')
 const mailgun = require('mailgun-js')
 const jwt = require('jsonwebtoken')
 const config = require('config')
-const axios = require('axios')
 const bcrypt = require('bcryptjs')
 
 const CLIENT_URL = config.get('clientUrl')
@@ -21,20 +20,26 @@ exports.registration = async (req, res) => {
         .status(400)
         .json({ message: constants.REGISTRATION_ERROR_USER_EXISTS })
     }
-
+    const hashedPassword = await bcrypt.hash(password, 1)
+    const newUser = new User({ email, password: hashedPassword })
+    await newUser.save()
     const activationToken = jwt.sign({ email, password }, JWT_SECRET, {
       expiresIn: '10min'
     })
     const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: DOMAIN })
-    mg.messages().send({
-      from: 'no-reply@linkStorage.org',
-      to: email,
-      subject: 'Activation link',
-      html: `
+    try {
+      mg.messages().send({
+        from: 'no-reply@linkStorage.org',
+        to: email,
+        subject: 'Activation link',
+        html: `
       <h2>Please click on given link to activate your account</h2>
-      <a href="${CLIENT_URL}/api/auth/validate-email/${activationToken}"><button>confirm email</button></a>
+      <a href="${CLIENT_URL}/reg-confirmation/${activationToken}"><button>confirm email</button></a>
       `
-    })
+      })
+    } catch (e) {
+      console.log(e)
+    }
     return res
       .status(200)
       .json({ message: constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL })
@@ -47,15 +52,11 @@ exports.registration = async (req, res) => {
 exports.validateEmail = async (req, res) => {
   try {
     const { token } = req.params
-    const { email, password } = jwt.verify(token, JWT_SECRET)
-    const hashedPassword = await bcrypt.hash(password, 1)
-    const user = new User({ email, password: hashedPassword })
-    await user.save()
-    const { data } = await axios.post('http://localhost:5000/api/auth/login', {
-      email,
-      password
-    })
-    return res.status(201).json({ token: data.token })
+    const { email } = jwt.verify(token, JWT_SECRET)
+    await User.findOneAndUpdate({ email }, { isEmailConfirmed: true })
+    return res
+      .status(200)
+      .json({ message: constants.REGISTRATION_SUCCESS_CONFIRMED_EMAIL })
   } catch (error) {
     console.log(error)
     return res
@@ -64,20 +65,30 @@ exports.validateEmail = async (req, res) => {
   }
 }
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body
+    const { email, password, isConfirmation } = req.body
     const user = await User.findOne({ email })
     if (!user) {
-      res.status(400).json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
+      return res
+        .status(400)
+        .json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
     }
 
     const matchPasswords = await bcrypt.compare(password, user.password)
     if (!matchPasswords) {
-      res.status(400).json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
+      return res
+        .status(400)
+        .json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
     }
 
-    const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '1h' })
+    const token = jwt.sign({ email, password }, JWT_SECRET, { expiresIn: '1h' })
+
+    if (isConfirmation) {
+      // return res.redirect(301, `http://localhost:3000/auth/${token}`)
+      return res.status(301).redirect('http://nodejs.org')
+    }
+
     res.status(201).json({ token })
   } catch (error) {
     console.log(error)

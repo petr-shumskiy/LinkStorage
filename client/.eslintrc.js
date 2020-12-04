@@ -19,11 +19,19 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module'
   },
-  plugins: [
-    'react'
-  ],
+  plugins: ['react'],
   rules: {
-    'space-before-function-paren': ['error', 'never']
+    'space-before-function-paren': [
+      'error',
+      {
+        anonymous: 'always',
+        named: 'never',
+        asyncArrow: 'always'
+      }
+    ],
+    'multiline-ternary': ['error', 'never'],
+    'react/prop-types': 0,
+    '@typescript-eslint': 0
   },
   settings: {
     react: {

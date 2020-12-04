@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const config = require('config')
 const app = express()
 const bodyParser = require('body-parser')
+const cors = require('cors')
 require('dotenv').config()
 
 const authRouter = require('./routes/authRoutes')
@@ -13,6 +14,7 @@ const MONGO_OPTIONS = config.get('mongoOptions')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cors({ origin: '*' }))
 
 app.use('/api/auth', authRouter)
 

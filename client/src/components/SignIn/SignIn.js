@@ -1,103 +1,102 @@
-/* eslint-disable react/prop-types */
 import React from 'react'
 import './signIn.css'
 import { connect } from 'react-redux'
-import { loginUser } from '../../redux/action'
+import { Field, Form, reduxForm } from 'redux-form'
+import { showSignInModal, sendSignInData } from '../../redux/userReducer'
+import {
+  Avatar,
+  Button,
+  CircularProgress,
+  Container,
+  CssBaseline,
+  Dialog,
+  Typography
+} from '@material-ui/core'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { authStyles } from '../authModalStyles'
+import {
+  RememberMe,
+  StyledEmailField,
+  StyledPassField
+} from '../authStylesFields'
+import { formRequired } from '../../utils/validators'
 
-class SignIn extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      email: '',
-      password: ''
-    }
-  }
-
-    submitHandler = (event) => {
-      event.preventDefault()
-      const { email, password } = this.state
-      if (!email.trim()) {
-        return
-      }
-
-      const user = {
-        email,
-        password
-      }
-
-      console.log(user)
-      this.props.loginUser(user)
-
-      // this.setState({ email: '', password: ''})
-    }
-
-    changeInputHandler = (event) => {
-      event.persist()
-      this.setState((prev) => ({
-        ...prev,
-        ...{
-          [event.target.name]: event.target.value
-        }
-      }))
-    }
-
-    render() {
-      return (
-        <React.Fragment>
-          {(this.props.show === 'signIn') && (
-            <div className="signIn-popup">
-              <div className="signIn-container">
-
-                <div className="signIn-header">
-                  <h4>Sign In</h4>
-                  <div className="close-icon"
-                  onClick={() => { this.props.onHideSignIn() }}
-                  >x</div>
-                </div>
-
-                <div className="form-container">
-                  <form onSubmit={this.submitHandler} method="post">
-
-                    <div className="mail-form">
-                      <label className="signIn-label" htmlFor="email">Email</label>
-                      <input
-                      className="signIn-input"
-                      type="text"
-                      id="email"
-                      value={this.state.email}
-                      name="email"
-                      onChange={this.changeInputHandler}
-                      />
-                    </div>
-
-                    <div className="mail-form">
-                      <label className="signIn-label" htmlFor="password">Password</label>
-                      <input className="signIn-input"
-                      type="password"
-                      id="password"
-                      value={this.state.password}
-                      name="password"
-                      onChange={this.changeInputHandler}
-                      />
-                    </div>
-
-                    <div className="submit-block">
-                      <button className="submitBtn" type="submit">Sign In</button>
-                    </div>
-
-                  </form>
-                </div>
-
-              </div>
+const SignIn = ({
+  showSignIn,
+  showSignInModal,
+  handleSubmit,
+  pristine,
+  valid,
+  error,
+  signInRequestInProgress
+}) => {
+  const classes = authStyles()
+  return (
+    <Dialog open={showSignIn} onClose={() => showSignInModal(false)}>
+      <Container component='main' maxWidth='xs' className={classes.main}>
+        <CssBaseline />
+        <div className={classes.paper}>
+          {error ? (
+            <div className={classes.additionalMessage}>
+              <Typography
+                component='h2'
+                variant='h6'
+                color='error'
+                align='center'
+              >
+                {error}
+              </Typography>
             </div>
-          )}
-        </React.Fragment>
-      )
-    }
+          ) : null}
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component='h1' variant='h5'>
+            Sign in
+          </Typography>
+          <Form onSubmit={handleSubmit} className={classes.form}>
+            <Field component={StyledEmailField} name='email' />
+            <Field
+              component={StyledPassField}
+              name='password'
+              type='password'
+              validate={[formRequired]}
+            />
+            <Field component={RememberMe} type='checkbox' name='isRemember' />
+            <Button
+              fullWidth
+              variant='contained'
+              color='primary'
+              className={classes.submit}
+              type='submit'
+              validate={[formRequired]}
+              disabled={pristine || !valid || signInRequestInProgress}
+            >
+              {signInRequestInProgress ? <CircularProgress /> : 'Sign In'}
+            </Button>
+          </Form>
+        </div>
+      </Container>
+    </Dialog>
+  )
 }
 
-const mapDispatchToProps = {
-  loginUser
+const SingInReduxForm = reduxForm({ form: 'signIn', touchOnChange: true })(
+  SignIn
+)
+
+const SignInContainer = (props) => {
+  const submitHandler = (formData) => {
+    props.sendSignInData(formData)
+  }
+  return <SingInReduxForm onSubmit={submitHandler} {...props} />
 }
 
-export default connect(null, mapDispatchToProps)(SignIn)
+const mapStateToProps = ({ user }) => ({
+  showSignIn: user.showSignIn,
+  signInRequestInProgress: user.signInRequestInProgress
+})
+
+export default connect(mapStateToProps, { showSignInModal, sendSignInData })(
+  SignInContainer
+)
