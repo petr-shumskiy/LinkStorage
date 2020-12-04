@@ -9,12 +9,12 @@ class _API {
   }
 
   sendNewLink = async (data) => {
-    try {
-      const response = await post(BASE_URL + 'newLink', data)
-      return response
-    } catch (error) {
-      console.log('', error)
-    }
+    // try {
+    // const response = await post(BASE_URL + 'newLink', data)
+    return { data: { linkTitle: 'test' } }
+    // } catch (error) {
+    // console.log('', error)
+    // }
   }
 
   sendSignInData = async (data) => {
@@ -34,7 +34,9 @@ class _API {
   }
 
   takeLinkData = async (data) => {
-    const response = await fetch('https://my-json-server.typicode.com/Gaziz666/demo/posts')
+    const response = await fetch(
+      'https://my-json-server.typicode.com/Gaziz666/demo/posts'
+    )
     return response.json()
   }
 }

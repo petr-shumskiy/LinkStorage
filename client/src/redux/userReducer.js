@@ -7,7 +7,7 @@ import {
   SET_TOKEN,
   LOG_OUT,
   LOAD_LINK_DATA,
-  SET_LINK_TYPE
+  SET_LINK_TYPE,
   TOGGLE_EMAIL_SENDED,
   TOGGLE_PROGRESS_SIGN_IN,
   TOGGLE_PROGRESS_SIGN_UP,
@@ -21,7 +21,7 @@ const initialState = {
   email: null,
   token: null,
   linksData: [],
-  linkType: ''
+  linkType: '',
   signInRequestInProgress: false,
   signInRequestUpProgress: false
 }
@@ -183,7 +183,7 @@ export const sendSignInData = (data) => (dispatch) => {
     })
 }
 
-sendNewLink
+// sendNewLink
 export const validateEmail = (confirmationToken) => (dispatch) => {
   return API.sendConfirmationRequest(confirmationToken).then((res) => {
     if (res === 200) {
@@ -201,6 +201,5 @@ export const takeLinkData = () => (dispatch) => {
 }
 
 export const sendNewLink = (data) => (dispatch) => {
-  return API.sendNewLink(data).then(({ data }) => {
-  })
+  return API.sendNewLink(data).then(({ data }) => {})
 }
