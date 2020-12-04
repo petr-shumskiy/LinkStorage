@@ -4,12 +4,8 @@ const BASE_URL = 'http://localhost:5000/api/auth/'
 // FIXME catch errors
 class _API {
   sendRegistrationData = async (data) => {
-    try {
-      const response = await post(BASE_URL + 'registration', data)
-      return response
-    } catch (error) {
-      console.log('ваш email не прошел валидацию', error)
-    }
+    const response = await post(BASE_URL + 'registration', data)
+    return response
   }
 
   sendSignInData = async (data) => {

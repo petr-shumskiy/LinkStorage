@@ -1,4 +1,4 @@
-/* eslint-disable default-param-last */
+import { reset, stopSubmit } from 'redux-form'
 import { API } from '../API/API'
 import {
   LOGIN_USER,
@@ -6,18 +6,25 @@ import {
   SHOW_REGISTRATION,
   SET_TOKEN,
   LOG_OUT,
-  LOAD_LINK_DATA
+  LOAD_LINK_DATA,
+  TOGGLE_EMAIL_SENDED,
+  TOGGLE_PROGRESS_SIGN_IN,
+  TOGGLE_PROGRESS_SIGN_UP,
+  RESET_SIGN_IN_PASSWORD
 } from './types'
 
 const initialState = {
+  isEmailSended: false,
   showRegistration: false,
   showSignIn: false,
   email: null,
   token: null,
-  linksData: []
+  linksData: [],
+  signInRequestInProgress: false,
+  signInRequestUpProgress: false
 }
 
-export const userReducer = (state = initialState, { type, payload }) => {
+export const userReducer = (state = initialState, { type, payload } = {}) => {
   switch (type) {
     case SHOW_REGISTRATION:
       return {
@@ -28,6 +35,11 @@ export const userReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         showSignIn: payload.value
+      }
+    case TOGGLE_EMAIL_SENDED:
+      return {
+        ...state,
+        isEmailSended: payload.data
       }
     case LOGIN_USER:
       return { ...state, user: payload }
@@ -46,6 +58,16 @@ export const userReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         linksData: payload.linksData
+      }
+    case TOGGLE_PROGRESS_SIGN_IN:
+      return {
+        ...state,
+        signInRequestInProgress: !state.signInRequestInProgress
+      }
+    case TOGGLE_PROGRESS_SIGN_UP:
+      return {
+        ...state,
+        signUpRequestInProgress: !state.signUpRequestInProgress
       }
     default:
       return state
@@ -80,6 +102,12 @@ export const logOut = () => {
   }
 }
 
+export const resetSignInPassword = () => {
+  return {
+    type: RESET_SIGN_IN_PASSWORD
+  }
+}
+
 export const loadLinkData = (linksData) => ({
   type: LOAD_LINK_DATA,
   payload: {
@@ -87,20 +115,57 @@ export const loadLinkData = (linksData) => ({
   }
 })
 
+export const toggleEmailSended = (data) => ({
+  type: TOGGLE_EMAIL_SENDED,
+  payload: {
+    data
+  }
+})
+
+export const toggleProgressSignIn = () => ({
+  type: TOGGLE_PROGRESS_SIGN_IN
+})
+
+export const toggleProgressSignUp = () => ({
+  type: TOGGLE_PROGRESS_SIGN_UP
+})
+
 export const sendRegistrationData = (data) => (dispatch) => {
+  dispatch(toggleProgressSignUp())
   // FIXME refactor with async/await
-  return API.sendRegistrationData(data).then(() =>
-    dispatch(showRegistrationModal(false))
-  )
+  return API.sendRegistrationData(data)
+    .then((res) => {
+      dispatch(toggleProgressSignUp())
+      dispatch(toggleEmailSended(res.data.message))
+      dispatch(reset('registration'))
+      setTimeout(() => {
+        dispatch(toggleEmailSended(false))
+      }, 6000)
+    })
+    .catch((err) => {
+      dispatch(
+        stopSubmit('registration', { _error: err.response.data.message })
+      )
+      dispatch(toggleProgressSignUp())
+    })
 }
 
 export const sendSignInData = (data) => (dispatch) => {
   // FIXME refactor with async/await
-  return API.sendSignInData(data).then(({ data }) => {
-    dispatch(setToken(data.token))
-    localStorage.setItem('token', data.token)
-    // dispatch(showSignInModal(false))
-  })
+  dispatch(toggleProgressSignIn())
+  return API.sendSignInData(data)
+    .then(({ data }) => {
+      dispatch(toggleProgressSignIn())
+      dispatch(setToken(data.token))
+      localStorage.setItem('token', data.token)
+
+      // dispatch(showSignInModal(false))
+    })
+    .catch((err) => {
+      dispatch(resetSignInPassword())
+      dispatch(stopSubmit('signIn', { _error: err.response.data.message }))
+      dispatch(toggleProgressSignIn())
+    })
 }
 
 export const validateEmail = (confirmationToken) => (dispatch) => {

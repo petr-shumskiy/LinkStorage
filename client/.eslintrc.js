@@ -29,7 +29,9 @@ module.exports = {
         asyncArrow: 'always'
       }
     ],
-    'react/prop-types': 0
+    'multiline-ternary': ['error', 'never'],
+    'react/prop-types': 0,
+    '@typescript-eslint': 0
   },
   settings: {
     react: {
