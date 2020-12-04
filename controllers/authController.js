@@ -67,7 +67,6 @@ exports.validateEmail = async (req, res) => {
 
 exports.login = async (req, res, next) => {
   try {
-    console.log(req.body)
     const { email, password, isConfirmation } = req.body
     const user = await User.findOne({ email })
     if (!user) {

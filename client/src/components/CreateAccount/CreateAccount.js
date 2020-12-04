@@ -2,88 +2,149 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Field, Form, reduxForm } from 'redux-form'
-import './createAccount.css'
 import {
   sendRegistrationData,
   showRegistrationModal
 } from '../../redux/userReducer'
+import {
+  Avatar,
+  Button,
+  CircularProgress,
+  Container,
+  CssBaseline,
+  Dialog,
+  Fade,
+  Snackbar,
+  Tooltip,
+  Typography,
+  Zoom
+} from '@material-ui/core'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import { authStyles } from '../authModalStyles'
+import { StyledEmailField, StyledPassField } from '../authStylesFields'
+import {
+  formRequired,
+  validateEmailForm,
+  validatePasswordForm
+} from '../../utils/validators'
 
 const CreateAccount = ({
   showRegistrationModal,
   showRegistration,
-  handleSubmit
+  handleSubmit,
+  pristine,
+  valid,
+  error,
+  success,
+  signUpRequestInProgress
 }) => {
-  if (!showRegistration) {
-    return null
-  }
+  const classes = authStyles()
+  const isButtonDisabled = pristine || !valid || signUpRequestInProgress
   return (
-    <>
-      (
-      <div className='signIn-popup'>
-        <div className='signIn-container'>
-          <div className='signIn-header'>
-            <h4>Create an Account</h4>
-            <div
-              className='close-icon'
-              onClick={() => showRegistrationModal(false)}
-            >
-              x
+    <Dialog
+      open={showRegistration}
+      onClose={() => showRegistrationModal(false)}
+    >
+      <Container component='main' maxWidth='xs' className={classes.main}>
+        <CssBaseline />
+        <div className={classes.paper}>
+          {error ? (
+            <div className={classes.additionalMessage}>
+              <Typography
+                component='h2'
+                variant='h6'
+                color='error'
+                align='center'
+              >
+                {error}
+              </Typography>
             </div>
-          </div>
-
-          <div className='form-container'>
-            <Form onSubmit={handleSubmit}>
-              <div className='mail-form'>
-                <label className='signIn-label' htmlFor='email'>
-                  Email
-                </label>
+          ) : null}
+          <Avatar
+            className={
+              !error && success ? classes.avatarSuccess : classes.avatar
+            }
+          >
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component='h1' variant='h5'>
+            Sign up
+          </Typography>
+          <Form
+            onSubmit={handleSubmit}
+            className={!error && success ? classes.successForm : classes.form}
+          >
+            {!error && success ? null : (
+              <>
                 <Field
-                  component='input'
+                  component={StyledEmailField}
                   name='email'
-                  id='email'
-                  type='text'
-                  className='signIn-input'
+                  validate={[validateEmailForm, formRequired]}
+                  className={classes.wrap}
                 />
-              </div>
-
-              <div className='mail-form'>
-                <label className='signIn-label' htmlFor='password'>
-                  Password
-                </label>
                 <Field
-                  component='input'
-                  className='signIn-input'
-                  type='password'
-                  id='pssword'
+                  component={StyledPassField}
                   name='password'
+                  validate={[validatePasswordForm, formRequired]}
                 />
-              </div>
+              </>
+            )}
+            {!error && success ? (
+              <Typography
+                component='h2'
+                variant='h6'
+                align='center'
+                color='primary'
+              >
+                Email was sent
+              </Typography>
+            ) : null}
 
-              <div className='submit-block'>
-                <button className='submitBtn' type='submit'>
-                  Create Account
-                </button>
-              </div>
-            </Form>
-          </div>
+            {!error && success ? null : (
+              <Tooltip
+                title={
+                  isButtonDisabled ? 'input valid data' : 'create an account'
+                }
+                placement='top'
+                TransitionComponent={isButtonDisabled ? Zoom : Fade}
+              >
+                <span>
+                  <Button
+                    type='submit'
+                    fullWidth
+                    variant='contained'
+                    color='primary'
+                    className={classes.submit}
+                    disabled={isButtonDisabled}
+                  >
+                    {signUpRequestInProgress ? <CircularProgress /> : 'Sign Up'}
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
+          </Form>
+          <Snackbar></Snackbar>
         </div>
-      </div>
-      )
-    </>
+      </Container>
+    </Dialog>
   )
 }
+const CreateAccountReduxForm = reduxForm({
+  form: 'registration',
+  touchOnChange: true
+})(CreateAccount)
 
-const CreateAccountReduxForm = reduxForm({ form: 'registration' })(
-  CreateAccount
-)
 const createAccountContainer = (props) => {
   const submitHandler = (formData) => {
     props.sendRegistrationData(formData)
   }
   return <CreateAccountReduxForm onSubmit={submitHandler} {...props} />
 }
+
 const mapStateToProps = ({ user }) => ({
-  showRegistration: user.showRegistration
+  showRegistration: user.showRegistration,
+  success: user.isEmailSended,
+  signUpRequestInProgress: user.signUpRequestInProgress
 })
 
 export default connect(mapStateToProps, {

@@ -1,8 +1,26 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { userReducer } from './userReducer'
-import { reducer as form } from 'redux-form'
+import { reducer as formReducer } from 'redux-form'
 import thunk from 'redux-thunk'
-// import { composeWithDevTools } from 'redux-devtools-extension'
+import { composeWithDevTools } from 'redux-devtools-extension'
+import { RESET_SIGN_IN_PASSWORD } from './types'
+
+const form = formReducer.plugin({
+  signIn: (state, { type, payload }) => {
+    switch (type) {
+      case RESET_SIGN_IN_PASSWORD: {
+        return {
+          ...state,
+          values: { ...state.values, password: '' },
+          fields: { ...state.fields, password: { touched: false } }
+        }
+      }
+      default:
+        return state
+    }
+  }
+})
+
 const rootReducer = combineReducers({
   user: userReducer,
   form
@@ -10,6 +28,5 @@ const rootReducer = combineReducers({
 
 export const store = createStore(
   rootReducer,
-  applyMiddleware(thunk)
-  // composeWithDevTools(applyMiddleware(thunk))
+  composeWithDevTools(applyMiddleware(thunk))
 )
