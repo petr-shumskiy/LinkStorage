@@ -1,8 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 export const authStyles = makeStyles((theme) => ({
   main: {
-    backgroundColor: 'white',
-    outline: 0
+    backgroundColor: 'white'
   },
   paper: {
     position: 'relative',

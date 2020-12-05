@@ -4,13 +4,13 @@
   "description": "link-storage-app",
   "main": "app.js",
   "scripts": {
-    "eslint": "eslint . && cd client && npx eslint ./src",
+    "eslint": "eslint . ",
     "test": "cross-env NODE_ENV=test mocha --timeout 3500 tests",
     "start": "node index.js",
     "server": "nodemon index.js",
-    "client": "npm run start-travis --prefix client",
+    "client": "npm run start --prefix ../client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "devTest": "timeout --preserve-status -s INT 20s concurrently 'npm run start' 'npm run client'"
+    "devTest": "timeout --preserve-status -s INT 20s concurrently 'npm run dev'"
   },
   "keywords": [
     "node",

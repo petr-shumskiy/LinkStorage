@@ -38,7 +38,9 @@ export const StyledPassField = ({ input, meta }) => {
       id='password'
       autoComplete='current-password'
       helperText={
-        shouldShowError ? 'At least 6 symbols, 1 Uppercase or digit' : ''
+        shouldShowError && meta.form !== 'signIn'
+          ? 'At least 6 symbols, 1 Uppercase or digit'
+          : ''
       }
       onChange={input.onChange}
       value={input.value}

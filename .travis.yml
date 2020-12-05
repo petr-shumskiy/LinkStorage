@@ -4,7 +4,7 @@ os:
 dist:
   - xenial
 
-language: 
+language:
   - node_js
 
 node_js:
@@ -12,12 +12,12 @@ node_js:
 
 cache:
   directories:
-    - $HOME/node_modules
+    - $HOME/server/node_modules
     - $HOME/client/node_modules
 
 install:
-  - npm install
-  - cd client && npm install && cd ../
+  - npm install --prefix client
+  - npm install --prefix server
 
 script:
-  - npm run eslint && npm test && npm run devTest
+  - npm run eslint --prefix client && npm run eslint --prefix server && npm run test --prefix server && npm run devTest --prefix server
