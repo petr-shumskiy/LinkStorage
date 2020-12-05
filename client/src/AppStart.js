@@ -37,7 +37,7 @@ const AppStart = ({
         </div>
         <div className={classes.signInBtn}>
           <Button onClick={() => showSignInModal(true)}>
-            <Typography component='span'>Sign In</Typography>
+            <Typography component="span">Sign In</Typography>
           </Button>
           <SignIn />
           <CreateAccount />
@@ -45,11 +45,11 @@ const AppStart = ({
       </header>
       <div className={classes.createAccount}>
         <Button
-          variant='contained'
+          variant="contained"
           className={classes.createAccBtn}
           onClick={() => showRegistrationModal(true)}
         >
-          <Typography component='span'>Create an Account</Typography>
+          <Typography component="span">Create an Account</Typography>
         </Button>
       </div>
     </main>
