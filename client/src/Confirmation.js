@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { validateEmail } from './redux/userReducer'
+import { validateEmail } from './redux/authReducer'
 
+// TODO refactor
 const Confirmation = ({ token, validateEmail, match, history }) => {
   const { confirmationToken } = match.params
   useEffect(() => {

@@ -1,5 +1,4 @@
 import React from 'react'
-import propTypes from 'prop-types'
 import { AccountCircle } from '@material-ui/icons/'
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'
 import FolderOpenIcon from '@material-ui/icons/FolderOpen'
@@ -31,13 +30,14 @@ import {
 } from '@material-ui/core'
 import { useTheme } from '@material-ui/core/styles'
 import mainStyle from './mainStyle'
-import { connect } from 'react-redux'
-import { logOut, takeLinkData, setCurrentLinkType } from './../../../redux/userReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { setCurrentLinkType, takeLinkData } from '../../../redux/userReducer'
+import { logout } from '../../../redux/authReducer'
 import Cards from './../../Card/Cards'
 import cardType from './../../Card/cardType'
 import addLinkModal from './../../addLinkModal/addLinkModal'
 
-const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType }) => {
+const Main = () => {
   const window = undefined
   const classes = mainStyle()
   const theme = useTheme()
@@ -47,14 +47,17 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
   const [modalOpen, setModalOpen] = React.useState(false)
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
+  const linksData = useSelector(({ user }) => user.linksData)
+  const linkType = useSelector(({ user }) => user.linkType)
+  const dispatch = useDispatch()
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
   }
 
   const loadLinkData = (cardType) => {
-    setCurrentLinkType(cardType)
-    takeLinkData()
+    dispatch(setCurrentLinkType(cardType))
+    dispatch(takeLinkData())
   }
 
   const drawer = (
@@ -66,25 +69,25 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
       </div>
       <Divider />
       <List>
-        <ListItem button key={'Home'} onClick={() => loadLinkData(cardType.home)}>
+        <ListItem button key={'Home'} onClick={() => dispatch(loadLinkData(cardType.home))}>
           <ListItemIcon>
             <HomeOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary={'Home'} />
         </ListItem>
-        <ListItem button key={'Liked'} onClick={() => loadLinkData(cardType.liked)}>
+        <ListItem button key={'Liked'} onClick={() => dispatch(loadLinkData(cardType.liked))}>
           <ListItemIcon>
             <FavoriteBorderOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary={'Liked'} />
         </ListItem>
-        <ListItem button key={'Archive'} onClick={() => loadLinkData(cardType.archive)}>
+        <ListItem button key={'Archive'} onClick={() => dispatch(loadLinkData(cardType.archive))}>
           <ListItemIcon>
             <ArchiveOutlinedIcon />
           </ListItemIcon>
           <ListItemText primary={'Archive'} />
         </ListItem>
-        <ListItem button key={'Videos'} onClick={() => loadLinkData(cardType.video)}>
+        <ListItem button key={'Videos'} onClick={() => dispatch(loadLinkData(cardType.video))}>
           <ListItemIcon>
             <VideoLibrarySharpIcon />
           </ListItemIcon>
@@ -106,8 +109,7 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
     </div>
   )
 
-  const container =
-    window !== undefined ? () => window().document.body : undefined
+  const container = window !== undefined ? () => window().document.body : undefined
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget)
@@ -145,7 +147,7 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={() => logOut()}>Log out</MenuItem>
+      <MenuItem onClick={() => dispatch(logout())}>Log out</MenuItem>
     </Menu>
   )
 
@@ -161,7 +163,7 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
       onClose={handleMobileMenuClose}
     >
       <MenuItem onClick={handleProfileMenuOpen}>Account</MenuItem>
-      <MenuItem onClick={() => logOut()}>Log out</MenuItem>
+      <MenuItem onClick={() => dispatch(logout())}>Log out</MenuItem>
     </Menu>
   )
   return (
@@ -192,17 +194,14 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
             />
           </div>
           <div className={classes.grow} />
-          <Button
-            className={classes.addFolderBtn}
-            type="button"
-            onClick={handleModalOpen}>
-              Add Link
+          <Button className={classes.addFolderBtn} type='button' onClick={handleModalOpen}>
+            Add Link
           </Button>
           <Modal
             open={modalOpen}
             onClose={handleModalCLose}
-            aria-labelledby="transition-modal-title"
-            aria-describedby="transition-modal-description"
+            aria-labelledby='transition-modal-title'
+            aria-describedby='transition-modal-description'
             className={classes.modal}
             closeAfterTransition
             BackdropComponent={Backdrop}
@@ -274,13 +273,7 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
         <div className={classes.toolbar} />
         {linksData.map(({ id, title, text, url, type, img }) => {
           if (type === linkType) {
-            return <Cards
-            text={text}
-            title={title}
-            url={url}
-            typeCard={type}
-            img={img}
-            key={id} />
+            return <Cards text={text} title={title} url={url} typeCard={type} img={img} key={id} />
           }
           return null
         })}
@@ -289,23 +282,4 @@ const Main = ({ logOut, linksData, takeLinkData, setCurrentLinkType, linkType })
   )
 }
 
-const mapStateToProps = ({ user }) => ({
-  token: user.token,
-  linksData: user.linksData,
-  linkType: user.linkType
-})
-
-export default connect(mapStateToProps, {
-  logOut,
-  takeLinkData,
-  setCurrentLinkType
-})(Main)
-
-Main.propTypes = {
-  token: propTypes.string,
-  linkType: propTypes.string,
-  logOut: propTypes.func,
-  takeLinkData: propTypes.func,
-  linksData: propTypes.array,
-  setCurrentLinkType: propTypes.func
-}
+export default Main

@@ -17,29 +17,27 @@ const formStyle = makeStyles((theme) => ({
   }
 }))
 
-const SendLinkForm = reduxForm({ form: 'addLink' })(
-  ({ handleSubmit }) => {
-    const classes = formStyle()
+const SendLinkForm = reduxForm({ form: 'addLink' })(({ handleSubmit }) => {
+  const classes = formStyle()
 
-    return (
-      <Form onSubmit={handleSubmit} className={classes.grow}>
-          <Field
-            container='true'
-            className={classes.input} spacing={2}
-            component='input'
-            type='text'
-            id='url'
-            name='url'
-            placeholder="www.example.com/index.html"
-          />
-          <Button color="primary" type="submit">
-            Add
-          </Button>
-
-      </Form>
-    )
-  }
-)
+  return (
+    <Form onSubmit={handleSubmit} className={classes.grow}>
+      <Field
+        container='true'
+        className={classes.input}
+        spacing={2}
+        component='input'
+        type='text'
+        id='url'
+        name='url'
+        placeholder='www.example.com/index.html'
+      />
+      <Button color='primary' type='submit'>
+        Add
+      </Button>
+    </Form>
+  )
+})
 
 const sendLinkFormContainer = (props) => {
   const onSubmit = (formData) => {
@@ -48,9 +46,6 @@ const sendLinkFormContainer = (props) => {
   return <SendLinkForm onSubmit={onSubmit} {...props} />
 }
 
-const mapStateToProps = ({ user }) => ({
-})
+const mapStateToProps = ({ user }) => ({})
 
-export default connect(mapStateToProps, { sendNewLink })(
-  sendLinkFormContainer
-)
+export default connect(mapStateToProps, { sendNewLink })(sendLinkFormContainer)
