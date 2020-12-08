@@ -1,4 +1,4 @@
-const app = require('../index')
+const app = require('../../index')
 const { expect } = require('chai')
 const request = require('supertest')(app)
 const constants = require('../constants')
@@ -11,9 +11,7 @@ const AUTH_PATH = '/api/auth'
 describe('post registration', async () => {
   before(async () => {
     await mongoose.connect(MONGO_URI, MONGO_OPTIONS)
-    const collections = await mongoose.connection.db
-      .listCollections({ name: 'users' })
-      .toArray()
+    const collections = await mongoose.connection.db.listCollections({ name: 'users' }).toArray()
     if (collections.map((col) => col.name).includes('uesrs')) {
       await mongoose.connection.db.createCollection('users')
     }
@@ -43,9 +41,7 @@ describe('post registration', async () => {
           .post(`${AUTH_PATH}/registration`)
           .send({ email, password: 'hardPassword12sdjgf' })
         expect(response.status).to.eql(200)
-        expect(response.body.message).to.eql(
-          constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL
-        )
+        expect(response.body.message).to.eql(constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL)
       })
     })
   })
@@ -76,9 +72,7 @@ describe('post registration', async () => {
           .post(`${AUTH_PATH}/registration`)
           .send({ email, password: '12345sdafkasgd5' })
         expect(response.status).to.eql(400)
-        expect(response.body.message).to.eql(
-          constants.REGISTRATION_ERROR_EMAIL_VALIDATION
-        )
+        expect(response.body.message).to.eql(constants.REGISTRATION_ERROR_EMAIL_VALIDATION)
       })
     })
   })
@@ -116,9 +110,7 @@ describe('post registration', async () => {
           .post(`${AUTH_PATH}/registration`)
           .send({ email: `validEmail${idx}@gmail.com`, password })
         expect(response.status).to.eql(400)
-        expect(response.body.message).to.eql(
-          constants.REGISTRATION_ERROR_PASSWORD_VALIDATION_WEAK
-        )
+        expect(response.body.message).to.eql(constants.REGISTRATION_ERROR_PASSWORD_VALIDATION_WEAK)
       })
     })
   })
@@ -132,13 +124,9 @@ describe('post registration', async () => {
   describe('registration with existing email gives error', () => {
     existsUsers.forEach(({ email, password }) => {
       it(`${email}`, async () => {
-        const response = await request
-          .post(`${AUTH_PATH}/registration`)
-          .send({ email, password })
+        const response = await request.post(`${AUTH_PATH}/registration`).send({ email, password })
         expect(response.status).to.eql(400)
-        expect(response.body.message).to.eql(
-          constants.REGISTRATION_ERROR_USER_EXISTS
-        )
+        expect(response.body.message).to.eql(constants.REGISTRATION_ERROR_USER_EXISTS)
       })
     })
   })
