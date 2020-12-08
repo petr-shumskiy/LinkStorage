@@ -1,11 +1,12 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import { reset, stopSubmit } from 'redux-form'
-import { API } from '../API/API'
+import API from '../API/API'
 
 export const authReducer = createSlice({
   name: 'auth',
   initialState: {
     isEmailSended: false,
+    validationError: null,
     showRegistration: false,
     showSignIn: false,
     email: null,
@@ -31,13 +32,16 @@ export const authReducer = createSlice({
       state.token = null
     },
     toggleEmailSended(state, action) {
-      state.isEmailSended = action.data
+      state.isEmailSended = !state.isEmailSended
     },
     toggleProgressSignIn(state) {
       state.signInRequestInProgress = !state.signInRequestInProgress
     },
     toggleProgressSignUp(state) {
       state.signInRequestUpProgress = !state.signInRequestUpProgress
+    },
+    setValidationError(state, action) {
+      state.validationError = action.payload
     }
   }
 })
@@ -73,10 +77,12 @@ export const sendSignInData = (data) => async (dispatch) => {
 }
 
 export const validateEmail = (confirmationToken) => async (dispatch) => {
-  const res = await API.sendConfirmationRequest(confirmationToken) // TODO catch
-  if (res === 200) {
+  try {
+    await API.sendConfirmationRequest(confirmationToken) // TODO catch
     dispatch(setToken(confirmationToken))
     localStorage.setItem('token', confirmationToken)
+  } catch (err) {
+    dispatch(setValidationError(err.response.data.message))
   }
 }
 
@@ -93,7 +99,8 @@ export const {
   logout,
   setToken,
   toggleProgressSignIn,
-  toggleProgressSignUp
+  toggleProgressSignUp,
+  setValidationError
 } = authReducer.actions
 
 export default authReducer.reducer
