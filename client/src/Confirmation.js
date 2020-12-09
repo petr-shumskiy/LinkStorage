@@ -1,28 +1,27 @@
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import { validateEmail } from './redux/userReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory, useParams, withRouter } from 'react-router-dom'
+import { validateEmail } from './redux/authReducer'
 
-const Confirmation = ({ token, validateEmail, match, history }) => {
-  const { confirmationToken } = match.params
+const Confirmation = () => {
+  const history = useHistory()
+  const { confirmationToken } = useParams()
+  const token = useSelector(({ auth }) => auth.token)
+  const validationError = useSelector(({ auth }) => auth.validationError)
+  const dispatch = useDispatch()
   useEffect(() => {
-    validateEmail(confirmationToken)
-  }, [token, confirmationToken, validateEmail])
+    dispatch(validateEmail(confirmationToken))
+  }, [token, validationError, confirmationToken, dispatch])
+
   if (token) {
     history.push('/')
   }
   return (
     <div>
-      <h1>{'Awaiting..'}</h1>
-      {/* <button onClick={onButtonClick}>ok</button> */}
+      <h1>{validationError || 'Awaiting..'}</h1>
+      <button onClick={() => history.push('/')}>go home</button>
     </div>
   )
 }
 
-const mapStateToProps = ({ user }) => ({
-  token: user.token
-})
-
-export default connect(mapStateToProps, {
-  validateEmail
-})(withRouter(Confirmation))
+export default withRouter(Confirmation)

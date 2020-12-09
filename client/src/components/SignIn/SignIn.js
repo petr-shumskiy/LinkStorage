@@ -1,8 +1,8 @@
 import React from 'react'
-import './signIn.css'
-import { connect } from 'react-redux'
+// import './signIn.css'
+import { useDispatch, useSelector } from 'react-redux'
 import { Field, Form, reduxForm } from 'redux-form'
-import { showSignInModal, sendSignInData } from '../../redux/userReducer'
+import { showSignInModal, sendSignInData } from '../../redux/authReducer'
 import {
   Avatar,
   Button,
@@ -14,36 +14,22 @@ import {
 } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { authStyles } from '../authModalStyles'
-import {
-  RememberMe,
-  StyledEmailField,
-  StyledPassField
-} from '../authStylesFields'
+import { RememberMe, StyledEmailField, StyledPassField } from '../authStylesFields'
 import { formRequired } from '../../utils/validators'
 
-const SignIn = ({
-  showSignIn,
-  showSignInModal,
-  handleSubmit,
-  pristine,
-  valid,
-  error,
-  signInRequestInProgress
-}) => {
+const SignIn = ({ handleSubmit, pristine, valid, error }) => {
+  const showSignIn = useSelector(({ auth }) => auth.showSignIn)
+  const dispatch = useDispatch()
+  const signInRequestInProgress = useSelector(({ auth }) => auth.signInRequestInProgress)
   const classes = authStyles()
   return (
-    <Dialog open={showSignIn} onClose={() => showSignInModal(false)}>
+    <Dialog open={showSignIn} onClose={() => dispatch(showSignInModal(false))}>
       <Container component='main' maxWidth='xs' className={classes.main}>
         <CssBaseline />
         <div className={classes.paper}>
           {error ? (
             <div className={classes.additionalMessage}>
-              <Typography
-                component='h2'
-                variant='h6'
-                color='error'
-                align='center'
-              >
+              <Typography component='h2' variant='h6' color='error' align='center'>
                 {error}
               </Typography>
             </div>
@@ -81,22 +67,14 @@ const SignIn = ({
   )
 }
 
-const SingInReduxForm = reduxForm({ form: 'signIn', touchOnChange: true })(
-  SignIn
-)
+const SingInReduxForm = reduxForm({ form: 'signIn', touchOnChange: true })(SignIn)
 
-const SignInContainer = (props) => {
+const SignInContainer = () => {
+  const dispatch = useDispatch()
   const submitHandler = (formData) => {
-    props.sendSignInData(formData)
+    dispatch(sendSignInData(formData))
   }
-  return <SingInReduxForm onSubmit={submitHandler} {...props} />
+  return <SingInReduxForm onSubmit={submitHandler} />
 }
 
-const mapStateToProps = ({ user }) => ({
-  showSignIn: user.showSignIn,
-  signInRequestInProgress: user.signInRequestInProgress
-})
-
-export default connect(mapStateToProps, { showSignInModal, sendSignInData })(
-  SignInContainer
-)
+export default SignInContainer

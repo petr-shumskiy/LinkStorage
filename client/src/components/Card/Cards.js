@@ -1,37 +1,67 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import Card from '@material-ui/core/Card'
-import {
-  CardMedia,
-  Link,
-  CardContent,
-  IconButton,
-  Typography
-} from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import { ReactTinyLink } from 'react-tiny-link'
+// import Card from '@material-ui/core/Card'
+// import { CardMedia, Link, CardContent, IconButton, Typography, Box } from '@material-ui/core'
+import { IconButton, Box } from '@material-ui/core'
+
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
 import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
-import cardStyle from './cardStyle'
+import DeleteIcon from '@material-ui/icons/Delete'
 
-const Cards = (data) => {
-  const classes = cardStyle()
+const cardStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex'
+  },
+  details: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: 'calc(100% - 96px)',
+    maxWidth: '100%'
+  },
+  content: {
+    flex: '1 0 auto',
+    textAlign: 'justify'
+  },
+  text: {
+    wordBreak: 'break-all'
+  },
+  cover: {
+    alignSelf: 'center',
+    width: '80px',
+    height: '80px',
+    marginRight: '16px',
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat'
+  },
+  controls: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(1)
+  },
+  playIcon: {
+    height: 38,
+    width: 38
+  }
+}))
+
+const Cards = ({ url }) => {
+  const classes = cardStyles()
 
   return (
-    <Card className={classes.root}>
+    <Box>
       <div className={classes.details}>
-        <CardContent className={classes.content}>
-          <Typography component="h5" variant="h5">
-            {data.title}
-          </Typography>
-          <Typography className={classes.text} variant="subtitle2" color="textSecondary">
-          {data.text}
-          </Typography>
-          <Typography variant="subtitle1" color="textSecondary">
-            <Link >
-              {data.url}
-            </Link>
-          </Typography>
-        </CardContent>
+        <ReactTinyLink
+          cardSize='small'
+          showGraphic={true}
+          maxLine={4}
+          minLine={1}
+          autoPlay
+          url={url}
+          onSuccess={(data) => {}}
+        />
         <div className={classes.controls}>
           <IconButton>
             <FavoriteBorderOutlinedIcon />
@@ -42,19 +72,13 @@ const Cards = (data) => {
           <IconButton>
             <VideoLibrarySharpIcon />
           </IconButton>
+          <IconButton>
+            <DeleteIcon />
+          </IconButton>
         </div>
       </div>
-      <CardMedia
-        className={classes.cover}
-        image={data.img}
-        title="Live from space album cover"
-      />
-    </Card>
+    </Box>
   )
 }
 
-const mapStateToProps = ({ user }) => ({
-  linksData: user.linksData
-})
-
-export default connect(mapStateToProps, {})(Cards)
+export default Cards
