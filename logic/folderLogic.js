@@ -1,18 +1,18 @@
-const User = require('../models/User');
+const User = require('../models/User')
 
 class FolderLogic {
   async createFolder(userId, folderName) {
-    let user = await User.findById(userId);
+    const user = await User.findById(userId)
 
-    user.folders.push({ name: folderName });
+    user.folders.push({ name: folderName })
 
-    await user.save();
+    await user.save()
   }
 
   async getFolders(userId) {
-    let user = await User.findById(userId);
+    const user = await User.findById(userId)
 
-    return user.folders;
+    return user.folders
   }
 
   async updateFolder(userId, folderId, folderName) {
@@ -25,7 +25,7 @@ class FolderLogic {
       $set: {
         'folders.$.name': folderName
       }
-    });
+    })
   }
 
   async deleteFolder(userId, folderId) {
@@ -36,31 +36,31 @@ class FolderLogic {
     },
     {
       $pull: {
-        'folders':{
+        'folders': {
           '_id': folderId
         } 
       }
-    });
+    })
   }
   // ниже логика для линков
-  async addItem(userId, itemTitle, itemHyperlink){
+  async addItem(userId, itemTitle, itemHyperlink) {
 
-    let user = await User.findById(userId);
+    const user = await User.findById(userId)
     
     user.items.push({ title: itemTitle, hyperlink: itemHyperlink });
 
-    await user.save();
+    await user.save()
   }
 
-  async getItems(userId){
+  async getItems(userId) {
 
-    let user = await User.findById(userId);
+    const user = await User.findById(userId)
 
-    return user.items;
+    return user.items
 
   }
 
-  async deleteItem(userId, itemId){
+  async deleteItem(userId, itemId) {
 
     await User.findOneAndUpdate({
       '_id': userId,
@@ -68,16 +68,13 @@ class FolderLogic {
     },
     {
       $pull: {
-        'items':{
+        'items': {
           '_id': itemId
         } 
       }
-    });
+    })
   }
-
-  
-
 }
-// значит так, придурок! напиши роуты на перемещение линок в папки.
 
-module.exports = { FolderLogic };
+
+module.exports = { FolderLogic }

@@ -1,10 +1,10 @@
 class ControllerBase {
   setRequest(request) {
-    this.request = request;
+    this.request = request
   }
 
   setResponse(response) {
-    this.response = response;
+    this.response = response
   }
 }
 
