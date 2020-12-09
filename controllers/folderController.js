@@ -35,7 +35,7 @@ class FolderController extends ControllerBase {
 
       return this.response.status(204).json()
     } catch (err) {
-      console.log(err);
+      console.log(err)
       return this.response.status(500).json()
     }
   }
@@ -50,6 +50,7 @@ class FolderController extends ControllerBase {
       return this.response.status(500).json()
     }
   }
+
   // ниже контроллеры для линков
   async addItem(userId, itemTitle, itemHyperlink) {
     try {
@@ -64,11 +65,11 @@ class FolderController extends ControllerBase {
 
   async getItems(userId) {
     try {
-      let items = await this.folderLogic.getItems(userId)
+      const items = await this.folderLogic.getItems(userId)
 
       return this.response.status(200).json(items)
     } catch (err) {
-      console.log(err);
+      console.log(err)
       return this.response.status(500).json()
     }
   }

@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require('mongoose')
 
 const itemSchema = new Schema({
   title: { type: String },
@@ -9,12 +9,12 @@ const itemSchema = new Schema({
   home: { type: Boolean },
   liked: { type: Boolean },
   archived: { type: Boolean }
-});
+})
 
 const folderSchema = new Schema({
   name: { type: String, required: true },
   items: [itemSchema]
-});
+})
 
 const userSchema = new Schema({
   name: { type: String },
@@ -23,6 +23,6 @@ const userSchema = new Schema({
   isEmailConfirmed: { type: Boolean, required: false },
   folders: [folderSchema],
   items: [itemSchema]
-});
+})
 
 module.exports = model('User', userSchema)

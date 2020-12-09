@@ -23,7 +23,7 @@ const start = async() => {
 
     app.listen(PORT, () => {
       console.log(`Server started on http://localhost:${PORT}`)
-    });
+    })
   } catch (error) {
     console.log(`The server or database failed\n${error}`)
   }
