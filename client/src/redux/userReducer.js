@@ -4,8 +4,30 @@ import API from '../API/API'
 export const userReducer = createSlice({
   name: 'user',
   initialState: {
-    linksData: [],
-    linkType: ''
+    isOpenedAddLinkModal: false,
+    linksData: [
+      {
+        id: 0,
+        url: 'https://github.com/'
+      },
+      {
+        id: 1,
+        url: 'https://reactjs.org/'
+      },
+      {
+        id: 2,
+        url: 'https://nodejs.org/en/'
+      },
+      {
+        id: 3,
+        url: 'https://www.npmjs.com/package/react-tiny-link'
+      },
+      {
+        id: 4,
+        url: 'https://www.youtube.com/watch?v=DWcJFNfaw9c&ab_channel=ChilledCow'
+      }
+    ],
+    folders: ['Folder1', 'Folder2']
   },
   reducers: {
     setCurrentLinkType(state, action) {
@@ -15,7 +37,21 @@ export const userReducer = createSlice({
       state.token = null
     },
     loadLinkData(state, action) {
-      state.linksDtata = action.payload.Data
+      state.linksData = action.payload.Data
+    },
+    addLinkInState(state, { payload }) {
+      const link = {
+        id: state.linksData.length,
+        title: '',
+        text: '',
+        url: payload.url,
+        type: '',
+        img: ''
+      }
+      state.linksData.push(link)
+    },
+    toggleAddLinkModal(state, action) {
+      state.isOpenedAddLinkModal = !state.isOpenedAddLinkModal
     }
   }
 })
@@ -30,6 +66,17 @@ export const sendNewLink = (data) => async (dispatch) => {
   return res
 }
 
-export const { setCurrentLinkType, logOut, loadLinkData } = userReducer.actions
+export const addLink = (data) => (dispatch) => {
+  dispatch(addLinkInState(data))
+  dispatch(toggleAddLinkModal())
+}
+
+export const {
+  setCurrentLinkType,
+  logOut,
+  loadLinkData,
+  addLinkInState,
+  toggleAddLinkModal
+} = userReducer.actions
 
 export default userReducer
