@@ -17,7 +17,7 @@ class FolderLogic {
 
   async updateFolder(userId, folderId, folderName) {
     await User.findOneAndUpdate({
-      'id': userId,
+      id: userId,
       'folders.id': folderId
     },
     {
@@ -29,13 +29,13 @@ class FolderLogic {
 
   async deleteFolder(userId, folderId) {
     await User.findOneAndUpdate({
-      'id': userId,
+      id: userId,
       'folders.id': folderId
     },
     {
       $pull: {
-        'folders': {
-          'id': folderId
+        folders: {
+          id: folderId
         }
       }
     })

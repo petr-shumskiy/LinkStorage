@@ -1,6 +1,5 @@
 const { ControllerBase } = require('./controllerBase')
 
-
 class FolderController extends ControllerBase {
   constructor(folderLogic) {
     super()
