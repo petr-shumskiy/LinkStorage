@@ -1,16 +1,14 @@
 const { ControllerBase } = require('./controllerBase')
 
-
 class ItemController extends ControllerBase {
   constructor(itemLogic) {
     super()
     this.itemLogic = itemLogic
   }
-  
-  async addItem(itemUrl) {
+
+  async addItem(email, itemUrl) {
     try {
-      await this.itemLogic.addItem(itemUrl)
-      console.log(itemUrl)
+      await this.itemLogic.addItem(email, itemUrl)
       return this.response.status(204).json()
     } catch (err) {
       console.log(err._message)

@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const { ItemController } = require('../controllers/ItemController')
-const { ItemLogic } = require('../logic/ItemLogic')
+const { ItemController } = require('../controllers/itemController')
+const { ItemLogic } = require('../logic/itemLogic')
 const { hasAuth } = require('../middlewares')
 
 // function createFolderController(req, res) {
@@ -41,8 +41,7 @@ function createItemController(req, res) {
 router.post('/link', hasAuth, (req, res) => {
   // console.log(req.user)
   // console.log(req.body)
-  return createItemController(req, res).addItem(req.user.email, req.body.itemUrl)
- 
+  return createItemController(req, res).addItem(req.user.email, req.body.url)
 })
 
 router.get('/link', hasAuth, (req, res) => {
@@ -50,7 +49,10 @@ router.get('/link', hasAuth, (req, res) => {
 })
 
 router.delete('/link/:itemId', hasAuth, (req, res) => {
-  return createItemController(req, res).deleteItem(req.user.email, req.params.itemId)
+  return createItemController(req, res).deleteItem(
+    req.user.email,
+    req.params.itemId
+  )
 })
 
 module.exports = router

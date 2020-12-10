@@ -4,11 +4,10 @@ class ItemLogic {
   // ниже логика для линков
   async addItem(email, itemUrl) {
     // const { email } = req.user
-    const user = await User.findOne({email})
+    const user = await User.findOne({ email })
 
-    user.items = [...user.items, {url: itemUrl} ]
-    // user.items.push({ url: itemUrl })
-    console.log(user)
+    user.items.push({ url: itemUrl })
+
     await user.save()
   }
 
@@ -31,13 +30,16 @@ class ItemLogic {
     //     }
     //   })
     const user = User.findOne(email)
-    user.update({
-      'items._id': itemId
-    }, {
-      $pull:{
-        items: {_id: itemId}
+    user.update(
+      {
+        'items._id': itemId
+      },
+      {
+        $pull: {
+          items: { _id: itemId }
+        }
       }
-    })
+    )
     // console.log(email)
   }
 }

@@ -59,9 +59,9 @@ describe('Links', () => {
   })
 
   describe('add new link', () => {
-      const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
-        expiresIn: '10min'
-      })
+    const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
+      expiresIn: '10min'
+    })
     const linksUrls = [
       'https://github.com/',
       'https://reactjs.org/',
@@ -72,7 +72,10 @@ describe('Links', () => {
 
     linksUrls.forEach((url) => {
       it(`${url}`, async () => {
-        const response = await request.post(LINK_PATH).send({ url }).set('Authorization', `Bearer ${token}`)
+        const response = await request
+          .post(LINK_PATH)
+          .send({ url })
+          .set('Authorization', `Bearer ${token}`)
         expect(response.status).to.eql(204)
       })
     })
