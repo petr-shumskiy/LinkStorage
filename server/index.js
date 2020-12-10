@@ -7,7 +7,8 @@ const cors = require('cors')
 require('dotenv').config()
 
 const authRouter = require('./routes/authRoutes')
-const linkRouter = require('./routes/linkRoutes')
+const itemRouter = require('./routes/itemRoutes')
+// const itemRouter = require('./routes/itemRoutes')
 
 const PORT = config.get('serverPort')
 const MONGO_URI = process.env.MONGO_URI
@@ -18,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({ origin: '*' }))
 
 app.use('/api/auth', authRouter)
-app.use('/api/', linkRouter)
+app.use('/api/user', itemRouter)
 
 const start = async () => {
   try {

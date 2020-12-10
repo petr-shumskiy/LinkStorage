@@ -8,7 +8,7 @@ const User = require('../models/User')
 const MONGO_URI = config.get('mongoURI')
 const MONGO_OPTIONS = config.get('mongoOptions')
 const JWT_SECRET = process.env.JWT_SECRET
-const LINK_PATH = '/api/link'
+const LINK_PATH = '/api/user/link'
 const jwt = require('jsonwebtoken')
 describe('Links', () => {
   const email = 'testUser'
@@ -58,22 +58,25 @@ describe('Links', () => {
     })
   })
 
-  // describe('add new link', () => {
-  //   const linksUrls = [
-  //     'https://github.com/',
-  //     'https://reactjs.org/',
-  //     'https://nodejs.org/en/',
-  //     'https://www.npmjs.com/package/react-tiny-link/',
-  //     'https://www.youtube.com/watch?v=DWcJFNfaw9c&ab_channel=ChilledCow/'
-  //   ]
+  describe('add new link', () => {
+      const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
+        expiresIn: '10min'
+      })
+    const linksUrls = [
+      'https://github.com/',
+      'https://reactjs.org/',
+      'https://nodejs.org/en/',
+      'https://www.npmjs.com/package/react-tiny-link/',
+      'https://www.youtube.com/watch?v=DWcJFNfaw9c&ab_channel=ChilledCow/'
+    ]
 
-  //   linksUrls.forEach((url) => {
-  //     it(`${url}`, async () => {
-  //       const response = await request.post(LINK_PATH).send({ url })
-  //       expect(response.status).to.eql(201)
-  //     })
-  //   })
-  // })
+    linksUrls.forEach((url) => {
+      it(`${url}`, async () => {
+        const response = await request.post(LINK_PATH).send({ url }).set('Authorization', `Bearer ${token}`)
+        expect(response.status).to.eql(204)
+      })
+    })
+  })
 
   // describe('delete link', () => {
   //   it('items should decrease by link with specific id', async () => {

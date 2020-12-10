@@ -36,6 +36,7 @@ const hasAuth = (req, res, next) => {
     const token = bearer.split(' ')[1]
     const decodeData = jwt.verify(token, JWT_SECRET)
     req.user = decodeData
+    console.log(decodeData)
     next()
   } catch (error) {
     console.log(error.message)
