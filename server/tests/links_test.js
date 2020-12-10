@@ -13,12 +13,23 @@ const jwt = require('jsonwebtoken')
 describe('Links', () => {
   const email = 'testUser'
   const password = 'testUser'
-  const linkId = mongoose.Types.ObjectId('5fd106f031ac566c766bce2b')
+  const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
+    expiresIn: '10min'
+  })
+  const bearerToken = `Bearer ${token}`
+  const linkId = '5fd106f031ac566c766bce2b'
   const items = [
-    { url: 'https://test.com/', _id: linkId },
+    { url: 'https://test.com/', _id: mongoose.Types.ObjectId(linkId) },
     { url: 'https://test2.org/' },
     { url: 'https://test3.net/' },
     { url: 'https://test4.net/' }
+  ]
+  const linksUrls = [
+    'https://github.com/',
+    'https://reactjs.org/',
+    'https://nodejs.org/en/',
+    'https://www.npmjs.com/package/react-tiny-link/',
+    'https://www.youtube.com/watch?v=DWcJFNfaw9c&ab_channel=ChilledCow/'
   ]
   before(async () => {
     await mongoose.connect(MONGO_URI, MONGO_OPTIONS)
@@ -59,34 +70,30 @@ describe('Links', () => {
     })
   })
 
-  // describe('add new link', () => {
-  //   const linksUrls = [
-  //     'https://github.com/',
-  //     'https://reactjs.org/',
-  //     'https://nodejs.org/en/',
-  //     'https://www.npmjs.com/package/react-tiny-link/',
-  //     'https://www.youtube.com/watch?v=DWcJFNfaw9c&ab_channel=ChilledCow/'
-  //   ]
+  describe('add new link', () => {
+    linksUrls.forEach((url) => {
+      it(`${url}`, async () => {
+        const response = await request
+          .post(LINK_PATH)
+          .send({ url })
+          .set('Authorization', bearerToken)
+        expect(response.status).to.eql(204)
+      })
+    })
+  })
 
-  //   linksUrls.forEach((url) => {
-  //     it(`${url}`, async () => {
-  //       const response = await request.post(LINK_PATH).send({ url })
-  //       expect(response.status).to.eql(201)
-  //     })
-  //   })
-  // })
+  describe('delete link', () => {
+    it('items should decrease by link with specific id', async () => {
+      const response = await request
+        .delete(`${LINK_PATH}/${linkId}`)
+        .send({ email })
+        .set('Authorization', bearerToken)
 
-  // describe('delete link', () => {
-  //   it('items should decrease by link with specific id', async () => {
-  //     const response = await request
-  //       .delete(LINK_PATH)
-  //       .send({ email, linkId: linkId.toString() })
-  //     expect(response.status).to.eql(204)
-  //     // await User.updateOne({ email: 'testUser' }, { $pull: { items: { _id: linkId } } })
-  //     const user = await User.findOne({ email: 'testUser' })
-  //     expect(user.items.length).to.eql(items.length - 1)
-  //   })
-  // })
+      expect(response.status).to.eql(204)
+      const user = await User.findOne({ email: 'testUser' })
+      expect(user.items.length).to.eql(items.length + linksUrls.length - 1)
+    })
+  })
 
   after(async () => {
     await mongoose.connection.db.collection('users').drop()

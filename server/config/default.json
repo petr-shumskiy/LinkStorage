@@ -2,7 +2,8 @@
   "serverPort": "5000",
   "mongoOptions": {
     "useNewUrlParser": true,
-    "useUnifiedTopology": true
+    "useUnifiedTopology": true,
+    "useFindAndModify": false
   },
   "clientUrl": "http://localhost:3000"
 }
