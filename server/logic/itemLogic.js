@@ -18,29 +18,28 @@ class ItemLogic {
   }
 
   async deleteItem(email, itemId) {
-    // await User.findOneAndUpdate({
-    //   'email': email,
-    //   'items._id': itemId
-    // },
-    //   {
-    //     $pull: {
-    //       'items': {
-    //         '_id': itemId
-    //       }
-    //     }
-    //   })
-    const user = User.findOne(email)
-    user.update(
-      {
-        'items._id': itemId
-      },
+    await User.findOneAndUpdate(
+      { email },
       {
         $pull: {
-          items: { _id: itemId }
+          items: {
+            _id: itemId
+          }
         }
       }
     )
-    // console.log(email)
+    // const user = User.findOne(email)
+    // user.update(
+    //   {
+    //     $match: { '$items._id': itemId }
+    //   },
+    //   {
+    //     $pull: {
+    //       items: { _id: itemId }
+    //     }
+    //   }
+    // )
+    // // console.log(email)
   }
 }
 

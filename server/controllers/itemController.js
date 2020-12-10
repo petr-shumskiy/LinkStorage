@@ -30,7 +30,6 @@ class ItemController extends ControllerBase {
   async deleteItem(email, itemId) {
     try {
       await this.itemLogic.deleteItem(email, itemId)
-
       return this.response.status(204).json()
     } catch (err) {
       console.log(err)

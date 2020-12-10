@@ -39,8 +39,6 @@ function createItemController(req, res) {
 }
 
 router.post('/link', hasAuth, (req, res) => {
-  // console.log(req.user)
-  // console.log(req.body)
   return createItemController(req, res).addItem(req.user.email, req.body.url)
 })
 
