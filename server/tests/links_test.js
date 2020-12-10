@@ -43,6 +43,7 @@ describe('Links', () => {
       const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
         expiresIn: '10min'
       })
+
       const response = await request
         .get(LINK_PATH)
         .set('Authorization', `Bearer ${token}`)

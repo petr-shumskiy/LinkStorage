@@ -18,31 +18,36 @@ import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
 import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
 
 import { useSelector } from 'react-redux'
+import { NavLink } from 'react-router-dom'
 
 const AsidePanel = () => {
   const classes = mainStyle()
   const userFoldersData = useSelector(({ user }) => user.folders)
 
-  const DrawerItem = ({ Icon, text, getData }) => {
+  const DrawerItem = ({ Icon, text, link, getData }) => {
     return (
-      <ListItem button key={'Home2'} onClick={() => {}}>
-        <ListItemIcon>
-          <Icon />
-        </ListItemIcon>
-        <ListItemText primary={text} />
-      </ListItem>
+      <NavLink to={link}>
+        <ListItem button key={'Home2'} onClick={() => {}}>
+          <ListItemIcon>
+            <Icon />
+          </ListItemIcon>
+          <ListItemText primary={text} />
+        </ListItem>
+      </NavLink>
     )
   }
 
   const userFolders = (
     <List>
       {userFoldersData.map((text, index) => (
-        <ListItem button key={text}>
-          <ListItemIcon>
-            <FolderOpenIcon />
-          </ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
+        <NavLink to={'/' + text} key={index}>
+          <ListItem button>
+            <ListItemIcon>
+              <FolderOpenIcon />
+            </ListItemIcon>
+            <ListItemText primary={text} />
+          </ListItem>
+        </NavLink>
       ))}
     </List>
   )
@@ -56,10 +61,10 @@ const AsidePanel = () => {
       </div>
       <Divider />
       <List>
-        <DrawerItem Icon={HomeOutlinedIcon} text={'Home'} />
-        <DrawerItem Icon={FavoriteBorderOutlinedIcon} text={'Liked'} />
-        <DrawerItem Icon={ArchiveOutlinedIcon} text={'Archive'} />
-        <DrawerItem Icon={VideoLibrarySharpIcon} text={'Videos'} />
+        <DrawerItem Icon={HomeOutlinedIcon} text={'Home'} link='/home' />
+        <DrawerItem Icon={FavoriteBorderOutlinedIcon} text={'Liked'} link='liked' />
+        <DrawerItem Icon={ArchiveOutlinedIcon} text={'Archive'} link='archive' />
+        <DrawerItem Icon={VideoLibrarySharpIcon} text={'Videos'} link='/videos' />
       </List>
       <Divider />
       {userFolders}
