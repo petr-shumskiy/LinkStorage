@@ -9,6 +9,8 @@ import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
 import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
 import DeleteIcon from '@material-ui/icons/Delete'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteItemThunk } from '../../redux/userReducer'
 
 const cardStyles = makeStyles((theme) => ({
   root: {
@@ -47,9 +49,10 @@ const cardStyles = makeStyles((theme) => ({
   }
 }))
 
-const Cards = ({ url }) => {
+const Cards = ({ id, url }) => {
   const classes = cardStyles()
-
+  const dispatch = useDispatch()
+  const token = useSelector(({ auth }) => auth.token)
   return (
     <Box>
       <div className={classes.details}>
@@ -72,7 +75,7 @@ const Cards = ({ url }) => {
           <IconButton>
             <VideoLibrarySharpIcon />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => dispatch(deleteItemThunk(id, token))}>
             <DeleteIcon />
           </IconButton>
         </div>

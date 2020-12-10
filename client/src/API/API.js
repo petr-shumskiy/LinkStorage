@@ -1,35 +1,45 @@
-import { post } from 'axios'
-const BASE_URL = 'http://localhost:5000/api/auth/'
+// create different apis for different reducers, create instancec of axios
+import { create } from 'axios'
+
+const addAuthHeader = (token) => ({ Authorization: `Bearer ${token}` })
+
+const userInstance = create({
+  baseURL: 'http://localhost:5000/api/user'
+  // timeout: 1000,
+  // headers: { Authorization: 'Bearer' + token }
+})
+
+const authInstance = create({
+  baseURL: 'http://localhost:5000/api/auth'
+})
 
 // FIXME catch errors
 class API {
-  sendRegistrationData = async (data) => {
-    const response = await post(BASE_URL + 'registration', data)
+  // AUTH
+  sendRegistrationData = async ({ url }) => {
+    const response = await authInstance.post('/registration', url)
     return response
   }
 
-  sendNewLink = async (data) => {
-    // try {
-    // const response = await post(BASE_URL + 'newLink', data)
-    return { data: { linkTitle: 'test' } }
-    // } catch (error) {
-    // console.log('', error)
-    // }
-  }
-
   sendSignInData = async (data) => {
-    const response = await post(BASE_URL + 'login', data)
+    const response = await authInstance.post('/login', data)
     return response
   }
 
   sendConfirmationRequest = async (confirmationToken) => {
-    const response = await post(BASE_URL + 'validate-email/' + confirmationToken)
+    const response = await authInstance.post('/validate-email/' + confirmationToken)
     return response
   }
 
-  takeLinkData = async (data) => {
-    const response = await fetch('https://my-json-server.typicode.com/Gaziz666/demo/posts')
-    return response.json()
+  // USER
+  addItem = async (url, token) => {
+    const response = await userInstance.post('/link', url, addAuthHeader(token))
+    return response
+  }
+
+  deleteItem = async (id, token) => {
+    const response = await userInstance.delete('/link', id, addAuthHeader(token))
+    return response
   }
 }
 

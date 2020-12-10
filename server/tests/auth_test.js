@@ -11,10 +11,6 @@ const AUTH_PATH = '/api/auth'
 describe('post registration', async () => {
   before(async () => {
     await mongoose.connect(MONGO_URI, MONGO_OPTIONS)
-    const collections = await mongoose.connection.db.listCollections({ name: 'users' }).toArray()
-    if (collections.map((col) => col.name).includes('uesrs')) {
-      await mongoose.connection.db.createCollection('users')
-    }
   })
 
   describe('registration with valid email without confirmation', () => {
