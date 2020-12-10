@@ -21,10 +21,10 @@ import { useTheme } from '@material-ui/core/styles'
 import mainStyle from './mainStyle'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
-import Cards from './../../Card/Cards'
 import AddLinkModal from './../../addLinkModal/addLinkModal'
 import AsidePanel from './AsidePanel'
 import { toggleAddLinkModal } from '../../../redux/userReducer'
+import LinksContent from './LinksContent'
 
 const Main = () => {
   const window = undefined // ?
@@ -39,7 +39,6 @@ const Main = () => {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
 
   const dispatch = useDispatch()
-  const linksData = useSelector(({ user }) => user.linksData)
   const isOpenedAddLinkModal = useSelector(({ user }) => user.isOpenedAddLinkModal)
 
   const handleDrawerToggle = () => {
@@ -205,12 +204,7 @@ const Main = () => {
           </Drawer>
         </Hidden>
       </nav>
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        {linksData.map(({ id, url }) => (
-          <Cards key={id} url={url} />
-        ))}
-      </main>
+      <LinksContent />
     </div>
   )
 }

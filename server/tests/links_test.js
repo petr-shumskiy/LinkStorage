@@ -8,7 +8,7 @@ const User = require('../models/User')
 const MONGO_URI = config.get('mongoURI')
 const MONGO_OPTIONS = config.get('mongoOptions')
 const JWT_SECRET = process.env.JWT_SECRET
-const LINK_PATH = '/api/link'
+const LINK_PATH = '/api/user/link'
 const jwt = require('jsonwebtoken')
 describe('Links', () => {
   const email = 'testUser'
@@ -32,6 +32,7 @@ describe('Links', () => {
       const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
         expiresIn: '10min'
       })
+
       const response = await request
         .get(LINK_PATH)
         .set('Authorization', `Bearer ${token}`)

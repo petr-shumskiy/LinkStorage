@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({ origin: '*' }))
 
 app.use('/api/auth', authRouter)
-app.use('/api/', linkRouter)
+app.use('/api/user/', linkRouter)
 
 const start = async () => {
   try {
