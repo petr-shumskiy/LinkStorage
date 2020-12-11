@@ -6,9 +6,9 @@ class FolderController extends ControllerBase {
     this.folderLogic = folderLogic
   }
 
-  async createFolder(userId, folderName) {
+  async createFolder(email, folderName) {
     try {
-      await this.folderLogic.createFolder(userId, folderName)
+      await this.folderLogic.createFolder(email, folderName)
 
       return this.response.status(204).json()
     } catch (err) {
@@ -17,9 +17,9 @@ class FolderController extends ControllerBase {
     }
   }
 
-  async getFolders(userId) {
+  async getFolders(email) {
     try {
-      const folders = await this.folderLogic.getFolders(userId)
+      const folders = await this.folderLogic.getFolders(email)
 
       return this.response.status(200).json(folders)
     } catch (err) {
@@ -28,9 +28,9 @@ class FolderController extends ControllerBase {
     }
   }
 
-  async updateFolder(userId, folderId, folderName) {
+  async updateFolder(email, folderId, folderName) {
     try {
-      await this.folderLogic.updateFolder(userId, folderId, folderName)
+      await this.folderLogic.updateFolder(email, folderId, folderName)
 
       return this.response.status(204).json()
     } catch (err) {
@@ -39,9 +39,9 @@ class FolderController extends ControllerBase {
     }
   }
 
-  async deleteFolder(userId, folderId) {
+  async deleteFolder(email, folderId) {
     try {
-      await this.folderLogic.deleteFolder(userId, folderId)
+      await this.folderLogic.deleteFolder(email, folderId)
 
       return this.response.status(204).json()
     } catch (err) {
