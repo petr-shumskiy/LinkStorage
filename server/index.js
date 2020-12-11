@@ -8,7 +8,7 @@ require('dotenv').config()
 
 const authRouter = require('./routes/authRoutes')
 const itemRouter = require('./routes/itemRoutes')
-const folderRouter = require('./routes/folderRoutes')
+// const folderRouter = require('./routes/folderRoutes')
 
 const PORT = config.get('serverPort')
 const MONGO_URI = process.env.MONGO_URI

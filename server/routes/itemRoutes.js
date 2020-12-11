@@ -28,8 +28,4 @@ router.patch('/link/:itemId', hasAuth, (req, res) => {
   return createItemController(req, res).updateItem(req.body.userId, req.params.itemId, req.body)
 })
 
-
-
-
-
 module.exports = router

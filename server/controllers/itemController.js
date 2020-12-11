@@ -39,7 +39,6 @@ class ItemController extends ControllerBase {
 
   async updateItem(userId, itemId, item) {
     try {
-      
       await this.itemLogic.updateItem(userId, itemId, item)
       return this.response.status(204).json()
     } catch (err) {
@@ -47,16 +46,6 @@ class ItemController extends ControllerBase {
       return this.response.status(500).json()
     }
   }
-
-  async updateItemArchived(email, itemId) {
-    try {
-      await this.itemLogic.updateItemArchived(email, itemId)
-      return this.response.status(204).json()
-    } catch (err) {
-      console.log(err)
-      return this.response.status(500).json()
-    }
-  }
-
 }
+
 module.exports = { ItemController }
