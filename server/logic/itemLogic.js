@@ -1,9 +1,7 @@
 const User = require('../models/User')
 
 class ItemLogic {
-
   async addItem(email, itemUrl) {
- 
     const user = await User.findOne({ email })
 
     user.items.push({ url: itemUrl })
@@ -32,7 +30,7 @@ class ItemLogic {
 
   async updateItem(email, itemId, item) {
     const user = await User.findById({ email })
- 
+
     const currentItem = user.items.id(itemId)
 
     if (item.liked !== undefined) {
