@@ -96,7 +96,7 @@ describe('Links', function () {
     })
   })
 
-  describe('like link', function () {
+  describe('like / dislike link', function () {
     it('item should change field liked from false to true ', async function () {
       const response = await request
         .post(`${LINK_PATH}/${linkIdLiked}/like`)
@@ -107,8 +107,25 @@ describe('Links', function () {
       const item = user.items.filter(
         (item) => item._id.toString() === linkIdLiked
       )[0]
+
       // eslint-disable-next-line no-unused-expressions
       expect(item.liked).to.be.true
+      // eslint-disable-next-line no-unused-expressions
+      expect(item.home).to.be.true
+    })
+
+    it('item should change field liked from true to false ', async function () {
+      const response = await request
+        .post(`${LINK_PATH}/${linkIdLiked}/like`)
+        .set('Authorization', bearerToken)
+
+      expect(response.status).to.eql(204)
+      const user = await User.findOne({ email })
+      const item = user.items.filter(
+        (item) => item._id.toString() === linkIdLiked
+      )[0]
+      // eslint-disable-next-line no-unused-expressions
+      expect(item.liked).to.be.false
       // eslint-disable-next-line no-unused-expressions
       expect(item.home).to.be.true
     })
