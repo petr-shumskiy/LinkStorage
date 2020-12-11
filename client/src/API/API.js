@@ -1,7 +1,7 @@
 // create different apis for different reducers, create instancec of axios
 import { create } from 'axios'
 
-const addAuthHeader = (token) => ({ Authorization: `Bearer ${token}` })
+const addAuthHeader = (token) => ({ headers: { authorization: `Bearer ${token}` } })
 
 const userInstance = create({
   baseURL: 'http://localhost:5000/api/user'
@@ -32,13 +32,18 @@ class API {
   }
 
   // USER
+  fetchAllItems = async (token) => {
+    const response = await userInstance.get('/link', addAuthHeader(token))
+    return response
+  }
+
   addItem = async (url, token) => {
     const response = await userInstance.post('/link', url, addAuthHeader(token))
     return response
   }
 
   deleteItem = async (id, token) => {
-    const response = await userInstance.delete('/link', id, addAuthHeader(token))
+    const response = await userInstance.delete('/link/' + id, addAuthHeader(token))
     return response
   }
 }
