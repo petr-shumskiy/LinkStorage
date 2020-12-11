@@ -10,17 +10,18 @@ const MONGO_OPTIONS = config.get('mongoOptions')
 const JWT_SECRET = process.env.JWT_SECRET
 const LINK_PATH = '/api/user/link'
 const jwt = require('jsonwebtoken')
-describe('Links', () => {
+const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
+  expiresIn: '10min'
+})
+describe('Links', function () {
   const email = 'testUser'
   const password = 'testUser'
-  const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
-    expiresIn: '10min'
-  })
   const bearerToken = `Bearer ${token}`
   const linkId = '5fd106f031ac566c766bce2b'
+  const linkIdLiked = '5fd36752277e204b56468ec4'
   const items = [
     { url: 'https://test.com/', _id: mongoose.Types.ObjectId(linkId) },
-    { url: 'https://test2.org/' },
+    { url: 'https://test2.org/', _id: mongoose.Types.ObjectId(linkIdLiked) },
     { url: 'https://test3.net/' },
     { url: 'https://test4.net/' }
   ]
@@ -31,15 +32,15 @@ describe('Links', () => {
     'https://www.npmjs.com/package/react-tiny-link/',
     'https://www.youtube.com/watch?v=DWcJFNfaw9c&ab_channel=ChilledCow/'
   ]
-  before(async () => {
+  before(async function () {
     await mongoose.connect(MONGO_URI, MONGO_OPTIONS)
 
     const testUser = new User({ email, password, items })
     await testUser.save()
   })
 
-  describe('get links', () => {
-    it('should return list list of items to authorized user', async () => {
+  describe('get links', function () {
+    it('should return list list of items to authorized user', async function () {
       const token = jwt.sign({ email: 'testUser' }, JWT_SECRET, {
         expiresIn: '10min'
       })
@@ -51,14 +52,14 @@ describe('Links', () => {
     })
   })
 
-  describe('check auth', () => {
-    it('sould return error for unauthorized user', async () => {
+  describe('check auth', function () {
+    it('sould return error for unauthorized user', async function () {
       const response = await request.get(LINK_PATH)
       expect(response.status).to.eql(403)
       expect(response.body.message).to.eql('no authorization')
     })
 
-    it('should return error for user with invalid token', async () => {
+    it('should return error for user with invalid token', async function () {
       const token = jwt.sign({ email: 'testUser' }, config.get('secretKey'), {
         expiresIn: '10min'
       })
@@ -70,9 +71,9 @@ describe('Links', () => {
     })
   })
 
-  describe('add new link', () => {
+  describe('add new link', function () {
     linksUrls.forEach((url) => {
-      it(`${url}`, async () => {
+      it(`${url}`, async function () {
         const response = await request
           .post(LINK_PATH)
           .send({ url })
@@ -82,8 +83,8 @@ describe('Links', () => {
     })
   })
 
-  describe('delete link', () => {
-    it('items should decrease by link with specific id', async () => {
+  describe('delete link', function () {
+    it('items should decrease by link with specific id', async function () {
       const response = await request
         .delete(`${LINK_PATH}/${linkId}`)
         .send({ email })
@@ -95,7 +96,25 @@ describe('Links', () => {
     })
   })
 
-  after(async () => {
+  describe('like link', function () {
+    it('item should change field liked from false to true ', async function () {
+      const response = await request
+        .post(`${LINK_PATH}/${linkIdLiked}/like`)
+        .set('Authorization', bearerToken)
+
+      expect(response.status).to.eql(204)
+      const user = await User.findOne({ email })
+      const item = user.items.filter(
+        (item) => item._id.toString() === linkIdLiked
+      )[0]
+      // eslint-disable-next-line no-unused-expressions
+      expect(item.liked).to.be.true
+      // eslint-disable-next-line no-unused-expressions
+      expect(item.home).to.be.true
+    })
+  })
+
+  after(async function () {
     await mongoose.connection.db.collection('users').drop()
     await mongoose.connection.close()
   })
