@@ -10,7 +10,7 @@ import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutline
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
 import DeleteIcon from '@material-ui/icons/Delete'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import {
   cacheItemData,
   deleteItemThunk,
@@ -57,7 +57,6 @@ const cardStyles = makeStyles((theme) => ({
 const Card = ({ _id, url, archived, home, liked }) => {
   const classes = cardStyles()
   const dispatch = useDispatch()
-  const token = useSelector(({ auth }) => auth.token)
 
   const likeHandler = (id) => {
     dispatch(toggleLikeItemThunk(id))
@@ -97,7 +96,7 @@ const Card = ({ _id, url, archived, home, liked }) => {
           <IconButton>
             <VideoLibrarySharpIcon />
           </IconButton>
-          <IconButton onClick={() => dispatch(deleteItemThunk(_id, token))}>
+          <IconButton onClick={() => dispatch(deleteItemThunk(_id))}>
             <DeleteIcon />
           </IconButton>
         </div>

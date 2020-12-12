@@ -3,7 +3,7 @@ import React from 'react'
 import { makeStyles, Divider, Button } from '@material-ui/core'
 // import SendLinkForm from './../SendLinkForm/SendLinkForm'
 import { Field, Form, reduxForm } from 'redux-form'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { addItemThunk } from '../../redux/userReducer'
 
 const useModalStyles = makeStyles((theme) => ({
@@ -59,10 +59,9 @@ const AddLinkModalReduxForm = reduxForm({ form: 'addLink' })(AddLinkModal)
 
 const AddLinkModalContainer = (props) => {
   const dispatch = useDispatch()
-  const token = useSelector(({ auth }) => auth.token)
 
   const submitHandler = (formData) => {
-    dispatch(addItemThunk(formData, token))
+    dispatch(addItemThunk(formData))
   }
 
   return <AddLinkModalReduxForm onSubmit={submitHandler} {...props} />

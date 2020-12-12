@@ -50,18 +50,18 @@ export const userReducer = createSlice({
   }
 })
 
-export const fetchItemsThunk = (token) => async (dispatch) => {
+export const fetchItemsThunk = () => async (dispatch) => {
   try {
-    const res = await API.fetchAllItems(token) // TODO catch
+    const res = await API.fetchAllItems() // TODO catch
     dispatch(setItems(res.data))
   } catch (error) {
     console.log(error)
   }
 }
 
-export const addItemThunk = (url, token) => async (dispatch) => {
+export const addItemThunk = (url) => async (dispatch) => {
   try {
-    await API.addItem(url, token)
+    await API.addItem(url)
     dispatch(addItem(url))
     dispatch(toggleAddLinkModal())
   } catch (error) {
@@ -69,9 +69,9 @@ export const addItemThunk = (url, token) => async (dispatch) => {
   }
 }
 
-export const deleteItemThunk = (id, token) => async (dispatch) => {
+export const deleteItemThunk = (id) => async (dispatch) => {
   try {
-    await API.deleteItem(id, token)
+    await API.deleteItem(id)
     dispatch(deleteItem(id))
   } catch (error) {
     // TODO logic for catch
@@ -79,7 +79,7 @@ export const deleteItemThunk = (id, token) => async (dispatch) => {
   }
 }
 
-export const toggleLikeItemThunk = (id, token) => async (dispatch) => {
+export const toggleLikeItemThunk = (id) => async (dispatch) => {
   try {
     // await API.toggleLikeItem(id, token)
     dispatch(toggleLikeItem(id))
@@ -88,7 +88,7 @@ export const toggleLikeItemThunk = (id, token) => async (dispatch) => {
   }
 }
 
-export const toggleArchiveItemThunk = (id, token) => async (dispatch) => {
+export const toggleArchiveItemThunk = (id) => async (dispatch) => {
   try {
     // await API.toggleLikeItem(id, token)
     dispatch(toggleArchiveItem(id))
