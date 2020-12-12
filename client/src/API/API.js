@@ -32,7 +32,9 @@ class API {
   }
 
   sendConfirmationRequest = async (confirmationToken) => {
-    const response = await authInstance.post('/validate-email/' + confirmationToken)
+    const response = await authInstance.post(
+      '/validate-email/' + confirmationToken
+    )
     return response
   }
 
@@ -49,6 +51,11 @@ class API {
 
   deleteItem = async (id) => {
     const response = await userInstance.delete('/link/' + id)
+    return response
+  }
+
+  updateItem = async (id, payload) => {
+    const response = await userInstance.patch('/link/' + id, payload)
     return response
   }
 

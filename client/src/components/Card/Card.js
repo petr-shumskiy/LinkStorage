@@ -11,12 +11,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite'
 import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { useDispatch } from 'react-redux'
-import {
-  cacheItemData,
-  deleteItemThunk,
-  toggleArchiveItemThunk,
-  toggleLikeItemThunk
-} from '../../redux/userReducer'
+import { deleteItemThunk, updateItemThunk } from '../../redux/userReducer'
 
 const cardStyles = makeStyles((theme) => ({
   root: {
@@ -58,12 +53,12 @@ const Card = ({ _id, url, archived, home, liked }) => {
   const classes = cardStyles()
   const dispatch = useDispatch()
 
-  const likeHandler = (id) => {
-    dispatch(toggleLikeItemThunk(id))
+  const onLikeHandler = () => {
+    dispatch(updateItemThunk(_id, { liked: !liked }))
   }
 
-  const archiveHandler = (id) => {
-    dispatch(toggleArchiveItemThunk(id))
+  const onArchiveHandler = () => {
+    dispatch(updateItemThunk(_id, { archived: !archived }))
   }
 
   return (
@@ -76,19 +71,18 @@ const Card = ({ _id, url, archived, home, liked }) => {
           minLine={1}
           autoPlay
           url={url}
-          onSuccess={(data) => dispatch(cacheItemData(data, _id))}
         />
         <div className={classes.controls}>
           {liked ? (
-            <IconButton onClick={() => likeHandler(_id)}>
+            <IconButton onClick={onLikeHandler}>
               <FavoriteIcon color='primary' />
             </IconButton>
           ) : (
             <>
-              <IconButton onClick={() => likeHandler(_id)}>
+              <IconButton onClick={onLikeHandler}>
                 <FavoriteBorderOutlinedIcon />
               </IconButton>
-              <IconButton onClick={() => archiveHandler(_id)}>
+              <IconButton onClick={onArchiveHandler}>
                 <ArchiveOutlinedIcon />
               </IconButton>
             </>

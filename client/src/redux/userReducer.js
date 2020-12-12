@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import API from '../API/API'
 
+const findIndexById = (arr, id) => arr.findIndex((item) => item._id === id)
+
 export const userReducer = createSlice({
   name: 'user',
   initialState: {
@@ -9,9 +11,6 @@ export const userReducer = createSlice({
     folders: ['Folder1', 'Folder2']
   },
   reducers: {
-    setCurrentLinkType(state, action) {
-      state.linkType = action.payload.linkType
-    },
     setItems(state, action) {
       state.items = action.payload
     },
@@ -35,18 +34,19 @@ export const userReducer = createSlice({
     toggleAddLinkModal(state, action) {
       state.isOpenedAddLinkModal = !state.isOpenedAddLinkModal
     },
-    toggleLikeItem(state, action) {
-      const idx = state.items.findIndex((item) => item._id === action.payload)
-      state.items[idx].liked = !state.items[idx].liked
-    },
-    toggleArchiveItem(state, action) {
-      const idx = state.items.findIndex((item) => item._id === action.payload)
-      state.items[idx].home = !state.items[idx].home
-      state.items[idx].archived = !state.items[idx].archived
+    updateItem(state, { payload }) {
+      const idx = findIndexById(state.items, payload.id)
+      const item = state.items[idx]
+
+      if (payload.liked !== undefined) {
+        item.liked = payload.liked
+      }
+
+      if (payload.archived !== undefined) {
+        item.archived = payload.archived
+        item.home = !item.home
+      }
     }
-    // cacheItemData(state, action) {
-    //   const { header, description } = action.payload
-    // }
   }
 })
 
@@ -79,35 +79,21 @@ export const deleteItemThunk = (id) => async (dispatch) => {
   }
 }
 
-export const toggleLikeItemThunk = (id) => async (dispatch) => {
+export const updateItemThunk = (id, payload) => async (dispatch) => {
   try {
-    // await API.toggleLikeItem(id, token)
-    dispatch(toggleLikeItem(id))
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-export const toggleArchiveItemThunk = (id) => async (dispatch) => {
-  try {
-    // await API.toggleLikeItem(id, token)
-    dispatch(toggleArchiveItem(id))
+    await API.updateItem(id, payload)
+    dispatch(updateItem({ ...payload, id }))
   } catch (error) {
     console.log(error)
   }
 }
 
 export const {
-  setCurrentLinkType,
-  logOut,
+  toggleAddLinkModal,
   setItems,
-  addLinkInState,
   addItem,
   deleteItem,
-  toggleAddLinkModal,
-  toggleLikeItem,
-  toggleArchiveItem,
-  cacheItemData
+  updateItem
 } = userReducer.actions
 
 export default userReducer
