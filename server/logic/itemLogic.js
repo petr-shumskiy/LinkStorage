@@ -1,9 +1,7 @@
 const User = require('../models/User')
 
 class ItemLogic {
-  // ниже логика для линков
   async addItem(email, itemUrl) {
-    // const { email } = req.user
     const user = await User.findOne({ email })
 
     user.items.push({ url: itemUrl })
@@ -12,7 +10,7 @@ class ItemLogic {
   }
 
   async getItems(email) {
-    const user = await User.findOne(email)
+    const user = await User.findOne({ email })
 
     return user.items
   }
@@ -28,18 +26,20 @@ class ItemLogic {
         }
       }
     )
-    // const user = User.findOne(email)
-    // user.update(
-    //   {
-    //     $match: { '$items._id': itemId }
-    //   },
-    //   {
-    //     $pull: {
-    //       items: { _id: itemId }
-    //     }
-    //   }
-    // )
-    // // console.log(email)
+  }
+
+  async updateItem(email, itemId, item) {
+    const user = await User.findOne({ email })
+
+    const currentItem = await user.items.id(itemId)
+
+    if (item.liked !== undefined) {
+      currentItem.set({ liked: item.liked })
+    }
+    if (item.archived !== undefined) {
+      currentItem.set({ archived: item.archived, home: !item.archived })
+    }
+    await user.save()
   }
 }
 
