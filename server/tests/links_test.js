@@ -131,6 +131,38 @@ describe('Links', function () {
       expect(item.home).to.be.true
       expect(item.archived).to.be.false
     })
+
+    it('Archive item,should change field archived from false to true, and home from true to false ', async function () {
+      const response = await request
+        .patch(`${LINK_PATH}/${linkIdUpdated}`)
+        .send({ archived: true })
+        .set('Authorization', bearerToken)
+
+      expect(response.status).to.eql(204)
+      const user = await User.findOne({ email })
+      const item = user.items.filter(
+        (item) => item._id.toString() === linkIdUpdated
+      )[0]
+
+      expect(item.home).to.be.false
+      expect(item.archived).to.be.true
+    })
+
+    it('Unarchive item,should change field archived from true to false, and home from false to true ', async function () {
+      const response = await request
+        .patch(`${LINK_PATH}/${linkIdUpdated}`)
+        .send({ archived: false })
+        .set('Authorization', bearerToken)
+
+      expect(response.status).to.eql(204)
+      const user = await User.findOne({ email })
+      const item = user.items.filter(
+        (item) => item._id.toString() === linkIdUpdated
+      )[0]
+
+      expect(item.home).to.be.true
+      expect(item.archived).to.be.false
+    })
   })
 
   after(async function () {

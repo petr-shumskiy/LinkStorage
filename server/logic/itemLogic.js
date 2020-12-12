@@ -37,7 +37,7 @@ class ItemLogic {
       currentItem.set({ liked: item.liked })
     }
     if (item.archived !== undefined) {
-      currentItem.set({ archived: item.archived })
+      currentItem.set({ archived: item.archived, home: !item.archived })
     }
     await user.save()
   }
