@@ -36,6 +36,16 @@ class ItemController extends ControllerBase {
       return this.response.status(500).json()
     }
   }
+
+  async updateItem(email, itemId, item) {
+    try {
+      await this.itemLogic.updateItem(email, itemId, item)
+      return this.response.status(204).json()
+    } catch (err) {
+      console.log(err)
+      return this.response.status(500).json()
+    }
+  }
 }
 
 module.exports = { ItemController }

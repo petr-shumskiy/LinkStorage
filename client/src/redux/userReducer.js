@@ -1,115 +1,99 @@
 import { createSlice } from '@reduxjs/toolkit'
 import API from '../API/API'
 
+const findIndexById = (arr, id) => arr.findIndex((item) => item._id === id)
+
 export const userReducer = createSlice({
   name: 'user',
   initialState: {
     isOpenedAddLinkModal: false,
-    itemsData: [
-      {
-        id: 0,
-        url: 'https://github.com/',
-        home: true,
-        liked: false,
-        archived: false
-      },
-      {
-        id: 1,
-        url: 'https://reactjs.org/',
-        home: true,
-        liked: true,
-        archived: false
-      },
-      {
-        id: 2,
-        url: 'https://nodejs.org/en/',
-        home: true,
-        liked: true,
-        archived: false
-      },
-      {
-        id: 3,
-        url: 'https://www.npmjs.com/package/react-tiny-link',
-        home: true,
-        liked: false,
-        archived: false
-      },
-      {
-        id: 4,
-        url: 'https://www.youtube.com/watch?v=DWcJFNfaw9c&ab_channel=ChilledCow',
-        home: true,
-        liked: false,
-        archived: false
-      }
-    ],
+    items: [],
     folders: ['Folder1', 'Folder2']
   },
   reducers: {
-    setCurrentLinkType(state, action) {
-      state.linkType = action.payload.linkType
-    },
-    loadLinkData(state, action) {
-      state.itemsData = action.payload.Data
+    setItems(state, action) {
+      state.items = action.payload
     },
     addItem(state, { payload }) {
       const link = {
-        id: state.itemsData.length,
+        id: state.items.length,
         home: true,
         liked: false,
         archived: false,
-        title: '',
-        text: '',
+        header: '',
+        description: '',
         url: payload.url,
         type: '',
         img: ''
       }
-      state.itemsData.push(link)
+      state.items.push(link)
     },
     deleteItem(state, { payload }) {
-      state.itemsData = state.itemsData.filter((item) => item.id !== payload)
+      state.items = state.items.filter((item) => item._id !== payload)
     },
     toggleAddLinkModal(state, action) {
       state.isOpenedAddLinkModal = !state.isOpenedAddLinkModal
+    },
+    updateItem(state, { payload }) {
+      const idx = findIndexById(state.items, payload.id)
+      const item = state.items[idx]
+
+      if (payload.liked !== undefined) {
+        item.liked = payload.liked
+      }
+
+      if (payload.archived !== undefined) {
+        item.archived = payload.archived
+        item.home = !item.home
+      }
     }
   }
 })
 
-export const takeLinkData = () => async (dispatch) => {
-  const res = await API.takeLinkData() // TODO catch
-  dispatch(loadLinkData(res))
-}
-
-export const addItemThunk = (url, token) => async (dispatch) => {
+export const fetchItemsThunk = () => async (dispatch) => {
   try {
-    dispatch(addItem(url))
-    await API.addItem(url, token)
-    dispatch(toggleAddLinkModal())
+    const res = await API.fetchAllItems() // TODO catch
+    dispatch(setItems(res.data))
   } catch (error) {
-    console.log(error.message)
-    dispatch(addItem(url))
-    dispatch(toggleAddLinkModal())
+    console.log(error)
   }
 }
 
-export const deleteItemThunk = (id, token) => async (dispatch) => {
+export const addItemThunk = (url) => async (dispatch) => {
   try {
-    await API.deleteItem(id, token)
+    await API.addItem(url)
+    dispatch(addItem(url))
+    dispatch(toggleAddLinkModal())
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export const deleteItemThunk = (id) => async (dispatch) => {
+  try {
+    await API.deleteItem(id)
     dispatch(deleteItem(id))
   } catch (error) {
     // TODO logic for catch
     console.log(error.message)
-    dispatch(deleteItem(id))
+  }
+}
+
+export const updateItemThunk = (id, payload) => async (dispatch) => {
+  try {
+    await API.updateItem(id, payload)
+    dispatch(updateItem({ ...payload, id }))
+  } catch (error) {
+    console.log(error)
   }
 }
 
 export const {
-  setCurrentLinkType,
-  logOut,
-  loadLinkData,
-  addLinkInState,
+  toggleAddLinkModal,
+  setItems,
   addItem,
   deleteItem,
-  toggleAddLinkModal
+  updateItem
 } = userReducer.actions
 
 export default userReducer

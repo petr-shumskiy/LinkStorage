@@ -1,16 +1,21 @@
 // create different apis for different reducers, create instancec of axios
 import { create } from 'axios'
 
-const addAuthHeader = (token) => ({ Authorization: `Bearer ${token}` })
+const token = localStorage.getItem('token')
+console.log(token)
 
 const userInstance = create({
-  baseURL: 'http://localhost:5000/api/user'
-  // timeout: 1000,
-  // headers: { Authorization: 'Bearer' + token }
+  baseURL: '/api/user',
+  timeout: 1000,
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    Authorization: 'Bearer ' + token
+  }
 })
 
 const authInstance = create({
-  baseURL: 'http://localhost:5000/api/auth'
+  baseURL: '/api/auth',
+  header: { 'Access-Control-Allow-Origin': '*' }
 })
 
 // FIXME catch errors
@@ -27,18 +32,35 @@ class API {
   }
 
   sendConfirmationRequest = async (confirmationToken) => {
-    const response = await authInstance.post('/validate-email/' + confirmationToken)
+    const response = await authInstance.post(
+      '/validate-email/' + confirmationToken
+    )
     return response
   }
 
   // USER
-  addItem = async (url, token) => {
-    const response = await userInstance.post('/link', url, addAuthHeader(token))
+  fetchAllItems = async () => {
+    const response = await userInstance.get('/link')
     return response
   }
 
-  deleteItem = async (id, token) => {
-    const response = await userInstance.delete('/link', id, addAuthHeader(token))
+  addItem = async (url) => {
+    const response = await userInstance.post('/link', url)
+    return response
+  }
+
+  deleteItem = async (id) => {
+    const response = await userInstance.delete('/link/' + id)
+    return response
+  }
+
+  updateItem = async (id, payload) => {
+    const response = await userInstance.patch('/link/' + id, payload)
+    return response
+  }
+
+  toggleLikeItem = async (id) => {
+    const response = await userInstance.post(`/link/${id}/like`)
     return response
   }
 }

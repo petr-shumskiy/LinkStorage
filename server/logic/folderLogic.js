@@ -1,36 +1,39 @@
 const User = require('../models/User')
 
 class FolderLogic {
-  async createFolder(userId, folderName) {
-    const user = await User.findById(userId)
+  async createFolder(email, folderName) {
+    const user = await User.findOne({ email })
 
     user.folders.push({ name: folderName })
 
     await user.save()
   }
 
-  async getFolders(userId) {
-    const user = await User.findById(userId)
+  async getFolders(email) {
+    const user = await User.findOne({ email })
 
     return user.folders
   }
 
-  async updateFolder(userId, folderId, folderName) {
+  async updateFolder(email, folderId, folderName) {
     await User.findOneAndUpdate({
-      id: userId,
-      'folders.id': folderId
+      email,
+      folders: {
+        _id: folderId
+      }
     },
     {
       $set: {
-        'folders.$.name': folderName
+        folders: {
+          name: folderName
+        }
       }
     })
   }
 
-  async deleteFolder(userId, folderId) {
+  async deleteFolder(email, folderId) {
     await User.findOneAndUpdate({
-      id: userId,
-      'folders.id': folderId
+      email
     },
     {
       $pull: {

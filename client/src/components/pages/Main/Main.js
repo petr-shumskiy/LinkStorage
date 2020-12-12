@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AccountCircle } from '@material-ui/icons/'
 import MoreIcon from '@material-ui/icons/MoreVert'
 import SearchIcon from '@material-ui/icons/Search'
@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
 import AddLinkModal from './../../addLinkModal/addLinkModal'
 import AsidePanel from './AsidePanel'
-import { toggleAddLinkModal } from '../../../redux/userReducer'
+import { fetchItemsThunk, toggleAddLinkModal } from '../../../redux/userReducer'
 import LinksContent from './LinksContent'
 
 const Main = () => {
@@ -38,8 +38,16 @@ const Main = () => {
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
 
-  const dispatch = useDispatch()
   const isOpenedAddLinkModal = useSelector(({ user }) => user.isOpenedAddLinkModal)
+  const token = useSelector(({ auth }) => auth.token)
+  const dispatch = useDispatch()
+  const items = useSelector(({ user }) => user.items)
+  console.log(token)
+  console.log(items)
+
+  useEffect(() => {
+    dispatch(fetchItemsThunk(token))
+  }, [dispatch, token])
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -204,7 +212,7 @@ const Main = () => {
           </Drawer>
         </Hidden>
       </nav>
-      <LinksContent />
+      <LinksContent items={items} />
     </div>
   )
 }

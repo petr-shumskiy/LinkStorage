@@ -11,18 +11,20 @@ function createFolderController(req, res) {
   return controller
 }
 
-router.post('/user/:id/folder', (req, res) => {
-  return createFolderController(req, res).createFolder(req.params.id, req.body.folderName)
+router.post('/folder', (req, res) => {
+  return createFolderController(req, res).createFolder(req.user.email, req.body.name)
 })
 
-router.get('/user/:id/folder', (req, res) => {
-  return createFolderController(req, res).getFolders(req.params.id)
+router.get('/folder', (req, res) => {
+  return createFolderController(req, res).getFolders(req.user.email)
 })
 
-router.post('/user/:id/folder/:folderId', (req, res) => {
-  return createFolderController(req, res).updateFolder(req.params.id, req.params.folderId, req.body.folderName)
+router.post('/folder/:folderId', (req, res) => {
+  return createFolderController(req, res).updateFolder(req.user.email, req.body.id, req.body.name)
 })
 
-router.delete('/user/:id/folder/:folderId', (req, res) => {
-  return createFolderController(req, res).deleteFolder(req.params.id, req.params.folderId)
+router.delete('/folder/:folderId', (req, res) => {
+  return createFolderController(req, res).deleteFolder(req.user.email, req.body.id)
 })
+
+module.exports = router
