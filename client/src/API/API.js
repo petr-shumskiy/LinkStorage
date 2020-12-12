@@ -4,13 +4,15 @@ import { create } from 'axios'
 const addAuthHeader = (token) => ({ headers: { authorization: `Bearer ${token}` } })
 
 const userInstance = create({
-  baseURL: 'http://localhost:5000/api/user'
+  baseURL: '/api/user',
   // timeout: 1000,
   // headers: { Authorization: 'Bearer' + token }
+  headers: { 'Access-Control-Allow-Origin': '*' }
 })
 
 const authInstance = create({
-  baseURL: 'http://localhost:5000/api/auth'
+  baseURL: '/api/auth',
+  header: { 'Access-Control-Allow-Origin': '*' }
 })
 
 // FIXME catch errors
@@ -44,6 +46,11 @@ class API {
 
   deleteItem = async (id, token) => {
     const response = await userInstance.delete('/link/' + id, addAuthHeader(token))
+    return response
+  }
+
+  toggleLikeItem = async (id, token) => {
+    const response = await userInstance.post(`/link/${id}/like`, addAuthHeader(token))
     return response
   }
 }

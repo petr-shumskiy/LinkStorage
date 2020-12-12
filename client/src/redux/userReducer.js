@@ -21,8 +21,8 @@ export const userReducer = createSlice({
         home: true,
         liked: false,
         archived: false,
-        title: '',
-        text: '',
+        header: '',
+        description: '',
         url: payload.url,
         type: '',
         img: ''
@@ -34,7 +34,19 @@ export const userReducer = createSlice({
     },
     toggleAddLinkModal(state, action) {
       state.isOpenedAddLinkModal = !state.isOpenedAddLinkModal
+    },
+    toggleLikeItem(state, action) {
+      const idx = state.items.findIndex((item) => item._id === action.payload)
+      state.items[idx].liked = !state.items[idx].liked
+    },
+    toggleArchiveItem(state, action) {
+      const idx = state.items.findIndex((item) => item._id === action.payload)
+      state.items[idx].home = !state.items[idx].home
+      state.items[idx].archived = !state.items[idx].archived
     }
+    // cacheItemData(state, action) {
+    //   const { header, description } = action.payload
+    // }
   }
 })
 
@@ -67,6 +79,24 @@ export const deleteItemThunk = (id, token) => async (dispatch) => {
   }
 }
 
+export const toggleLikeItemThunk = (id, token) => async (dispatch) => {
+  try {
+    // await API.toggleLikeItem(id, token)
+    dispatch(toggleLikeItem(id))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const toggleArchiveItemThunk = (id, token) => async (dispatch) => {
+  try {
+    // await API.toggleLikeItem(id, token)
+    dispatch(toggleArchiveItem(id))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export const {
   setCurrentLinkType,
   logOut,
@@ -74,7 +104,10 @@ export const {
   addLinkInState,
   addItem,
   deleteItem,
-  toggleAddLinkModal
+  toggleAddLinkModal,
+  toggleLikeItem,
+  toggleArchiveItem,
+  cacheItemData
 } = userReducer.actions
 
 export default userReducer

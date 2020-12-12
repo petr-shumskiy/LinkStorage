@@ -7,10 +7,16 @@ import { IconButton, Box } from '@material-ui/core'
 
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
+import FavoriteIcon from '@material-ui/icons/Favorite'
 import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteItemThunk } from '../../redux/userReducer'
+import {
+  cacheItemData,
+  deleteItemThunk,
+  toggleArchiveItemThunk,
+  toggleLikeItemThunk
+} from '../../redux/userReducer'
 
 const cardStyles = makeStyles((theme) => ({
   root: {
@@ -48,11 +54,19 @@ const cardStyles = makeStyles((theme) => ({
     width: 38
   }
 }))
-
-const Cards = ({ id, url }) => {
+const Card = ({ _id, url, archived, home, liked }) => {
   const classes = cardStyles()
   const dispatch = useDispatch()
   const token = useSelector(({ auth }) => auth.token)
+
+  const likeHandler = (id) => {
+    dispatch(toggleLikeItemThunk(id))
+  }
+
+  const archiveHandler = (id) => {
+    dispatch(toggleArchiveItemThunk(id))
+  }
+
   return (
     <Box>
       <div className={classes.details}>
@@ -63,19 +77,27 @@ const Cards = ({ id, url }) => {
           minLine={1}
           autoPlay
           url={url}
-          onSuccess={(data) => {}}
+          onSuccess={(data) => dispatch(cacheItemData(data, _id))}
         />
         <div className={classes.controls}>
-          <IconButton>
-            <FavoriteBorderOutlinedIcon />
-          </IconButton>
-          <IconButton>
-            <ArchiveOutlinedIcon />
-          </IconButton>
+          {liked ? (
+            <IconButton onClick={() => likeHandler(_id)}>
+              <FavoriteIcon color='primary' />
+            </IconButton>
+          ) : (
+            <>
+              <IconButton onClick={() => likeHandler(_id)}>
+                <FavoriteBorderOutlinedIcon />
+              </IconButton>
+              <IconButton onClick={() => archiveHandler(_id)}>
+                <ArchiveOutlinedIcon />
+              </IconButton>
+            </>
+          )}
           <IconButton>
             <VideoLibrarySharpIcon />
           </IconButton>
-          <IconButton onClick={() => dispatch(deleteItemThunk(id, token))}>
+          <IconButton onClick={() => dispatch(deleteItemThunk(_id, token))}>
             <DeleteIcon />
           </IconButton>
         </div>
@@ -84,4 +106,4 @@ const Cards = ({ id, url }) => {
   )
 }
 
-export default Cards
+export default Card

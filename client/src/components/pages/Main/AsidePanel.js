@@ -63,7 +63,7 @@ const AsidePanel = () => {
       <List>
         <DrawerItem Icon={HomeOutlinedIcon} text={'Home'} link='/home' />
         <DrawerItem Icon={FavoriteBorderOutlinedIcon} text={'Liked'} link='liked' />
-        <DrawerItem Icon={ArchiveOutlinedIcon} text={'Archive'} link='archive' />
+        <DrawerItem Icon={ArchiveOutlinedIcon} text={'Archive'} link='archived' />
         <DrawerItem Icon={VideoLibrarySharpIcon} text={'Videos'} link='/videos' />
       </List>
       <Divider />
