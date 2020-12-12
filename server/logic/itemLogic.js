@@ -29,9 +29,9 @@ class ItemLogic {
   }
 
   async updateItem(email, itemId, item) {
-    const user = await User.findById({ email })
+    const user = await User.findOne({ email })
 
-    const currentItem = user.items.id(itemId)
+    const currentItem = await user.items.id(itemId)
 
     if (item.liked !== undefined) {
       currentItem.set({ liked: item.liked })
@@ -39,7 +39,7 @@ class ItemLogic {
     if (item.archived !== undefined) {
       currentItem.set({ archived: item.archived })
     }
-    user.save()
+    await user.save()
   }
 }
 

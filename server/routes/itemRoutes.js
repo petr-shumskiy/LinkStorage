@@ -21,11 +21,18 @@ router.get('/link', hasAuth, (req, res) => {
 })
 
 router.delete('/link/:itemId', hasAuth, (req, res) => {
-  return createItemController(req, res).deleteItem(req.user.email, req.params.itemId)
+  return createItemController(req, res).deleteItem(
+    req.user.email,
+    req.params.itemId
+  )
 })
 
 router.patch('/link/:itemId', hasAuth, (req, res) => {
-  return createItemController(req, res).updateItem(req.body.userId, req.params.itemId, req.body)
+  return createItemController(req, res).updateItem(
+    req.user.email,
+    req.params.itemId,
+    req.body
+  )
 })
 
 module.exports = router

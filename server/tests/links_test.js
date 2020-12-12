@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 const app = require('../index')
 const { expect } = require('chai')
 const request = require('supertest')(app)
@@ -17,11 +18,11 @@ describe('Links', function () {
   const email = 'testUser'
   const password = 'testUser'
   const bearerToken = `Bearer ${token}`
-  const linkId = '5fd106f031ac566c766bce2b'
-  const linkIdLiked = '5fd36752277e204b56468ec4'
+  const linkIdDeleted = '5fd106f031ac566c766bce2b'
+  const linkIdUpdated = '5fd36752277e204b56468ec4'
   const items = [
-    { url: 'https://test.com/', _id: mongoose.Types.ObjectId(linkId) },
-    { url: 'https://test2.org/', _id: mongoose.Types.ObjectId(linkIdLiked) },
+    { url: 'https://test.com/', _id: mongoose.Types.ObjectId(linkIdDeleted) },
+    { url: 'https://test2.org/', _id: mongoose.Types.ObjectId(linkIdUpdated) },
     { url: 'https://test3.net/' },
     { url: 'https://test4.net/' }
   ]
@@ -86,7 +87,7 @@ describe('Links', function () {
   describe('delete link', function () {
     it('items should decrease by link with specific id', async function () {
       const response = await request
-        .delete(`${LINK_PATH}/${linkId}`)
+        .delete(`${LINK_PATH}/${linkIdDeleted}`)
         .send({ email })
         .set('Authorization', bearerToken)
 
@@ -96,38 +97,39 @@ describe('Links', function () {
     })
   })
 
-  describe('like / dislike link', function () {
-    it('item should change field liked from false to true ', async function () {
+  describe('update item', function () {
+    it('Like item, should change field liked from false to true ', async function () {
       const response = await request
-        .post(`${LINK_PATH}/${linkIdLiked}/like`)
+        .patch(`${LINK_PATH}/${linkIdUpdated}`)
+        .send({ liked: true })
         .set('Authorization', bearerToken)
 
       expect(response.status).to.eql(204)
       const user = await User.findOne({ email })
       const item = user.items.filter(
-        (item) => item._id.toString() === linkIdLiked
+        (item) => item._id.toString() === linkIdUpdated
       )[0]
 
-      // eslint-disable-next-line no-unused-expressions
       expect(item.liked).to.be.true
-      // eslint-disable-next-line no-unused-expressions
       expect(item.home).to.be.true
+      expect(item.archived).to.be.false
     })
 
-    it('item should change field liked from true to false ', async function () {
+    it('Dislike item,should change field liked from true to false ', async function () {
       const response = await request
-        .post(`${LINK_PATH}/${linkIdLiked}/like`)
+        .patch(`${LINK_PATH}/${linkIdUpdated}`)
+        .send({ liked: false })
         .set('Authorization', bearerToken)
 
       expect(response.status).to.eql(204)
       const user = await User.findOne({ email })
       const item = user.items.filter(
-        (item) => item._id.toString() === linkIdLiked
+        (item) => item._id.toString() === linkIdUpdated
       )[0]
-      // eslint-disable-next-line no-unused-expressions
+
       expect(item.liked).to.be.false
-      // eslint-disable-next-line no-unused-expressions
       expect(item.home).to.be.true
+      expect(item.archived).to.be.false
     })
   })
 
