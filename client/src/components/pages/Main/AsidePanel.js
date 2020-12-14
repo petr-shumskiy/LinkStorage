@@ -15,7 +15,7 @@ import FolderOpenIcon from '@material-ui/icons/FolderOpen'
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
-import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
+// import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
 
 import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
@@ -62,9 +62,17 @@ const AsidePanel = () => {
       <Divider />
       <List>
         <DrawerItem Icon={HomeOutlinedIcon} text={'Home'} link='/home' />
-        <DrawerItem Icon={FavoriteBorderOutlinedIcon} text={'Liked'} link='liked' />
-        <DrawerItem Icon={ArchiveOutlinedIcon} text={'Archive'} link='archived' />
-        <DrawerItem Icon={VideoLibrarySharpIcon} text={'Videos'} link='/videos' />
+        <DrawerItem
+          Icon={FavoriteBorderOutlinedIcon}
+          text={'Liked'}
+          link='liked'
+        />
+        <DrawerItem
+          Icon={ArchiveOutlinedIcon}
+          text={'Archive'}
+          link='archived'
+        />
+        {/* <DrawerItem Icon={VideoLibrarySharpIcon} text={'Videos'} link='/videos' /> */}
       </List>
       <Divider />
       {userFolders}

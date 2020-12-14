@@ -9,9 +9,12 @@ import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import VideoLibrarySharpIcon from '@material-ui/icons/VideoLibrarySharp'
+// import FolderOpenIcon from '@material-ui/icons/FolderOpen'
+import FolderIcon from '@material-ui/icons/Folder'
+
 import DeleteIcon from '@material-ui/icons/Delete'
 import { useDispatch } from 'react-redux'
-import { deleteItemThunk, updateItemThunk } from '../../redux/userReducer'
+import { deleteItemThunk, updateItemThunk } from '../../redux/userReducer.ts'
 
 const cardStyles = makeStyles((theme) => ({
   root: {
@@ -92,6 +95,9 @@ const Card = ({ _id, url, archived, home, liked }) => {
           </IconButton>
           <IconButton onClick={() => dispatch(deleteItemThunk(_id))}>
             <DeleteIcon />
+          </IconButton>
+          <IconButton>
+            <FolderIcon />
           </IconButton>
         </div>
       </div>

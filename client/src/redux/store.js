@@ -1,5 +1,5 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
-import { userReducer } from './userReducer'
+import { userReducer } from './userReducer.ts'
 import { authReducer } from './authReducer'
 import { reducer as formReducer } from 'redux-form'
 import { RESET_SIGN_IN_PASSWORD } from './types'

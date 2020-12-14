@@ -23,8 +23,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
 import AddLinkModal from './../../addLinkModal/addLinkModal'
 import AsidePanel from './AsidePanel'
-import { fetchItemsThunk, toggleAddLinkModal } from '../../../redux/userReducer'
+import {
+  fetchItemsThunk,
+  toggleAddLinkModal
+} from '../../../redux/userReducer.ts'
 import LinksContent from './LinksContent'
+import { Redirect } from 'react-router-dom'
 
 const Main = () => {
   const window = undefined // ?
@@ -38,21 +42,22 @@ const Main = () => {
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
 
-  const isOpenedAddLinkModal = useSelector(({ user }) => user.isOpenedAddLinkModal)
-  const token = useSelector(({ auth }) => auth.token)
+  const isOpenedAddLinkModal = useSelector(
+    ({ user }) => user.isOpenedAddLinkModal
+  )
   const dispatch = useDispatch()
   const items = useSelector(({ user }) => user.items)
-  console.log(token)
-  console.log(items)
+  const token = useSelector(({ auth }) => auth.token)
 
   useEffect(() => {
-    dispatch(fetchItemsThunk(token))
+    dispatch(fetchItemsThunk())
   }, [dispatch, token])
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
   }
-  const container = window !== undefined ? () => window().document.body : undefined
+  const container =
+    window !== undefined ? () => window().document.body : undefined
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget)
@@ -105,6 +110,11 @@ const Main = () => {
       <MenuItem onClick={() => dispatch(logout())}>Log out</MenuItem>
     </Menu>
   )
+
+  if (!token) {
+    return <Redirect to='/auth' />
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />

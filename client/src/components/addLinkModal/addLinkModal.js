@@ -4,7 +4,7 @@ import { makeStyles, Divider, Button } from '@material-ui/core'
 // import SendLinkForm from './../SendLinkForm/SendLinkForm'
 import { Field, Form, reduxForm } from 'redux-form'
 import { useDispatch } from 'react-redux'
-import { addItemThunk } from '../../redux/userReducer'
+import { addItemThunk } from '../../redux/userReducer.ts'
 
 const useModalStyles = makeStyles((theme) => ({
   paper: {
