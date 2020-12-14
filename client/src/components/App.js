@@ -1,9 +1,9 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import Main from './components/pages/Main/Main'
-import Auth from './components/pages/Auth'
+import Main from './AppPage/Main'
+import Auth from './AuthPage/Auth'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import Confirmation from './Confirmation'
+import Confirmation from './AuthPage/Confirmation'
 
 const App = () => {
   const token = useSelector(({ auth }) => auth.token)

@@ -1,6 +1,6 @@
 import React from 'react'
-import SignInContainer from '../SignIn/SignIn'
-import SignUpContainer from '../SignUp/SignUp'
+import SignInContainer from './SignIn'
+import SignUpContainer from './SignUp'
 import { useDispatch } from 'react-redux'
 import { showSignInModal, showRegistrationModal } from '../../redux/authReducer'
 import { Button, Typography } from '@material-ui/core'

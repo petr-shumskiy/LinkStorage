@@ -20,13 +20,10 @@ import {
 import { useTheme } from '@material-ui/core/styles'
 import mainStyle from './mainStyle'
 import { useDispatch, useSelector } from 'react-redux'
-import { logout } from '../../../redux/authReducer'
-import AddLinkModal from './../../addLinkModal/addLinkModal'
+import { logout } from '../../redux/authReducer'
+import AddLinkModal from './addLinkModal'
 import AsidePanel from './AsidePanel'
-import {
-  fetchItemsThunk,
-  toggleAddLinkModal
-} from '../../../redux/userReducer.ts'
+import { fetchItemsThunk, toggleAddLinkModal } from '../../redux/userReducer.ts'
 import LinksContent from './LinksContent'
 import { Redirect } from 'react-router-dom'
 

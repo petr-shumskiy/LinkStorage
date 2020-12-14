@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams, withRouter } from 'react-router-dom'
-import { validateEmail } from './redux/authReducer'
+import { validateEmail } from '../../redux/authReducer'
 
 const Confirmation = () => {
   const history = useHistory()

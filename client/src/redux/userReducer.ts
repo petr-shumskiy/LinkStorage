@@ -7,6 +7,9 @@ export type Item = {
   liked: boolean
   archived: boolean
   url: string
+  header: string
+  description: string
+  imageUrl: string
   folders: Array<string>
 }
 export interface State {
@@ -48,6 +51,9 @@ export const userReducer = createSlice({
         liked: false,
         archived: false,
         url: action.payload.url,
+        description: '',
+        header: '',
+        imageUrl: '',
         folders: []
       }
       state.items.push(item)

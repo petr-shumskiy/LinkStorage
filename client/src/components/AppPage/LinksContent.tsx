@@ -1,8 +1,8 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Redirect, Route, Switch } from 'react-router-dom'
-import { Item, State } from '../../../redux/userReducer'
-import Card from '../../Card/Card'
+import { Item, State } from '../../redux/userReducer'
+import Card from './Card'
 import mainStyle from './mainStyle'
 
 type LinkType = 'home' | 'liked' | 'archived'
