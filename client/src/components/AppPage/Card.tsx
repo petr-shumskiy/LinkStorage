@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { ReactTinyLink } from 'react-tiny-link'
+
 // import Card from '@material-ui/core/Card'
 // import { CardMedia, Link, CardContent, IconButton, Typography, Box } from '@material-ui/core'
 import { IconButton, Box } from '@material-ui/core'
@@ -14,7 +14,16 @@ import FolderIcon from '@material-ui/icons/Folder'
 
 import DeleteIcon from '@material-ui/icons/Delete'
 import { useDispatch } from 'react-redux'
-import { deleteItemThunk, updateItemThunk } from '../../redux/userReducer.ts'
+import { deleteItemThunk, Item, updateItemThunk } from '../../redux/userReducer'
+const { ReactTinyLink } = require('react-tiny-link')
+
+interface IReactTinyLinkData {
+  description: string
+  image: string[]
+  title: string
+  video: string[]
+  url: string
+}
 
 const cardStyles = makeStyles((theme) => ({
   root: {
@@ -52,29 +61,30 @@ const cardStyles = makeStyles((theme) => ({
     width: 38
   }
 }))
-const Card = ({ _id, url, archived, home, liked }) => {
+const Card = (props: Item) => {
+  const { _id, url, archived, home, liked } = props
   const classes = cardStyles()
   const dispatch = useDispatch()
 
   const onLikeHandler = () => {
-    dispatch(updateItemThunk(_id, { liked: !liked }))
+    dispatch(updateItemThunk(_id, { id: _id, liked: !liked }))
   }
 
   const onArchiveHandler = () => {
-    dispatch(updateItemThunk(_id, { archived: !archived }))
+    dispatch(updateItemThunk(_id, { id: _id, archived: !archived }))
   }
 
   return (
     <Box>
+      <ReactTinyLink
+        cardSize='small'
+        showGraphic={true}
+        maxLine={4}
+        minLine={1}
+        url={url}
+        autoPlay
+      />{' '}
       <div className={classes.details}>
-        <ReactTinyLink
-          cardSize='small'
-          showGraphic={true}
-          maxLine={4}
-          minLine={1}
-          autoPlay
-          url={url}
-        />
         <div className={classes.controls}>
           {liked ? (
             <IconButton onClick={onLikeHandler}>
@@ -106,3 +116,27 @@ const Card = ({ _id, url, archived, home, liked }) => {
 }
 
 export default Card
+
+// {
+/* <Card className={classes.root}>
+      <div className={classes.details}>
+        <CardContent className={classes.content}>
+          <Typography component="h5" variant="h5">
+            {data.title}
+          </Typography>
+          <Typography className={classes.text} variant="subtitle2" color="textSecondary">
+          {data.text}
+          </Typography>
+          <Typography variant="subtitle1" color="textSecondary">
+            <Link >
+              {data.url}
+            </Link>
+          </Typography>
+        </CardContent>
+      <CardMedia
+        className={classes.cover}
+        image={data.img}
+        title="Live from space album cover"
+      />
+    </Card> */
+// }

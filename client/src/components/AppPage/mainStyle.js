@@ -103,7 +103,18 @@ const navMenuStyle = makeStyles((theme) => ({
     }
   },
   addFolderBtn: {
-    minWidth: '85px'
+    minWidth: '85px',
+    border: 'solid 1px black'
+  },
+  addFolder: {
+    // display: 'inline-flex',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'start',
+    padding: '10px 16px !important'
+    // boxSizing: 'border-box'
+    // minWidth: '85px',
+    // width: '101px'
   },
   modal: {
     display: 'flex',

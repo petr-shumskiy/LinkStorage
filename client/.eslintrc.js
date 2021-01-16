@@ -6,8 +6,8 @@ module.exports = {
   },
   extends: [
     'react-app',
-    // 'plugin:@typescript-eslint/recommended',
-    // 'prettier/@typescript-eslint',
+    'plugin:@typescript-eslint/recommended',
+    'prettier/@typescript-eslint',
     'plugin:react/recommended',
     'standard'
     // 'plugin:prettier/recommended'
@@ -32,7 +32,8 @@ module.exports = {
     'multiline-ternary': 'off',
     '@typescript-eslint': 0,
     'no-use-before-define': 'off',
-    '@typescript-eslint/no-use-before-define': ['error']
+    '@typescript-eslint/no-use-before-define': ['error'],
+    'react/prop-types': 0
   },
   settings: {
     react: {

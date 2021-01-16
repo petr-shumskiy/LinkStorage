@@ -47,7 +47,7 @@ const ItemsOfFolder: Function = ({
 const LinksContent = ({ items }: { items: Array<Item> }) => {
   const classes = mainStyle()
   const userFoldersData = useSelector(
-    ({ user }: { user: State }) => user.folders
+    ({ user }: { user: State }) => user.MenuItems
   )
 
   return (
@@ -58,11 +58,7 @@ const LinksContent = ({ items }: { items: Array<Item> }) => {
           key={1}
           path='/home'
           exact
-          render={() => (
-            <>
-              <Items items={items} linkType='home' />
-            </>
-          )}
+          render={() => <Items items={items} linkType='home' />}
         />
         <Route
           path='/liked'
@@ -70,17 +66,19 @@ const LinksContent = ({ items }: { items: Array<Item> }) => {
           render={() => <Items items={items} linkType='liked' />}
         />
         <Route
-          path='/archived'
+          path='/archive'
           exact
           render={() => <Items items={items} linkType='archived' />}
         />
-        {userFoldersData.map((folder) => {
+        {userFoldersData.map((item) => {
           return (
             <Route
-              key={folder}
-              path={`/${folder}`}
+              key={item.name}
+              path={item.link}
               exact
-              render={() => <ItemsOfFolder items={items} folderName={folder} />}
+              render={() => (
+                <ItemsOfFolder items={items} folderName={item.name} />
+              )}
             />
           )
         })}

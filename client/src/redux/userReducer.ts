@@ -1,5 +1,12 @@
+import FolderOpenIcon from '@material-ui/icons/FolderOpen'
+import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'
+import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
+import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
+
 import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import API from '../API/API'
+import { OverridableComponent } from '@material-ui/core/OverridableComponent'
+import { SvgIconTypeMap } from '@material-ui/core'
 
 export type Item = {
   _id: string
@@ -12,36 +19,103 @@ export type Item = {
   imageUrl: string
   folders: Array<string>
 }
+
+type ServerItem = {
+  _id: string
+  home: boolean
+  liked: boolean
+  archived: boolean
+  url: string
+}
+
+export type AsideMenuItem = {
+  _id: number
+  Icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>
+  name: string
+  link: string
+  isSelected: boolean
+  handleClickItem?: any
+}
 export interface State {
   isOpenedAddLinkModal: boolean
   items: Array<Item>
-  folders: Array<string>
+  MenuItems: Array<AsideMenuItem>
 }
 
 type URL = {
   url: string
 }
-type UpdateObjectType = {
+export type UpdateObjectType = {
   id: string
   liked?: boolean
   archived?: boolean
 }
 
-const findIndexById = (arr: Array<Item>, id: string) =>
-  arr.findIndex((item) => item._id === id)
+const findIndexById = (arr: any, id: string | number) =>
+  arr.findIndex((item: any) => item._id === id)
+
+const convertServerToUiItems = (items: any): Array<Item> => {
+  return items.map(
+    (item: any): Item => {
+      item.folders = []
+      item.header = ''
+      item.description = ''
+      item.imageUrl = ''
+      return item
+    }
+  )
+}
 
 const initialState: State = {
   isOpenedAddLinkModal: false,
   items: [],
-  folders: ['Folder1', 'Folder2']
+  MenuItems: [
+    {
+      _id: 0,
+      Icon: HomeOutlinedIcon,
+      name: 'Home',
+      link: '/home',
+      isSelected: true
+    },
+    {
+      _id: 1,
+      Icon: FavoriteBorderOutlinedIcon,
+      name: 'Liked',
+      link: '/liked',
+      isSelected: false
+    },
+    {
+      _id: 2,
+      Icon: ArchiveOutlinedIcon,
+      name: 'Archive',
+      link: '/archive',
+      isSelected: false
+    },
+    {
+      _id: 3,
+      Icon: FolderOpenIcon,
+      name: 'Folder1',
+      link: '/folder1',
+      isSelected: false
+    },
+    {
+      _id: 4,
+      Icon: FolderOpenIcon,
+      name: 'Folder2',
+      link: '/folder2',
+      isSelected: false
+    }
+  ]
 }
 
 export const userReducer = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setItems(state: State, action: PayloadAction<Array<Item>>) {
-      state.items = action.payload
+    setItems(state: State, action: PayloadAction<Array<ServerItem>>) {
+      // state.items = action.payload
+      const items = convertServerToUiItems(action.payload)
+      state.items = items
     },
 
     addItem(state: State, action: PayloadAction<URL>) {
@@ -80,6 +154,16 @@ export const userReducer = createSlice({
         item.archived = payload.archived
         item.home = !item.home
       }
+    },
+
+    setItemActive(state: State, action: PayloadAction<number>) {
+      const activeNow = state.MenuItems.findIndex(
+        (item) => item.isSelected === true
+      )
+      state.MenuItems[activeNow].isSelected = false
+
+      const id: number = action.payload
+      state.MenuItems[id].isSelected = true
     }
   }
 })
@@ -119,7 +203,7 @@ export const updateItemThunk = (
 ) => async (dispatch: Dispatch) => {
   try {
     await API.updateItem(id, payload)
-    dispatch(updateItem({ ...payload, id }))
+    dispatch(updateItem(payload))
   } catch (error) {
     console.log(error)
   }
@@ -130,7 +214,8 @@ export const {
   setItems,
   addItem,
   deleteItem,
-  updateItem
+  updateItem,
+  setItemActive
 } = userReducer.actions
 
 export default userReducer
