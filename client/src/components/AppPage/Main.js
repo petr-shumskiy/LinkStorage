@@ -1,227 +1,111 @@
 import React, { useEffect, useState } from 'react'
-import { AccountCircle } from '@material-ui/icons/'
-import MoreIcon from '@material-ui/icons/MoreVert'
-import SearchIcon from '@material-ui/icons/Search'
-import MenuIcon from '@material-ui/icons/Menu'
 import {
-  AppBar,
-  Button,
-  CssBaseline,
-  Drawer,
+  Container,
+  Grid,
   Hidden,
-  IconButton,
-  InputBase,
   Menu,
   MenuItem,
-  Toolbar,
-  Modal,
-  Backdrop
+  SwipeableDrawer,
+  withWidth
 } from '@material-ui/core'
-import { useTheme } from '@material-ui/core/styles'
-import mainStyle from './mainStyle'
+import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../redux/authReducer'
-import AddLinkModal from './addLinkModal'
-import AsidePanel from './AsidePanel.tsx'
-import { fetchItemsThunk, toggleAddLinkModal } from '../../redux/userReducer.ts'
-import LinksContent from './LinksContent'
+import { fetchItemsThunk } from '../../redux/userReducer.ts'
 import { Redirect } from 'react-router-dom'
+import { ItemsList } from './ItemList'
+import { NavPanel } from './NavPanel'
+import { Aside } from './Aside'
 
-const Main = () => {
-  const window = undefined // ?
-  const classes = mainStyle()
-  const theme = useTheme()
+const drawerWidth = 260
+const useStyles = makeStyles((theme) => ({
+  drawerPaper: {
+    width: drawerWidth
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3)
+  }
+}))
 
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null)
+function App({ width }) {
+  const classes = useStyles()
 
-  const isMenuOpen = Boolean(anchorEl)
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
-
-  const isOpenedAddLinkModal = useSelector(
-    ({ user }) => user.isOpenedAddLinkModal
-  )
   const dispatch = useDispatch()
-  const items = useSelector(({ user }) => user.items)
+  // const items = useSelector(({ user }) => user.items)
   const token = useSelector(({ auth }) => auth.token)
 
   useEffect(() => {
     dispatch(fetchItemsThunk())
   }, [dispatch, token])
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen)
-  }
-  const container =
-    window !== undefined ? () => window().document.body : undefined
+  const [isDrawerOpen, setDrawerState] = useState(false)
 
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget)
+  const closeDrawer = () => {
+    setDrawerState(false)
   }
-
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null)
+  const openDrawer = () => {
+    setDrawerState(true)
   }
 
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-    handleMobileMenuClose()
-  }
-
-  // const handleModalOpen = () => {
-  //   setModalOpen(true)
-  // }
-
-  const menuId = 'primary-search-account-menu'
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={() => dispatch(logout())}>Log out</MenuItem>
-    </Menu>
-  )
-
-  const mobileMenuId = 'primary-search-account-menu-mobile'
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem onClick={handleProfileMenuOpen}>Account</MenuItem>
-      <MenuItem onClick={() => dispatch(logout())}>Log out</MenuItem>
-    </Menu>
-  )
-
-  if (!token) {
-    return <Redirect to='/auth' />
-  }
-
+  const small = ['xs', 'sm']
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position='fixed' className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            color='inherit'
-            aria-label='open drawer'
-            edge='start'
-            onClick={handleDrawerToggle}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder='Search…'
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
-          <div className={classes.grow} />
-          <Button
-            className={classes.addFolderBtn}
-            type='button'
-            onClick={() => dispatch(toggleAddLinkModal())}
-          >
-            Add Link
-          </Button>
-          <Modal
-            open={isOpenedAddLinkModal}
-            onClose={() => dispatch(toggleAddLinkModal())}
-            aria-labelledby='transition-modal-title'
-            aria-describedby='transition-modal-description'
-            className={classes.modal}
-            closeAfterTransition
-            BackdropComponent={Backdrop}
-            BackdropProps={{
-              timeout: 300
+    <div className='App'>
+      <Container maxWidth='lg'>
+        <Grid container spacing={small.includes(width) ? 4 : 10}>
+          <Grid
+            item
+            container
+            xs={12}
+            color='black'
+            style={{
+              color: 'black'
             }}
           >
-            <AddLinkModal />
-          </Modal>
-          <div className={classes.sectionDesktop}>
-            <IconButton
-              edge='end'
-              aria-label='account of current user'
-              aria-controls={menuId}
-              aria-haspopup='true'
-              onClick={handleProfileMenuOpen}
-              color='inherit'
-            >
-              <AccountCircle />
-            </IconButton>
-          </div>
-          <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label='show more'
-              aria-controls={mobileMenuId}
-              aria-haspopup='true'
-              onClick={handleMobileMenuOpen}
-              color='inherit'
-            >
-              <MoreIcon />
-            </IconButton>
-          </div>
-        </Toolbar>
-      </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
-
-      <nav className={classes.drawer} aria-label='mailbox folders'>
-        <Hidden smUp implementation='css'>
-          <Drawer
-            container={container}
-            variant='temporary'
-            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper
-            }}
-            ModalProps={{
-              keepMounted: true // Better open performance on mobile.
-            }}
-          >
-            <AsidePanel />
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation='css'>
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper
-            }}
-            variant='permanent'
-            open
-          >
-            <AsidePanel />
-          </Drawer>
-        </Hidden>
-      </nav>
-      <LinksContent items={items} />
+            <NavPanel openDrawer={openDrawer} />
+          </Grid>
+          <Grid item xs={false} md={1} style={{ marginRight: '7rem' }}>
+            <Hidden only={['xs', 'sm']}>
+              <Aside />
+            </Hidden>
+            {small.includes(width) ? (
+              <SwipeableDrawer
+                anchor={'left'}
+                disableBackdropTransition
+                onClose={closeDrawer}
+                onOpen={openDrawer}
+                variant='temporary'
+                ModalProps={{ keepMounted: true }}
+                classes={{
+                  paper: classes.drawerPaper
+                }}
+                open={isDrawerOpen}
+              >
+                <Aside />
+              </SwipeableDrawer>
+            ) : null}
+          </Grid>
+          <Grid item xs={12} md={9}>
+            <Main />
+          </Grid>
+        </Grid>
+      </Container>
     </div>
   )
 }
 
-export default Main
+function Main() {
+  // if (!token) {
+  //   return <Redirect to='/auth' />
+  // }
+
+  return (
+    <Grid container direction='column'>
+      <Grid item xs={12} md={12}>
+        <ItemsList />
+      </Grid>
+    </Grid>
+  )
+}
+
+export default withWidth()(App)

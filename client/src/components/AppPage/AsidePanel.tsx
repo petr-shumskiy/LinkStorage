@@ -1,5 +1,4 @@
-import React, { Dispatch, useState } from 'react'
-import mainStyle from './mainStyle'
+import React, { useState } from 'react'
 
 import {
   Button,
@@ -9,15 +8,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  TextField,
-  Typography,
-  withStyles
+  Typography
 } from '@material-ui/core'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 import { AsideMenuItem, setItemActive, State } from '../../redux/userReducer'
-import { Height } from '@material-ui/icons'
 
 const MenuItems = () => {
   const defaultMuenuItemsData: Array<AsideMenuItem> = useSelector(
@@ -54,7 +50,6 @@ const MenuItems = () => {
 }
 
 const AsidePanel = () => {
-  const classes = mainStyle()
   const [isEditMode, setEditMode] = useState(false)
   const [folderName, setFolderName] = useState('')
 
@@ -68,8 +63,8 @@ const AsidePanel = () => {
 
   return (
     <div>
-      <div className={classes.toolbar}>
-        <Typography className={classes.logo} variant='h6' noWrap>
+      <div>
+        <Typography variant='h6' noWrap>
           LinkStorage
         </Typography>
       </div>
@@ -77,11 +72,8 @@ const AsidePanel = () => {
       <List>
         <MenuItems />
 
-        <div className={classes.addFolder}>
-          <Button
-            className={classes.addFolderBtn}
-            onFocus={() => setEditMode(!isEditMode)}
-          >
+        <div>
+          <Button onFocus={() => setEditMode(!isEditMode)}>
             {isEditMode ? (
               <InputBase
                 // className={classes.addFolderInput}

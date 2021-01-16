@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { Item, State } from '../../redux/userReducer'
 import Card from './Card'
-import mainStyle from './mainStyle'
 
 type LinkType = 'home' | 'liked' | 'archived'
 
@@ -45,14 +44,13 @@ const ItemsOfFolder: Function = ({
 }
 
 const LinksContent = ({ items }: { items: Array<Item> }) => {
-  const classes = mainStyle()
   const userFoldersData = useSelector(
     ({ user }: { user: State }) => user.MenuItems
   )
 
   return (
-    <main className={classes.content}>
-      <div className={classes.toolbar} />
+    <main>
+      <div />
       <Switch>
         <Route
           key={1}

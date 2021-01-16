@@ -1,9 +1,11 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 import Main from './AppPage/Main'
 import Auth from './AuthPage/Auth'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import Confirmation from './AuthPage/Confirmation'
+import { ThemeProvider } from '@material-ui/core'
+import { theme } from '../theme'
+import { useSelector } from 'react-redux'
 
 const App = () => {
   const token = useSelector(({ auth }) => auth.token)
@@ -20,10 +22,26 @@ const App = () => {
         exact
         render={() => (token ? <Redirect to='/' /> : <Auth />)}
       />
-      <Route path='/home' exact render={() => <Main />} />
+      <Route
+        path='/home'
+        exact
+        render={() => (
+          <ThemeProvider theme={theme}>
+            <Main />
+          </ThemeProvider>
+        )}
+      />
       <Route
         path='/'
-        render={() => (token ? <Main /> : <Redirect to='/auth' />)}
+        render={() =>
+          token ? (
+            <ThemeProvider theme={theme}>
+              <Main />
+            </ThemeProvider>
+          ) : (
+            <Redirect to='/auth' />
+          )
+        }
       />
     </Switch>
   )
