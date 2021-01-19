@@ -31,23 +31,23 @@ export const theme = createMuiTheme({
       fontFamily: 'Bree Serif'
     },
     h2: {
-      fontSize: 'calc(8px + 2vmin)',
+      fontSize: 'calc(6px + 2vmin)',
       fontFamily: 'Open Sans',
       fontWeight: '600',
       color: '#111'
     },
     body1: {
       color: '#222',
-      fontSize: 'calc(8px + 1vmin)',
+      fontSize: 'calc(9px + 1vmin)',
       fontFamily: 'Open Sans',
       textTransform: 'none'
     },
     body2: {
-      fontSize: 'calc(10px + 1vmin)',
+      fontSize: 'calc(8px + 1vmin)',
       color: '#404040'
     },
     subtitle1: {
-      fontSize: 'calc(10px + 1vmin)',
+      fontSize: 'calc(8px + 1vmin)',
       color: '#7a7a7a'
     },
     subtitle2: {

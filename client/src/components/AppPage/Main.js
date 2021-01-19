@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import {
+  Box,
   Container,
+  Divider,
   Grid,
   Hidden,
-  Menu,
-  MenuItem,
   SwipeableDrawer,
+  Typography,
   withWidth
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch, useSelector } from 'react-redux'
-import { logout } from '../../redux/authReducer'
 import { fetchItemsThunk } from '../../redux/userReducer.ts'
-import { Redirect } from 'react-router-dom'
 import { ItemsList } from './ItemList'
 import { NavPanel } from './NavPanel'
-import { Aside } from './Aside'
+import { AsideNav } from './AsideNav/AsideNav'
+import { fetchFoldersThunk } from '../../redux/userReducer'
 
-const drawerWidth = 260
+const drawerWidth = 220
 const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth
@@ -25,6 +25,33 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     padding: theme.spacing(3)
+  },
+
+  noContentWrapper: {
+    minHeight: '160px'
+  },
+
+  MainContent: {
+    marginLeft: 220,
+    marginTop: theme.spacing(9),
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: 0,
+      paddingLeft: 0,
+      paddingRight: 0
+    }
+  },
+  GridContainer: {
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: 0,
+      paddingLeft: 0,
+      paddingRight: 0
+    }
+  },
+  mainContainer: {
+    [theme.breakpoints.down('sm')]: {
+      paddingLeft: theme.spacing(1),
+      paddingRight: theme.spacing(1)
+    }
   }
 }))
 
@@ -32,8 +59,13 @@ function App({ width }) {
   const classes = useStyles()
 
   const dispatch = useDispatch()
-  // const items = useSelector(({ user }) => user.items)
+  useEffect(() => {
+    dispatch(fetchFoldersThunk())
+    dispatch(fetchItemsThunk())
+  }, [dispatch])
+
   const token = useSelector(({ auth }) => auth.token)
+  const items = useSelector(({ user }) => user.items)
 
   useEffect(() => {
     dispatch(fetchItemsThunk())
@@ -49,10 +81,19 @@ function App({ width }) {
   }
 
   const small = ['xs', 'sm']
+
+  const main = (
+    <Grid container direction='column'>
+      <Grid item xs={12} md={12}>
+        {items.length ? <ItemsList items={items} /> : <NoContent />}
+      </Grid>
+    </Grid>
+  )
+
   return (
     <div className='App'>
-      <Container maxWidth='lg'>
-        <Grid container spacing={small.includes(width) ? 4 : 10}>
+      <Container maxWidth='lg' className={classes.mainContainer}>
+        <Grid container className={classes.GridContainer}>
           <Grid
             item
             container
@@ -64,29 +105,27 @@ function App({ width }) {
           >
             <NavPanel openDrawer={openDrawer} />
           </Grid>
-          <Grid item xs={false} md={1} style={{ marginRight: '7rem' }}>
-            <Hidden only={['xs', 'sm']}>
-              <Aside />
-            </Hidden>
-            {small.includes(width) ? (
-              <SwipeableDrawer
-                anchor={'left'}
-                disableBackdropTransition
-                onClose={closeDrawer}
-                onOpen={openDrawer}
-                variant='temporary'
-                ModalProps={{ keepMounted: true }}
-                classes={{
-                  paper: classes.drawerPaper
-                }}
-                open={isDrawerOpen}
-              >
-                <Aside />
-              </SwipeableDrawer>
-            ) : null}
-          </Grid>
-          <Grid item xs={12} md={9}>
-            <Main />
+          <Hidden only={['xs', 'sm']}>
+            <AsideNav swipeable={false} />
+          </Hidden>
+          {small.includes(width) ? (
+            <SwipeableDrawer
+              anchor={'left'}
+              disableBackdropTransition
+              onClose={closeDrawer}
+              onOpen={openDrawer}
+              variant='temporary'
+              ModalProps={{ keepMounted: true }}
+              classes={{
+                paper: classes.drawerPaper
+              }}
+              open={isDrawerOpen}
+            >
+              <AsideNav swipeable={true} />
+            </SwipeableDrawer>
+          ) : null}
+          <Grid item xs={12} md={8} className={classes.MainContent}>
+            {main}
           </Grid>
         </Grid>
       </Container>
@@ -94,17 +133,22 @@ function App({ width }) {
   )
 }
 
-function Main() {
-  // if (!token) {
-  //   return <Redirect to='/auth' />
-  // }
-
+function NoContent() {
   return (
-    <Grid container direction='column'>
-      <Grid item xs={12} md={12}>
-        <ItemsList />
-      </Grid>
-    </Grid>
+    <Container maxWidth='lg' md={12} xs={12}>
+      <Box
+        minHeight={160}
+        display='flex'
+        alignItems='center'
+        direction='column'
+        justifyContent='center'
+      >
+        <Typography variant='body1' style={{ opacity: 0.7 }}>
+          There are no items yet
+        </Typography>
+      </Box>
+      <Divider />
+    </Container>
   )
 }
 

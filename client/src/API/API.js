@@ -39,13 +39,19 @@ class API {
   }
 
   // USER
+  fetchFolders = () => {
+    // const response = await userInstance.get('/folders')
+    // return response
+    return ['art', 'programming', 'movies', 'books']
+  }
+
   fetchAllItems = async () => {
     const response = await userInstance.get('/link')
     return response
   }
 
-  addItem = async (url) => {
-    const response = await userInstance.post('/link', url)
+  addItem = async (item) => {
+    const response = await userInstance.post('/link', { item })
     return response
   }
 

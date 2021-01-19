@@ -13,7 +13,7 @@ function createItemController(req, res) {
 }
 
 router.post('/link', hasAuth, (req, res) => {
-  return createItemController(req, res).addItem(req.user.email, req.body.url)
+  return createItemController(req, res).addItem(req.user.email, req.body.item)
 })
 
 router.get('/link', hasAuth, (req, res) => {

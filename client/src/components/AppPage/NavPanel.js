@@ -22,6 +22,8 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { theme } from '../../theme'
 import { useDispatch } from 'react-redux'
 import { logout } from '../../redux/authReducer'
+import { addItemThunk } from '../../redux/userReducer'
+const { ReactTinyLink } = require('react-tiny-link')
 
 const NavButton = styled(Button)({
   '&:hover': {
@@ -42,7 +44,7 @@ const useStyles = makeStyles((theme) =>
       marginRight: 'auto',
       width: '100%',
       [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
+        marginLeft: theme.spacing(0),
         width: 'auto'
       }
     },
@@ -80,13 +82,32 @@ const useStyles = makeStyles((theme) =>
     addLinkInput: {
       minWidth: '30vw'
     },
+    navBar: {
+      maxWidth: 1200,
+      position: 'fixed',
+      top: 0,
+      backgroundColor: 'white',
+      width: 'inherit',
+      zIndex: 1,
+      [theme.breakpoints.down('sm')]: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        whiteSpace: 'nowrap',
+        left: 0,
+        paddingTop: 8,
+        paddingBottom: 8,
+        borderBottom: '0.5px solid rgba(0,0,0,0.1)',
+        width: '100%'
+      }
+    },
 
     navWrapper: {
-      [theme.breakpoints.down('md')]: {
+      display: 'flex',
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 170,
         minHeight: 45,
         position: 'relative',
-        display: 'flex',
-        minWidth: 240
+        display: 'flex'
       }
     },
     logoTitle: {
@@ -120,13 +141,13 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
       open={anchorEl !== null}
       onClose={onMenuClosed}
       variant='menu'
-      anchorOrigin={{
-        vertical: -45,
-        horizontal: 'center'
-      }}
+      // anchorOrigin={{
+      //   vertical: null,
+      //   horizontal: 'center'
+      // }}
       transformOrigin={{
         vertical: -45,
-        horizontal: 'center'
+        horizontal: -50
       }}
     >
       <MenuItem
@@ -141,8 +162,33 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
   )
 }
 
+const mockImageUrl =
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBvg8J2136rRRC-MGBdmSfYXV56XKO-yKqyg&usqp=CAU'
+
 function AddLinkDialog({ handleClose, open }) {
   const classes = useStyles()
+  const [isSubmitted, setSubmitted] = useState(false)
+  const [inputValue, setInputValue] = useState('')
+  const dispatch = useDispatch()
+
+  const handleScrappedData = async ({
+    title,
+    url,
+    description,
+    content,
+    image
+  }) => {
+    const item = {
+      title: title || 'The Valid title must be here but it does not :)',
+      url: inputValue,
+      description: description || content || '',
+      logoUrl: image[0] || mockImageUrl
+    }
+    await dispatch(addItemThunk(item))
+    setSubmitted(false)
+    handleClose()
+  }
+
   return (
     <Dialog
       open={open}
@@ -151,6 +197,14 @@ function AddLinkDialog({ handleClose, open }) {
       aria-describedby='alert-dialog-description'
       maxWidth='xl'
     >
+      {isSubmitted ? (
+        <ReactTinyLink
+          url={inputValue}
+          onSuccess={handleScrappedData}
+          style={{ display: 'none' }}
+        />
+      ) : null}
+
       <DialogTitle id='form-dialog-title'>{'Add a link'}</DialogTitle>
       <DialogContent>
         <Grid container alignItems='center' justify='space-between' spacing={1}>
@@ -162,7 +216,9 @@ function AddLinkDialog({ handleClose, open }) {
               margin='dense'
               id='name'
               label='url'
-              onSubmit={() => console.log('submit')}
+              onChange={(e) => setInputValue(e.currentTarget.value)}
+              value={inputValue}
+              onSubmit={() => setSubmitted(true)}
               classes={{
                 root: classes.addLinkInput
               }}
@@ -173,7 +229,11 @@ function AddLinkDialog({ handleClose, open }) {
             xs={2}
             style={{ display: 'flex', justifyContent: 'flex-end' }}
           >
-            <Button onClick={handleClose} color='primary' variant='contained'>
+            <Button
+              onClick={() => setSubmitted(true)}
+              color='primary'
+              variant='contained'
+            >
               Add
             </Button>
           </Grid>
@@ -189,7 +249,6 @@ export function NavPanel({ openDrawer }) {
   const [anchorEl, setAnchorEl] = useState(null)
 
   const onMenuClicked = (e) => {
-    console.log(e.currentTarget)
     setAnchorEl(e.currentTarget)
   }
 
@@ -204,35 +263,27 @@ export function NavPanel({ openDrawer }) {
   const handleClose = () => {
     setOpen(false)
   }
+
   const classes = useStyles()
   return (
-    <Grid
-      container
-      style={{
-        position: 'fixed',
-        top: 0,
-        backgroundColor: 'white',
-        maxWidth: 1280,
-        zIndex: 1
-      }}
-    >
+    <Grid container className={classes.navBar}>
+      <Hidden mdUp>
+        <IconButton
+          edge='start'
+          className={classes.menuButton}
+          color='primary'
+          onClick={openDrawer}
+        >
+          <MenuIcon />
+        </IconButton>
+      </Hidden>
       <Grid item xs={12} md={2} className={classes.navWrapper}>
-        <Hidden mdUp>
-          <IconButton
-            edge='start'
-            className={classes.menuButton}
-            color='primary'
-            onClick={openDrawer}
-          >
-            <MenuIcon />
-          </IconButton>
-        </Hidden>
         <Typography variant='h1' className={classes.logoTitle}>
           Link Storage
         </Typography>
       </Grid>
       <Hidden smDown>
-        <Grid item md={9} sm={8} container style={{}}>
+        <Grid item md={9} sm={8} container style={{ paddingLeft: 20 }}>
           <Grid
             container
             style={{

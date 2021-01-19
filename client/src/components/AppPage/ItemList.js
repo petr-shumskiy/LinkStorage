@@ -1,5 +1,9 @@
 import {
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   Hidden,
@@ -11,10 +15,14 @@ import React, { useState } from 'react'
 import FolderIcon from '@material-ui/icons/Folder'
 import {
   ArchiveRounded,
+  Delete,
   DeleteRounded,
   FavoriteBorderOutlined
 } from '@material-ui/icons'
 import { theme } from '../../theme'
+import { useRouteMatch } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { deleteItemThunk } from '../../redux/userReducer'
 
 const customStyles = {
   '&:hover': {
@@ -33,22 +41,47 @@ const useStyle = makeStyles((theme) =>
   createStyles({
     root: {
       opacity: 0.7,
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      maxWidth: 'inherit',
+      [theme.breakpoints.down('md')]: {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      },
       '&:hover': {
         opacity: 1,
         color: theme.palette.primary.main,
         cursor: 'pointer'
       }
     },
+    wrapText: {
+      maxWidth: 'inherit',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    },
     bgImage: {
-      height: '100%',
+      height: '70%',
       width: '100%',
       borderRadius: theme.shape.borderRadius,
-      backgroundImage: 'url(https://source.unsplash.com/random)',
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
-      backgroundSize: 'cover',
-      [theme.breakpoints.down('sm')]: {
-        height: '80%'
+      backgroundSize: 'cover'
+    },
+    hide: {
+      display: 'none'
+    },
+    restrictedMaxWidth: {
+      maxWidth: '100%'
+    },
+    editButton: {
+      position: 'absolute',
+      top: -theme.spacing(1),
+      right: 0,
+      [theme.breakpoints.down('md')]: {
+        top: -theme.spacing(2)
       }
     }
   })
@@ -58,22 +91,51 @@ const StyledIconButton = styled(IconButton)(customStyles)
 
 const StyledButton = styled(Button)(customStyles)
 
-function ItemActions({ isActive }) {
+function ItemActions({ isActive, deleteItemHandler }) {
+  const [isOpen, setIsOpen] = useState(false)
+
   return (
-    <div style={{ display: [isActive ? '' : 'none'] }}>
-      <StyledIconButton>
-        <FavoriteBorderOutlined fontSize='inherit' />{' '}
-      </StyledIconButton>
-      <StyledIconButton>
-        <FolderIcon fontSize='inherit' />{' '}
-      </StyledIconButton>
-      <StyledIconButton>
-        <ArchiveRounded fontSize='inherit' />{' '}
-      </StyledIconButton>
-      <StyledIconButton>
-        <DeleteRounded fontSize='inherit' />{' '}
-      </StyledIconButton>
-    </div>
+    <>
+      <Dialog open={isOpen} siz>
+        <DialogTitle>
+          <Typography variant='h2'>Are you sure?</Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant='subtitle1'>
+            This will permanently delete link
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button size='small' onClick={() => setIsOpen(false)}>
+            cancel
+          </Button>
+          <Button
+            size='small'
+            color='primary'
+            onClick={() => {
+              deleteItemHandler()
+              setIsOpen(false)
+            }}
+          >
+            ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <div style={{ display: [isActive ? '' : 'none'] }}>
+        <StyledIconButton>
+          <FavoriteBorderOutlined fontSize='inherit' />{' '}
+        </StyledIconButton>
+        <StyledIconButton>
+          <FolderIcon fontSize='inherit' />{' '}
+        </StyledIconButton>
+        <StyledIconButton>
+          <ArchiveRounded fontSize='inherit' />{' '}
+        </StyledIconButton>
+        <StyledIconButton onClick={() => setIsOpen(true)}>
+          <DeleteRounded fontSize='inherit' />{' '}
+        </StyledIconButton>
+      </div>
+    </>
   )
 }
 
@@ -91,8 +153,15 @@ function DateOfTitle({ isActive }) {
   )
 }
 
-function LinkItem() {
+function LinkItem({ item }) {
+  const { _id: id, url, title, description, logoUrl } = item
   const classes = useStyle()
+  const dispatch = useDispatch()
+
+  const onDeleteItem = (id) => {
+    dispatch(deleteItemThunk(id))
+  }
+
   const [isActive, setActive] = useState(false)
   return (
     <div
@@ -101,19 +170,19 @@ function LinkItem() {
     >
       <Grid
         container
+        spacing={1}
         item
         xs={12}
         md={12}
         style={{
-          color: 'black',
-          paddingLeft: '1rem'
+          color: 'black'
         }}
       >
         <Grid
           container
           item
-          md={8}
-          sm={7}
+          md={10}
+          sm={10}
           xs={12}
           direction='column'
           style={{
@@ -121,12 +190,9 @@ function LinkItem() {
           }}
         >
           <StyledButton
-            // size="small"
+            className={classes.editButton}
             style={{
-              display: [isActive ? 'block' : 'none'],
-              position: 'absolute',
-              top: 0,
-              right: '8%'
+              display: [isActive ? 'block' : 'none']
             }}
           >
             <Typography variant='body1' color='inherit'>
@@ -134,20 +200,27 @@ function LinkItem() {
             </Typography>
           </StyledButton>
 
-          <Grid item>
-            <Typography variant='h2'> Title</Typography>
+          {/* title */}
+          <Grid item className={classes.restrictedMaxWidth}>
+            <Typography
+              variant='h2'
+              className={classes.wrapText}
+              style={{ paddingRight: theme.spacing(8) }}
+            >
+              {title}
+            </Typography>
           </Grid>
-          <Grid item>
+
+          {/* url */}
+          <Grid item className={classes.restrictedMaxWidth}>
             <Typography variant='subtitle1' classes={{ root: classes.root }}>
-              subtitle.org
+              {url}
             </Typography>
           </Grid>
-          <Grid item>
-            <Typography variant='body2'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque
-              quaerat ab dignissimos minus id ut recusandae reiciendis
-              doloremque itaque in!
-            </Typography>
+
+          {/* description */}
+          <Grid item className={classes.restrictedMaxWidth}>
+            <Typography variant='body2'>{description}</Typography>
           </Grid>
           <Grid
             item
@@ -155,22 +228,31 @@ function LinkItem() {
             alignItems='center'
             style={{ minHeight: '40px' }}
           >
-            <ItemActions isActive={isActive} />
+            <ItemActions
+              isActive={isActive}
+              deleteItemHandler={() => onDeleteItem(id)}
+            />
             <DateOfTitle isActive={!isActive} />
           </Grid>
         </Grid>
+
+        {/* image */}
         <Hidden only={['xs']}>
           <Grid
             item
             container
-            md={4}
-            sm={4}
+            md={2}
+            sm={2}
             xs={false}
-            style={{ padding: 5 }}
             justify='center'
             alignItems='center'
           >
-            <div className={classes.bgImage}></div>
+            <div
+              className={classes.bgImage}
+              style={{
+                backgroundImage: 'url(' + logoUrl + ')'
+              }}
+            ></div>
           </Grid>
         </Hidden>
       </Grid>
@@ -178,7 +260,7 @@ function LinkItem() {
         style={{
           backgroundColor: 'black',
           width: '100%',
-          margin: '0.5rem 0 1rem 1rem',
+          margin: '0.5rem 0 1rem 0rem',
           opacity: 0.2
         }}
       />
@@ -186,8 +268,11 @@ function LinkItem() {
   )
 }
 
-export function ItemsList() {
-  return [1, 2, 3, 4].map((key) => {
-    return <LinkItem key={key} />
-  })
+export function ItemsList({ items }) {
+  const category = useRouteMatch().path.split('/')[1]
+  return items
+    .filter((item) => item[category])
+    .map((item) => {
+      return <LinkItem key={item._id} item={item} />
+    })
 }

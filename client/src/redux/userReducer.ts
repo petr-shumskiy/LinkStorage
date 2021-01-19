@@ -1,8 +1,3 @@
-import FolderOpenIcon from '@material-ui/icons/FolderOpen'
-import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined'
-import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined'
-import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined'
-
 import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import API from '../API/API'
 import { OverridableComponent } from '@material-ui/core/OverridableComponent'
@@ -14,18 +9,10 @@ export type Item = {
   liked: boolean
   archived: boolean
   url: string
-  header: string
+  title: string
   description: string
   imageUrl: string
   folders: Array<string>
-}
-
-type ServerItem = {
-  _id: string
-  home: boolean
-  liked: boolean
-  archived: boolean
-  url: string
 }
 
 export type AsideMenuItem = {
@@ -39,12 +26,10 @@ export type AsideMenuItem = {
 export interface State {
   isOpenedAddLinkModal: boolean
   items: Array<Item>
-  MenuItems: Array<AsideMenuItem>
+  categories: string[]
+  folders: string[]
 }
 
-type URL = {
-  url: string
-}
 export type UpdateObjectType = {
   id: string
   liked?: boolean
@@ -54,87 +39,23 @@ export type UpdateObjectType = {
 const findIndexById = (arr: any, id: string | number) =>
   arr.findIndex((item: any) => item._id === id)
 
-const convertServerToUiItems = (items: any): Array<Item> => {
-  return items.map(
-    (item: any): Item => {
-      item.folders = []
-      item.header = ''
-      item.description = ''
-      item.imageUrl = ''
-      return item
-    }
-  )
-}
-
 const initialState: State = {
   isOpenedAddLinkModal: false,
   items: [],
-  MenuItems: [
-    {
-      _id: 0,
-      Icon: HomeOutlinedIcon,
-      name: 'Home',
-      link: '/home',
-      isSelected: true
-    },
-    {
-      _id: 1,
-      Icon: FavoriteBorderOutlinedIcon,
-      name: 'Liked',
-      link: '/liked',
-      isSelected: false
-    },
-    {
-      _id: 2,
-      Icon: ArchiveOutlinedIcon,
-      name: 'Archive',
-      link: '/archive',
-      isSelected: false
-    },
-    {
-      _id: 3,
-      Icon: FolderOpenIcon,
-      name: 'Folder1',
-      link: '/folder1',
-      isSelected: false
-    },
-    {
-      _id: 4,
-      Icon: FolderOpenIcon,
-      name: 'Folder2',
-      link: '/folder2',
-      isSelected: false
-    }
-  ]
+  categories: [
+    'home',
+    'liked',
+    'archived'
+  ],
+  folders: []
 }
 
 export const userReducer = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setItems(state: State, action: PayloadAction<Array<ServerItem>>) {
-      // state.items = action.payload
-      const items = convertServerToUiItems(action.payload)
-      state.items = items
-    },
-
-    addItem(state: State, action: PayloadAction<URL>) {
-      const item: Item = {
-        _id: state.items.length.toString(),
-        home: true,
-        liked: false,
-        archived: false,
-        url: action.payload.url,
-        description: '',
-        header: '',
-        imageUrl: '',
-        folders: []
-      }
-      state.items.push(item)
-    },
-
-    deleteItem(state: State, action: PayloadAction<string>) {
-      state.items = state.items.filter((item) => item._id !== action.payload)
+    setItems(state: State, action: PayloadAction<Item[]>) {
+      state.items = action.payload
     },
 
     toggleAddLinkModal(state: State) {
@@ -155,18 +76,21 @@ export const userReducer = createSlice({
         item.home = !item.home
       }
     },
-
-    setItemActive(state: State, action: PayloadAction<number>) {
-      const activeNow = state.MenuItems.findIndex(
-        (item) => item.isSelected === true
-      )
-      state.MenuItems[activeNow].isSelected = false
-
-      const id: number = action.payload
-      state.MenuItems[id].isSelected = true
+    setListOfFolders(state: State, action: PayloadAction<string[]>) {
+      const { payload } = action
+      state.folders = payload
     }
   }
 })
+
+export const fetchFoldersThunk = () => (dispatch: Dispatch) => {
+  try {
+    const res: string[] = API.fetchFolders()
+    dispatch(setListOfFolders(res))
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 export const fetchItemsThunk = () => async (dispatch: Dispatch) => {
   try {
@@ -177,11 +101,10 @@ export const fetchItemsThunk = () => async (dispatch: Dispatch) => {
   }
 }
 
-export const addItemThunk = (url: URL) => async (dispatch: Dispatch) => {
+export const addItemThunk = (item: Item) => async (dispatch: Dispatch) => {
   try {
-    await API.addItem(url)
-    dispatch(addItem(url))
-    dispatch(toggleAddLinkModal())
+    const res = await API.addItem(item)
+    dispatch(setItems(res.data))
   } catch (error) {
     console.log(error.message)
   }
@@ -189,8 +112,8 @@ export const addItemThunk = (url: URL) => async (dispatch: Dispatch) => {
 
 export const deleteItemThunk = (id: string) => async (dispatch: Dispatch) => {
   try {
-    await API.deleteItem(id)
-    dispatch(deleteItem(id))
+    const res = await API.deleteItem(id)
+    dispatch(setItems(res.data))
   } catch (error) {
     // TODO logic for catch
     console.log(error.message)
@@ -212,10 +135,8 @@ export const updateItemThunk = (
 export const {
   toggleAddLinkModal,
   setItems,
-  addItem,
-  deleteItem,
   updateItem,
-  setItemActive
+  setListOfFolders
 } = userReducer.actions
 
 export default userReducer

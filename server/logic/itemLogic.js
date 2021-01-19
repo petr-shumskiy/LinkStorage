@@ -1,12 +1,14 @@
 const User = require('../models/User')
 
 class ItemLogic {
-  async addItem(email, itemUrl) {
-    const user = await User.findOne({ email })
+  async addItem(email, item) {
+    let user = await User.findOne({ email })
 
-    user.items.push({ url: itemUrl })
-
+    user.items.push(item)
     await user.save()
+
+    user = await User.findOne({ email })
+    return user.items
   }
 
   async getItems(email) {
@@ -26,6 +28,8 @@ class ItemLogic {
         }
       }
     )
+    const user = await User.findOne({ email })
+    return user.items
   }
 
   async updateItem(email, itemId, item) {
