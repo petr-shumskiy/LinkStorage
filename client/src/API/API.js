@@ -2,7 +2,15 @@
 import { create } from 'axios'
 
 const token = localStorage.getItem('token')
-console.log(token)
+
+function setHeader(token) {
+  return {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      Authorization: 'Bearer ' + token
+    }
+  }
+}
 
 const userInstance = create({
   baseURL: '/api/user',
@@ -39,14 +47,18 @@ class API {
   }
 
   // USER
-  fetchFolders = () => {
-    // const response = await userInstance.get('/folders')
-    // return response
-    return ['art', 'programming', 'movies', 'books']
+  fetchFolders = async () => {
+    const response = await userInstance.get('/folder')
+    return response
   }
 
-  fetchAllItems = async () => {
-    const response = await userInstance.get('/link')
+  addFolder = async (name) => {
+    const response = await userInstance.post('/folder', { name })
+    return response
+  }
+
+  fetchAllItems = async (token) => {
+    const response = await userInstance.get('/link', setHeader(token))
     return response
   }
 

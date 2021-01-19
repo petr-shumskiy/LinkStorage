@@ -67,8 +67,8 @@ export const sendSignInData = (data) => async (dispatch) => {
   try {
     const res = await API.sendSignInData(data)
     dispatch(toggleProgressSignIn())
-    dispatch(setToken(res.data.token))
     localStorage.setItem('token', res.data.token)
+    dispatch(setToken(res.data.token))
   } catch (err) {
     dispatch({ type: 'RESET_SIGN_IN_PASSWORD' })
     dispatch(stopSubmit('signIn', { _error: err.response.data.message }))

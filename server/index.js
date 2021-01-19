@@ -8,7 +8,7 @@ require('dotenv').config()
 
 const authRouter = require('./routes/authRoutes')
 const itemRouter = require('./routes/itemRoutes')
-// const folderRouter = require('./routes/folderRoutes')
+const folderRouter = require('./routes/folderRoutes')
 
 const PORT = config.get('serverPort')
 const MONGO_URI = process.env.MONGO_URI
@@ -20,7 +20,7 @@ app.use(cors({ origin: '*' }))
 
 app.use('/api/auth', authRouter)
 app.use('/api/user', itemRouter)
-// app.use('/api/user', folderRouter)
+app.use('/api/user', folderRouter)
 
 const start = async () => {
   try {

@@ -6,17 +6,16 @@ import { useSelector } from 'react-redux'
 import { State } from '../../../redux/userReducer'
 
 export function Folders() {
-  // const userFolders = ['programming', 'art', 'inspiration']
   const userFolders = useSelector(({ user }: { user: State }) => user.folders)
 
   return (
     <List>
-      {userFolders.map((label) => (
+      {userFolders.map((folder) => (
         <NavItem
-          key={label}
-          text={label}
+          key={folder._id}
+          text={folder.name}
           Icon={FolderOpenOutlined}
-          to={'/' + label}
+          to={'/' + folder.name}
         />
       ))}
     </List>

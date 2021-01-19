@@ -24,10 +24,9 @@ export type AsideMenuItem = {
   handleClickItem?: any
 }
 export interface State {
-  isOpenedAddLinkModal: boolean
-  items: Array<Item>
+  items: Item[]
   categories: string[]
-  folders: string[]
+  folders: Folder[]
 }
 
 export type UpdateObjectType = {
@@ -36,11 +35,15 @@ export type UpdateObjectType = {
   archived?: boolean
 }
 
+export type Folder = {
+  _id: string
+  name: string
+}
+
 const findIndexById = (arr: any, id: string | number) =>
   arr.findIndex((item: any) => item._id === id)
 
 const initialState: State = {
-  isOpenedAddLinkModal: false,
   items: [],
   categories: [
     'home',
@@ -58,10 +61,6 @@ export const userReducer = createSlice({
       state.items = action.payload
     },
 
-    toggleAddLinkModal(state: State) {
-      state.isOpenedAddLinkModal = !state.isOpenedAddLinkModal
-    },
-
     updateItem(state: State, action: PayloadAction<UpdateObjectType>) {
       const { payload } = action
       const idx = findIndexById(state.items, payload.id)
@@ -76,25 +75,25 @@ export const userReducer = createSlice({
         item.home = !item.home
       }
     },
-    setListOfFolders(state: State, action: PayloadAction<string[]>) {
+    setListOfFolders(state: State, action: PayloadAction<Folder[]>) {
       const { payload } = action
       state.folders = payload
     }
   }
 })
 
-export const fetchFoldersThunk = () => (dispatch: Dispatch) => {
+export const fetchFoldersThunk = () => async (dispatch: Dispatch) => {
   try {
-    const res: string[] = API.fetchFolders()
-    dispatch(setListOfFolders(res))
+    const res = await API.fetchFolders()
+    dispatch(setListOfFolders(res.data))
   } catch (error) {
     console.log(error)
   }
 }
 
-export const fetchItemsThunk = () => async (dispatch: Dispatch) => {
+export const fetchItemsThunk = (token: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.fetchAllItems() // TODO catch
+    const res = await API.fetchAllItems(token) // TODO catch
     dispatch(setItems(res.data))
   } catch (error) {
     console.log(error)
@@ -132,8 +131,17 @@ export const updateItemThunk = (
   }
 }
 
+export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
+  try {
+    const res = await API.addFolder(name)
+    console.log(res.data)
+    dispatch(setListOfFolders(res.data.folders))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export const {
-  toggleAddLinkModal,
   setItems,
   updateItem,
   setListOfFolders

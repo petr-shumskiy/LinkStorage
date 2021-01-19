@@ -20,6 +20,7 @@ import {
   StyledPassField
 } from './authStylesFields'
 import { formRequired } from '../../utils/validators'
+import { Redirect } from 'react-router-dom'
 
 const SignIn = ({ handleSubmit, pristine, valid, error }) => {
   const showSignIn = useSelector(({ auth }) => auth.showSignIn)
@@ -84,8 +85,9 @@ const SingInReduxForm = reduxForm({ form: 'signIn', touchOnChange: true })(
 
 const SignInContainer = () => {
   const dispatch = useDispatch()
-  const submitHandler = (formData) => {
-    dispatch(sendSignInData(formData))
+
+  const submitHandler = async (formData) => {
+    await dispatch(sendSignInData(formData))
   }
   return <SingInReduxForm onSubmit={submitHandler} />
 }

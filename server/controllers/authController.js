@@ -16,7 +16,9 @@ exports.registration = async (req, res) => {
     const { email, password } = req.body
     const candidate = await User.findOne({ email })
     if (candidate) {
-      return res.status(400).json({ message: constants.REGISTRATION_ERROR_USER_EXISTS })
+      return res
+        .status(400)
+        .json({ message: constants.REGISTRATION_ERROR_USER_EXISTS })
     }
     const hashedPassword = await bcrypt.hash(password, 1)
     const newUser = new User({ email, password: hashedPassword })
@@ -38,7 +40,9 @@ exports.registration = async (req, res) => {
     } catch (e) {
       console.log(e)
     }
-    return res.status(200).json({ message: constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL })
+    return res
+      .status(200)
+      .json({ message: constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL })
   } catch (error) {
     console.log(error)
     res.send({ message: 'error while sending confirmation code' })
@@ -50,11 +54,15 @@ exports.validateEmail = async (req, res) => {
     const { token } = req.params
     const { email } = jwt.verify(token, JWT_SECRET)
     await User.findOneAndUpdate({ email }, { isEmailConfirmed: true })
-    return res.status(200).json({ message: constants.REGISTRATION_SUCCESS_CONFIRMED_EMAIL })
+    return res
+      .status(200)
+      .json({ message: constants.REGISTRATION_SUCCESS_CONFIRMED_EMAIL })
   } catch (error) {
     console.log(error)
     console.log(error.message)
-    return res.status(400).json({ message: error.constants.REGISTRATION_ERROR_EMAIL_CONFIRMATION })
+    return res
+      .status(400)
+      .json({ message: error.constants.REGISTRATION_ERROR_EMAIL_CONFIRMATION })
   }
 }
 
@@ -63,12 +71,16 @@ exports.login = async (req, res) => {
     const { email, password } = req.body
     const user = await User.findOne({ email })
     if (!user) {
-      return res.status(400).json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
+      return res
+        .status(400)
+        .json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
     }
 
     const matchPasswords = await bcrypt.compare(password, user.password)
     if (!matchPasswords) {
-      return res.status(400).json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
+      return res
+        .status(400)
+        .json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
     }
 
     const token = jwt.sign({ email, password }, JWT_SECRET, { expiresIn: '1h' })

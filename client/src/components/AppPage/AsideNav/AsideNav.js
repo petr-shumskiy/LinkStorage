@@ -45,12 +45,11 @@ export function AsideNav({ swipeable }) {
   const classes = useStyles()
   const dispatch = useDispatch()
   const [isInputActive, setInputActive] = useState(false)
-  const onAddFolderClicked = () => {
-    console.log('hi')
+  const onAddFolderClicked = (data) => {
     setInputActive((prev) => {
-      console.log(prev)
       return !prev
     })
+    // dispatch(addFolder(folderName))
   }
 
   return (

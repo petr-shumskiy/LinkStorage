@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Main from './AppPage/Main'
 import Auth from './AuthPage/Auth'
 import { Redirect, Route, Switch } from 'react-router-dom'
@@ -7,9 +7,11 @@ import { ThemeProvider } from '@material-ui/core'
 import { theme } from '../theme'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchFoldersThunk, fetchItemsThunk } from '../redux/userReducer'
+import useLocalStorage from 'react-use-localstorage'
 
 const App = () => {
   const token = useSelector(({ auth }) => auth.token)
+  console.log(token)
 
   return (
     <Switch>
@@ -21,16 +23,20 @@ const App = () => {
       <Route
         path='/auth'
         exact
-        render={() => (token ? <Redirect to='/' /> : <Auth />)}
+        render={() => (token ? <Redirect to='/home' /> : <Auth />)}
       />
       <Route
         path='/home'
         exact
-        render={() => (
-          <ThemeProvider theme={theme}>
-            <Main />
-          </ThemeProvider>
-        )}
+        render={() =>
+          token ? (
+            <ThemeProvider theme={theme}>
+              <Main />
+            </ThemeProvider>
+          ) : (
+            <Redirect to='/auth' />
+          )
+        }
       />
       <Route
         path='/'
@@ -48,5 +54,4 @@ const App = () => {
   )
 }
 
-// const dispatch = useDispatch()
 export default App

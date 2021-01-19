@@ -8,9 +8,10 @@ class FolderController extends ControllerBase {
 
   async createFolder(email, folderName) {
     try {
-      await this.folderLogic.createFolder(email, folderName)
+      const folders = await this.folderLogic.createFolder(email, folderName)
 
-      return this.response.status(204).json()
+      console.log(folders)
+      return this.response.status(201).json({ folders })
     } catch (err) {
       console.log(err)
       return this.response.status(500).json()

@@ -15,7 +15,6 @@ import React, { useState } from 'react'
 import FolderIcon from '@material-ui/icons/Folder'
 import {
   ArchiveRounded,
-  Delete,
   DeleteRounded,
   FavoriteBorderOutlined
 } from '@material-ui/icons'
@@ -96,8 +95,8 @@ function ItemActions({ isActive, deleteItemHandler }) {
 
   return (
     <>
-      <Dialog open={isOpen} siz>
-        <DialogTitle>
+      <Dialog open={isOpen}>
+        <DialogTitle disableTypography>
           <Typography variant='h2'>Are you sure?</Typography>
         </DialogTitle>
         <DialogContent>
@@ -123,16 +122,16 @@ function ItemActions({ isActive, deleteItemHandler }) {
       </Dialog>
       <div style={{ display: [isActive ? '' : 'none'] }}>
         <StyledIconButton>
-          <FavoriteBorderOutlined fontSize='inherit' />{' '}
+          <FavoriteBorderOutlined fontSize='inherit' />
         </StyledIconButton>
         <StyledIconButton>
-          <FolderIcon fontSize='inherit' />{' '}
+          <FolderIcon fontSize='inherit' />
         </StyledIconButton>
         <StyledIconButton>
-          <ArchiveRounded fontSize='inherit' />{' '}
+          <ArchiveRounded fontSize='inherit' />
         </StyledIconButton>
         <StyledIconButton onClick={() => setIsOpen(true)}>
-          <DeleteRounded fontSize='inherit' />{' '}
+          <DeleteRounded fontSize='inherit' />
         </StyledIconButton>
       </div>
     </>
@@ -174,9 +173,7 @@ function LinkItem({ item }) {
         item
         xs={12}
         md={12}
-        style={{
-          color: 'black'
-        }}
+        style={{ color: 'black' }}
       >
         <Grid
           container

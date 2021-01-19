@@ -59,16 +59,14 @@ function App({ width }) {
   const classes = useStyles()
 
   const dispatch = useDispatch()
+
+  const items = useSelector(({ user }) => user.items)
+  const token = useSelector(({ auth }) => auth.token)
+  console.log(token)
+
   useEffect(() => {
     dispatch(fetchFoldersThunk())
-    dispatch(fetchItemsThunk())
-  }, [dispatch])
-
-  const token = useSelector(({ auth }) => auth.token)
-  const items = useSelector(({ user }) => user.items)
-
-  useEffect(() => {
-    dispatch(fetchItemsThunk())
+    dispatch(fetchItemsThunk(token))
   }, [dispatch, token])
 
   const [isDrawerOpen, setDrawerState] = useState(false)

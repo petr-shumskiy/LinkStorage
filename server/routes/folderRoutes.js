@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const { FolderController } = require('../controllers/folderController')
 const { FolderLogic } = require('../logic/folderLogic')
+const { hasAuth } = require('../middlewares')
 
 function createFolderController(req, res) {
   const logic = new FolderLogic()
@@ -11,20 +12,31 @@ function createFolderController(req, res) {
   return controller
 }
 
-router.post('/folder', (req, res) => {
-  return createFolderController(req, res).createFolder(req.user.email, req.body.name)
+router.post('/folder', hasAuth, (req, res) => {
+  console.log(req.body.name)
+  return createFolderController(req, res).createFolder(
+    req.user.email,
+    req.body.name
+  )
 })
 
-router.get('/folder', (req, res) => {
+router.get('/folder', hasAuth, (req, res) => {
   return createFolderController(req, res).getFolders(req.user.email)
 })
 
-router.post('/folder/:folderId', (req, res) => {
-  return createFolderController(req, res).updateFolder(req.user.email, req.body.id, req.body.name)
+router.post('/folder/:folderId', hasAuth, (req, res) => {
+  return createFolderController(req, res).updateFolder(
+    req.user.email,
+    req.body.id,
+    req.body.name
+  )
 })
 
-router.delete('/folder/:folderId', (req, res) => {
-  return createFolderController(req, res).deleteFolder(req.user.email, req.body.id)
+router.delete('/folder/:folderId', hasAuth, (req, res) => {
+  return createFolderController(req, res).deleteFolder(
+    req.user.email,
+    req.body.id
+  )
 })
 
 module.exports = router
