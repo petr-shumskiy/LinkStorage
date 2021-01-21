@@ -8,6 +8,8 @@ import {
   Grid,
   Hidden,
   IconButton,
+  Menu,
+  MenuItem,
   Typography
 } from '@material-ui/core'
 import { createStyles, makeStyles, styled } from '@material-ui/core/styles'
@@ -16,12 +18,13 @@ import FolderIcon from '@material-ui/icons/Folder'
 import {
   ArchiveRounded,
   DeleteRounded,
+  Favorite,
   FavoriteBorderOutlined
 } from '@material-ui/icons'
 import { theme } from '../../theme'
-import { useRouteMatch } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { deleteItemThunk } from '../../redux/userReducer'
+import { useLocation } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { addItemToFolder, deleteItemThunk } from '../../redux/userReducer'
 
 const customStyles = {
   '&:hover': {
@@ -90,8 +93,58 @@ const StyledIconButton = styled(IconButton)(customStyles)
 
 const StyledButton = styled(Button)(customStyles)
 
-function ItemActions({ isActive, deleteItemHandler }) {
+function FoldersMenu({ anchorEl, onMenuClosed, onAddItemToFolder }) {
+  const folders = useSelector(({ user }) => user.folders)
+  return (
+    <Menu
+      anchorEl={anchorEl}
+      keepMounted
+      open={anchorEl !== null}
+      onClose={onMenuClosed}
+      variant='menu'
+      transformOrigin={{
+        vertical: 90,
+        horizontal: 50
+      }}
+    >
+      {folders.map((folder) => {
+        return (
+          <MenuItem
+            key={folder._id}
+            onClick={() => {
+              onMenuClosed()
+              onAddItemToFolder(folder._id)
+            }}
+          >
+            {folder.name}
+          </MenuItem>
+        )
+      })}
+    </Menu>
+  )
+}
+
+function ItemActions({
+  isActive,
+  deleteItemHandler,
+  onAddItemToFolder,
+  onItemLiked,
+  isItemLiked
+}) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isFolderSelectorOpen, setFolderSelectorOpen] = useState(false)
+
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const onMenuClicked = (e) => {
+    setAnchorEl(e.currentTarget)
+    setFolderSelectorOpen((prev) => !prev)
+  }
+
+  const onMenuClosed = (e) => {
+    setAnchorEl(null)
+    setFolderSelectorOpen((prev) => !prev)
+  }
 
   return (
     <>
@@ -120,11 +173,25 @@ function ItemActions({ isActive, deleteItemHandler }) {
           </Button>
         </DialogActions>
       </Dialog>
-      <div style={{ display: [isActive ? '' : 'none'] }}>
-        <StyledIconButton>
-          <FavoriteBorderOutlined fontSize='inherit' />
+
+      <FoldersMenu
+        anchorEl={anchorEl}
+        onMenuClosed={onMenuClosed}
+        onAddItemToFolder={onAddItemToFolder}
+      />
+      <div
+        style={{
+          display: [isActive || isFolderSelectorOpen ? 'block' : 'none']
+        }}
+      >
+        <StyledIconButton onClick={onItemLiked}>
+          {isItemLiked ? (
+            <Favorite fontSize='inherit' color='primary' />
+          ) : (
+            <FavoriteBorderOutlined fontSize='inherit' />
+          )}
         </StyledIconButton>
-        <StyledIconButton>
+        <StyledIconButton onClick={onMenuClicked}>
           <FolderIcon fontSize='inherit' />
         </StyledIconButton>
         <StyledIconButton>
@@ -138,11 +205,14 @@ function ItemActions({ isActive, deleteItemHandler }) {
   )
 }
 
-function DateOfTitle({ isActive }) {
+function DateOfTitle({ isActive, isItemLiked }) {
+  const marginLeft = isActive && !isItemLiked ? 12 : 0
+  console.log(marginLeft)
   return (
     <div
       style={{
-        display: [isActive ? 'block' : 'none']
+        display: [isActive ? 'inline-block' : 'none'],
+        marginLeft
       }}
     >
       <Typography variant='subtitle2'>
@@ -157,11 +227,21 @@ function LinkItem({ item }) {
   const classes = useStyle()
   const dispatch = useDispatch()
 
+  const [isActive, setActive] = useState(false)
+  const [isItemLiked, setItemLiked] = useState(false)
+
   const onDeleteItem = (id) => {
     dispatch(deleteItemThunk(id))
   }
 
-  const [isActive, setActive] = useState(false)
+  const onAddItemToFolder = (folderId) => {
+    dispatch(addItemToFolder({ folderId, item }))
+  }
+
+  const onItemLiked = () => {
+    setItemLiked((prev) => !prev)
+  }
+
   return (
     <div
       onMouseOver={() => setActive(true)}
@@ -223,13 +303,26 @@ function LinkItem({ item }) {
             item
             container
             alignItems='center'
-            style={{ minHeight: '40px' }}
+            style={{
+              minHeight: '40px',
+              marginLeft: -12
+            }}
           >
             <ItemActions
               isActive={isActive}
               deleteItemHandler={() => onDeleteItem(id)}
+              onAddItemToFolder={onAddItemToFolder}
+              onItemLiked={onItemLiked}
+              isItemLiked={isItemLiked}
             />
-            <DateOfTitle isActive={!isActive} />
+            <StyledIconButton
+              style={{
+                display: [isItemLiked && !isActive ? '' : 'none']
+              }}
+            >
+              <Favorite fontSize='inherit' color='primary' />
+            </StyledIconButton>
+            <DateOfTitle isActive={!isActive} isItemLiked={isItemLiked} />
           </Grid>
         </Grid>
 
@@ -266,10 +359,22 @@ function LinkItem({ item }) {
 }
 
 export function ItemsList({ items }) {
-  const category = useRouteMatch().path.split('/')[1]
-  return items
+  const category = useLocation().pathname.split('/')[1]
+  const categories = useSelector(({ user }) => user.categories)
+  const folder = useSelector(
+    ({ user }) => user.folders.filter((folder) => folder.name === category)[0]
+  )
+  const filteredItems = items
     .filter((item) => item[category])
-    .map((item) => {
-      return <LinkItem key={item._id} item={item} />
-    })
+    .map((item) => <LinkItem key={item._id} item={item} />)
+  return categories.includes(category) ? (
+    filteredItems
+  ) : (
+    <div>
+      <h1>{category}</h1>
+      {folder.items.map((item) => (
+        <LinkItem key={item._id} item={item} />
+      ))}
+    </div>
+  )
 }

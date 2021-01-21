@@ -38,6 +38,7 @@ export type UpdateObjectType = {
 export type Folder = {
   _id: string
   name: string
+  items: Item[]
 }
 
 const findIndexById = (arr: any, id: string | number) =>
@@ -74,6 +75,12 @@ export const userReducer = createSlice({
         item.archived = payload.archived
         item.home = !item.home
       }
+    },
+    addItemToFolder(state: State, action: PayloadAction<{ folderId: string, item: Item }>) {
+      console.log(action.payload)
+      const folder = state.folders.filter(folder => folder._id === action.payload.folderId
+      )[0]
+      folder.items.push(action.payload.item)
     },
     setListOfFolders(state: State, action: PayloadAction<Folder[]>) {
       const { payload } = action
@@ -143,6 +150,7 @@ export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
 
 export const {
   setItems,
+  addItemToFolder,
   updateItem,
   setListOfFolders
 } = userReducer.actions

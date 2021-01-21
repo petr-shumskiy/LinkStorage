@@ -13,8 +13,8 @@ const itemSchema = new Schema({
 })
 
 const folderSchema = new Schema({
-  name: { type: String, required: true, trim: true }
-  // items: [itemSchema]
+  name: { type: String, required: true, trim: true },
+  items: [itemSchema]
 })
 
 const userSchema = new Schema({
