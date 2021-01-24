@@ -26,12 +26,17 @@ export const theme = createMuiTheme({
     ].join(','),
     h1: {
       fontSize: 'calc(12px + 2vmin)',
-      // fontSize: "1em",
       color: '#000',
       fontFamily: 'Bree Serif'
     },
     h2: {
       fontSize: 'calc(6px + 2vmin)',
+      fontFamily: 'Open Sans',
+      fontWeight: '600',
+      color: '#111'
+    },
+    h3: {
+      fontSize: 'calc(10px + 1vmin)',
       fontFamily: 'Open Sans',
       fontWeight: '600',
       color: '#111'
@@ -52,7 +57,8 @@ export const theme = createMuiTheme({
     },
     subtitle2: {
       fontSize: 'calc(6px + 1vmin)',
-      color: '#7a7a7a'
+      color: '#7a7a7a',
+      textTransform: 'none'
     }
   }
 })

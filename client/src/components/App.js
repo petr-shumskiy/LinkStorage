@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Main from './AppPage/Main'
 import Auth from './AuthPage/Auth'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import Confirmation from './AuthPage/Confirmation'
 import { ThemeProvider } from '@material-ui/core'
 import { theme } from '../theme'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchFoldersThunk, fetchItemsThunk } from '../redux/userReducer'
-import useLocalStorage from 'react-use-localstorage'
+import { useSelector } from 'react-redux'
 
 const App = () => {
   const token = useSelector(({ auth }) => auth.token)
-  console.log(token)
 
   return (
     <Switch>

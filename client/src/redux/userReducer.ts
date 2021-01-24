@@ -33,6 +33,7 @@ export type UpdateObjectType = {
   id: string
   liked?: boolean
   archived?: boolean
+  folderId?: string
 }
 
 export type Folder = {
@@ -40,9 +41,6 @@ export type Folder = {
   name: string
   items: Item[]
 }
-
-const findIndexById = (arr: any, id: string | number) =>
-  arr.findIndex((item: any) => item._id === id)
 
 const initialState: State = {
   items: [],
@@ -62,25 +60,13 @@ export const userReducer = createSlice({
       state.items = action.payload
     },
 
-    updateItem(state: State, action: PayloadAction<UpdateObjectType>) {
-      const { payload } = action
-      const idx = findIndexById(state.items, payload.id)
-      const item = state.items[idx]
-
-      if (payload.liked !== undefined) {
-        item.liked = payload.liked
-      }
-
-      if (payload.archived !== undefined) {
-        item.archived = payload.archived
-        item.home = !item.home
-      }
-    },
     addItemToFolder(state: State, action: PayloadAction<{ folderId: string, item: Item }>) {
-      console.log(action.payload)
+      const item = state.items.filter(item => item._id === action.payload.item._id)[0]
       const folder = state.folders.filter(folder => folder._id === action.payload.folderId
       )[0]
       folder.items.push(action.payload.item)
+      item.home = false
+      item.archived = false
     },
     setListOfFolders(state: State, action: PayloadAction<Folder[]>) {
       const { payload } = action
@@ -89,9 +75,9 @@ export const userReducer = createSlice({
   }
 })
 
-export const fetchFoldersThunk = () => async (dispatch: Dispatch) => {
+export const fetchFoldersThunk = (token: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.fetchFolders()
+    const res = await API.fetchFolders(token)
     dispatch(setListOfFolders(res.data))
   } catch (error) {
     console.log(error)
@@ -116,10 +102,13 @@ export const addItemThunk = (item: Item) => async (dispatch: Dispatch) => {
   }
 }
 
-export const deleteItemThunk = (id: string) => async (dispatch: Dispatch) => {
+export const deleteItemThunk = (id: string, token: string) => async (dispatch: Dispatch) => {
   try {
     const res = await API.deleteItem(id)
     dispatch(setItems(res.data))
+
+    const foldersRes = await API.fetchFolders(token)
+    dispatch(setListOfFolders(foldersRes.data))
   } catch (error) {
     // TODO logic for catch
     console.log(error.message)
@@ -128,11 +117,15 @@ export const deleteItemThunk = (id: string) => async (dispatch: Dispatch) => {
 
 export const updateItemThunk = (
   id: string,
-  payload: UpdateObjectType
+  payload: UpdateObjectType,
+  token: string
 ) => async (dispatch: Dispatch) => {
   try {
-    await API.updateItem(id, payload)
-    dispatch(updateItem(payload))
+    const res = await API.updateItem(id, payload)
+    dispatch(setItems(res.data))
+
+    const foldersRes = await API.fetchFolders(token)
+    dispatch(setListOfFolders(foldersRes.data))
   } catch (error) {
     console.log(error)
   }
@@ -151,7 +144,6 @@ export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
 export const {
   setItems,
   addItemToFolder,
-  updateItem,
   setListOfFolders
 } = userReducer.actions
 

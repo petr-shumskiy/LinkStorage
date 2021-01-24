@@ -2,6 +2,7 @@
 import { create } from 'axios'
 
 const token = localStorage.getItem('token')
+console.log(token)
 
 function setHeader(token) {
   return {
@@ -14,7 +15,7 @@ function setHeader(token) {
 
 const userInstance = create({
   baseURL: '/api/user',
-  timeout: 1000,
+  timeout: 5000,
   headers: {
     'Access-Control-Allow-Origin': '*',
     Authorization: 'Bearer ' + token
@@ -47,8 +48,8 @@ class API {
   }
 
   // USER
-  fetchFolders = async () => {
-    const response = await userInstance.get('/folder')
+  fetchFolders = async (token) => {
+    const response = await userInstance.get('/folder', setHeader(token))
     return response
   }
 
@@ -69,6 +70,7 @@ class API {
 
   deleteItem = async (id) => {
     const response = await userInstance.delete('/link/' + id)
+    console.log(response)
     return response
   }
 

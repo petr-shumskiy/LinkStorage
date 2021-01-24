@@ -1,5 +1,7 @@
 import {
+  Box,
   Button,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -24,7 +26,7 @@ import {
 import { theme } from '../../theme'
 import { useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { addItemToFolder, deleteItemThunk } from '../../redux/userReducer'
+import { deleteItemThunk, updateItemThunk } from '../../redux/userReducer'
 
 const customStyles = {
   '&:hover': {
@@ -93,8 +95,9 @@ const StyledIconButton = styled(IconButton)(customStyles)
 
 const StyledButton = styled(Button)(customStyles)
 
-function FoldersMenu({ anchorEl, onMenuClosed, onAddItemToFolder }) {
+function FoldersMenu({ anchorEl, onMenuClosed, onAddItemToFolder, category }) {
   const folders = useSelector(({ user }) => user.folders)
+
   return (
     <Menu
       anchorEl={anchorEl}
@@ -107,8 +110,18 @@ function FoldersMenu({ anchorEl, onMenuClosed, onAddItemToFolder }) {
         horizontal: 50
       }}
     >
+      {category !== 'home' ? (
+        <MenuItem
+          onClick={() => {
+            onAddItemToFolder('home')
+            onMenuClosed()
+          }}
+        >
+          Home
+        </MenuItem>
+      ) : null}
       {folders.map((folder) => {
-        return (
+        return folder.name !== category ? (
           <MenuItem
             key={folder._id}
             onClick={() => {
@@ -118,7 +131,7 @@ function FoldersMenu({ anchorEl, onMenuClosed, onAddItemToFolder }) {
           >
             {folder.name}
           </MenuItem>
-        )
+        ) : null
       })}
     </Menu>
   )
@@ -126,10 +139,13 @@ function FoldersMenu({ anchorEl, onMenuClosed, onAddItemToFolder }) {
 
 function ItemActions({
   isActive,
-  deleteItemHandler,
+  onItemDeleted,
   onAddItemToFolder,
   onItemLiked,
-  isItemLiked
+  isItemLiked,
+  onItemArchived,
+  isItemArchived,
+  category
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [isFolderSelectorOpen, setFolderSelectorOpen] = useState(false)
@@ -165,7 +181,7 @@ function ItemActions({
             size='small'
             color='primary'
             onClick={() => {
-              deleteItemHandler()
+              onItemDeleted()
               setIsOpen(false)
             }}
           >
@@ -178,6 +194,7 @@ function ItemActions({
         anchorEl={anchorEl}
         onMenuClosed={onMenuClosed}
         onAddItemToFolder={onAddItemToFolder}
+        category={category}
       />
       <div
         style={{
@@ -194,9 +211,15 @@ function ItemActions({
         <StyledIconButton onClick={onMenuClicked}>
           <FolderIcon fontSize='inherit' />
         </StyledIconButton>
-        <StyledIconButton>
-          <ArchiveRounded fontSize='inherit' />
-        </StyledIconButton>
+        {category === 'liked' ? null : (
+          <StyledIconButton onClick={onItemArchived}>
+            {isItemArchived ? (
+              <ArchiveRounded fontSize='inherit' color='primary' />
+            ) : (
+              <ArchiveRounded fontSize='inherit' />
+            )}
+          </StyledIconButton>
+        )}
         <StyledIconButton onClick={() => setIsOpen(true)}>
           <DeleteRounded fontSize='inherit' />
         </StyledIconButton>
@@ -207,7 +230,6 @@ function ItemActions({
 
 function DateOfTitle({ isActive, isItemLiked }) {
   const marginLeft = isActive && !isItemLiked ? 12 : 0
-  console.log(marginLeft)
   return (
     <div
       style={{
@@ -222,24 +244,28 @@ function DateOfTitle({ isActive, isItemLiked }) {
   )
 }
 
-function LinkItem({ item }) {
+function LinkItem({ item, category }) {
   const { _id: id, url, title, description, logoUrl } = item
   const classes = useStyle()
   const dispatch = useDispatch()
+  const token = useSelector(({ auth }) => auth.token)
 
   const [isActive, setActive] = useState(false)
-  const [isItemLiked, setItemLiked] = useState(false)
 
-  const onDeleteItem = (id) => {
-    dispatch(deleteItemThunk(id))
+  const handleDeleteItem = () => {
+    dispatch(deleteItemThunk(id, token))
   }
 
-  const onAddItemToFolder = (folderId) => {
-    dispatch(addItemToFolder({ folderId, item }))
+  const handleAddItemToFolder = (folderId) => {
+    dispatch(updateItemThunk(id, { folderId }, token))
   }
 
-  const onItemLiked = () => {
-    setItemLiked((prev) => !prev)
+  const handleLikeItem = () => {
+    dispatch(updateItemThunk(id, { liked: !item.liked }, token))
+  }
+
+  const handleArchiveItem = () => {
+    dispatch(updateItemThunk(id, { archived: !item.archived }, token))
   }
 
   return (
@@ -310,19 +336,22 @@ function LinkItem({ item }) {
           >
             <ItemActions
               isActive={isActive}
-              deleteItemHandler={() => onDeleteItem(id)}
-              onAddItemToFolder={onAddItemToFolder}
-              onItemLiked={onItemLiked}
-              isItemLiked={isItemLiked}
+              onItemDeleted={handleDeleteItem}
+              onAddItemToFolder={handleAddItemToFolder}
+              onItemLiked={handleLikeItem}
+              isItemLiked={item.liked}
+              onItemArchived={handleArchiveItem}
+              isItemArchived={item.archived}
+              category={category}
             />
             <StyledIconButton
               style={{
-                display: [isItemLiked && !isActive ? '' : 'none']
+                display: [item.liked && !isActive ? '' : 'none']
               }}
             >
               <Favorite fontSize='inherit' color='primary' />
             </StyledIconButton>
-            <DateOfTitle isActive={!isActive} isItemLiked={isItemLiked} />
+            <DateOfTitle isActive={!isActive} isItemLiked={item.liked} />
           </Grid>
         </Grid>
 
@@ -358,23 +387,98 @@ function LinkItem({ item }) {
   )
 }
 
+function NoContent({ label }) {
+  return (
+    <>
+      <Box
+        minHeight={label ? 150 : 'calc(134px - 1rem)'}
+        display='flex'
+        alignItems='center'
+        direction='column'
+        justifyContent='center'
+      >
+        <Typography variant='body1' style={{ opacity: 0.7 }}>
+          {label
+            ? `You have no ${label} items.`
+            : 'No articles in this folder.'}
+        </Typography>
+      </Box>
+      <Divider />
+    </>
+  )
+}
+
+function FolderTitle({ label }) {
+  return (
+    <Box display='flex' alignItems='center' marginBottom='1rem'>
+      <Typography variant='h3'>{label}</Typography>
+      <StyledButton
+        type='small'
+        style={{
+          marginLeft: '1rem',
+          padding: '6px 4px',
+          minWidth: 40,
+          height: 24
+        }}
+      >
+        <Typography variant='subtitle2' color='inherit'>
+          Edit
+        </Typography>
+      </StyledButton>
+    </Box>
+  )
+}
+
 export function ItemsList({ items }) {
   const category = useLocation().pathname.split('/')[1]
   const categories = useSelector(({ user }) => user.categories)
-  const folder = useSelector(
-    ({ user }) => user.folders.filter((folder) => folder.name === category)[0]
-  )
-  const filteredItems = items
+
+  const folders = useSelector(({ user }) => user.folders)
+  const folder = folders.filter((folder) => folder.name === category)[0]
+
+  const currentCategoryItems = items
     .filter((item) => item[category])
-    .map((item) => <LinkItem key={item._id} item={item} />)
-  return categories.includes(category) ? (
-    filteredItems
-  ) : (
-    <div>
-      <h1>{category}</h1>
-      {folder.items.map((item) => (
-        <LinkItem key={item._id} item={item} />
-      ))}
-    </div>
-  )
+    .map((item) => <LinkItem key={item._id} item={item} category={category} />)
+
+  const likedItemsInFolders = []
+  for (const folder of folders) {
+    for (const item of folder.items) {
+      if (item.liked) {
+        likedItemsInFolders.push(
+          <LinkItem key={item._id} item={item} category={category} />
+        )
+      }
+    }
+  }
+
+  if (category === 'liked') {
+    return [...currentCategoryItems, likedItemsInFolders]
+  }
+
+  const currentFolderItems =
+    folder && folder.items.length ? (
+      <>
+        <FolderTitle label={folder.name} />
+        {folder.items.map((item) => {
+          return <LinkItem key={item._id} item={item} category={folder.name} />
+        })}
+      </>
+    ) : null
+
+  if (!currentCategoryItems.length && categories.includes(category)) {
+    return <NoContent label={category} />
+  }
+
+  if (folder && !folder.items.length) {
+    return (
+      <>
+        <FolderTitle label={folder.name} />
+        <NoContent label='' />
+      </>
+    )
+  }
+
+  return categories.includes(category)
+    ? currentCategoryItems
+    : currentFolderItems
 }

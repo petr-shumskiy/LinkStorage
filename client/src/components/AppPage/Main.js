@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {
-  Box,
   Container,
-  Divider,
   Grid,
   Hidden,
   SwipeableDrawer,
-  Typography,
   withWidth
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
@@ -62,10 +59,9 @@ function App({ width }) {
 
   const items = useSelector(({ user }) => user.items)
   const token = useSelector(({ auth }) => auth.token)
-  console.log(token)
 
   useEffect(() => {
-    dispatch(fetchFoldersThunk())
+    dispatch(fetchFoldersThunk(token))
     dispatch(fetchItemsThunk(token))
   }, [dispatch, token])
 
@@ -83,7 +79,7 @@ function App({ width }) {
   const main = (
     <Grid container direction='column'>
       <Grid item xs={12} md={12}>
-        {items.length ? <ItemsList items={items} /> : <NoContent />}
+        <ItemsList items={items} />
       </Grid>
     </Grid>
   )
@@ -128,25 +124,6 @@ function App({ width }) {
         </Grid>
       </Container>
     </div>
-  )
-}
-
-function NoContent() {
-  return (
-    <Container maxWidth='lg' md={12} xs={12}>
-      <Box
-        minHeight={160}
-        display='flex'
-        alignItems='center'
-        direction='column'
-        justifyContent='center'
-      >
-        <Typography variant='body1' style={{ opacity: 0.7 }}>
-          There are no items yet
-        </Typography>
-      </Box>
-      <Divider />
-    </Container>
   )
 }
 
