@@ -60,14 +60,6 @@ export const userReducer = createSlice({
       state.items = action.payload
     },
 
-    addItemToFolder(state: State, action: PayloadAction<{ folderId: string, item: Item }>) {
-      const item = state.items.filter(item => item._id === action.payload.item._id)[0]
-      const folder = state.folders.filter(folder => folder._id === action.payload.folderId
-      )[0]
-      folder.items.push(action.payload.item)
-      item.home = false
-      item.archived = false
-    },
     setListOfFolders(state: State, action: PayloadAction<Folder[]>) {
       const { payload } = action
       state.folders = payload
@@ -78,6 +70,35 @@ export const userReducer = createSlice({
 export const fetchFoldersThunk = (token: string) => async (dispatch: Dispatch) => {
   try {
     const res = await API.fetchFolders(token)
+    dispatch(setListOfFolders(res.data))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const renameFolderThunk = (folderId: string, folderName: string) => async (dispatch: Dispatch) => {
+  try {
+    const res = await API.updateFolder(folderId, folderName)
+    dispatch(setListOfFolders(res.data))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
+  try {
+    const res = await API.addFolder(name)
+    dispatch(setListOfFolders(res.data))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const deleteFolderThunk = (folderId: string) => async (dispatch: Dispatch) => {
+  try {
+    const res = await API.deleteFolder(folderId)
+
+    console.log(res.data)
     dispatch(setListOfFolders(res.data))
   } catch (error) {
     console.log(error)
@@ -131,19 +152,8 @@ export const updateItemThunk = (
   }
 }
 
-export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
-  try {
-    const res = await API.addFolder(name)
-    console.log(res.data)
-    dispatch(setListOfFolders(res.data.folders))
-  } catch (error) {
-    console.log(error)
-  }
-}
-
 export const {
   setItems,
-  addItemToFolder,
   setListOfFolders
 } = userReducer.actions
 

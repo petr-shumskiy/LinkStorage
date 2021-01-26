@@ -33,9 +33,10 @@ router.post('/folder/:folderId', hasAuth, (req, res) => {
 })
 
 router.delete('/folder/:folderId', hasAuth, (req, res) => {
+  console.log(req.body)
   return createFolderController(req, res).deleteFolder(
     req.user.email,
-    req.body.id
+    req.params.folderId
   )
 })
 

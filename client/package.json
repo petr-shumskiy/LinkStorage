@@ -17,6 +17,7 @@
     "axios": "^0.21.0",
     "check-password-strength": "^1.0.15",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-inlinesvg": "^2.1.1",

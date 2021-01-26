@@ -20,7 +20,6 @@ import {
   StyledPassField
 } from './authStylesFields'
 import { formRequired } from '../../utils/validators'
-import { Redirect } from 'react-router-dom'
 
 const SignIn = ({ handleSubmit, pristine, valid, error }) => {
   const showSignIn = useSelector(({ auth }) => auth.showSignIn)
@@ -36,12 +35,7 @@ const SignIn = ({ handleSubmit, pristine, valid, error }) => {
         <div className={classes.paper}>
           {error ? (
             <div className={classes.additionalMessage}>
-              <Typography
-                component='h2'
-                variant='h6'
-                color='error'
-                align='center'
-              >
+              <Typography variant='h1' color='primary' align='center'>
                 {error}
               </Typography>
             </div>

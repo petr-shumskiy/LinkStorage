@@ -9,8 +9,8 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchItemsThunk } from '../../redux/userReducer.ts'
-import { ItemsList } from './ItemList'
-import { NavPanel } from './NavPanel'
+import { ItemsList } from './ItemList/ItemList'
+import { NavPanel } from './NavPanel/NavPanel'
 import { AsideNav } from './AsideNav/AsideNav'
 import { fetchFoldersThunk } from '../../redux/userReducer'
 
@@ -54,9 +54,7 @@ const useStyles = makeStyles((theme) => ({
 
 function App({ width }) {
   const classes = useStyles()
-
   const dispatch = useDispatch()
-
   const items = useSelector(({ user }) => user.items)
   const token = useSelector(({ auth }) => auth.token)
 

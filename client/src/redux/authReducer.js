@@ -1,4 +1,4 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { reset, stopSubmit } from 'redux-form'
 import API from '../API/API'
 
@@ -78,18 +78,13 @@ export const sendSignInData = (data) => async (dispatch) => {
 
 export const validateEmail = (confirmationToken) => async (dispatch) => {
   try {
-    await API.sendConfirmationRequest(confirmationToken) // TODO catch
+    await API.sendConfirmationRequest(confirmationToken)
     dispatch(setToken(confirmationToken))
     localStorage.setItem('token', confirmationToken)
   } catch (err) {
     dispatch(setValidationError(err.response.data.message))
   }
 }
-
-export const checkIfTokenExists = createSelector(
-  ({ auth }) => auth.token,
-  (token) => token || localStorage.getItem('token')
-)
 
 export const {
   showRegistrationModal,

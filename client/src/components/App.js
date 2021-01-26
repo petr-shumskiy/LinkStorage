@@ -1,5 +1,5 @@
 import React from 'react'
-import Main from './AppPage/Main'
+import Main from './AppPage/AppPage'
 import Auth from './AuthPage/Auth'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import Confirmation from './AuthPage/Confirmation'

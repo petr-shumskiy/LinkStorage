@@ -9,9 +9,9 @@ import React, { useState } from 'react'
 import { AddFolderInput } from './AddFolderInput'
 import { NavItem } from './NavItem'
 import { AddFolder } from './AddFolder'
-import { Folders } from './Folders'
 import { useDispatch } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
+import { Folders } from './Folders'
 
 const useStyles = makeStyles((theme) =>
   createStyles({

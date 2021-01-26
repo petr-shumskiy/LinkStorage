@@ -2,7 +2,6 @@
 import { create } from 'axios'
 
 const token = localStorage.getItem('token')
-console.log(token)
 
 function setHeader(token) {
   return {
@@ -55,6 +54,17 @@ class API {
 
   addFolder = async (name) => {
     const response = await userInstance.post('/folder', { name })
+    return response
+  }
+
+  updateFolder = async (id, name) => {
+    const response = await userInstance.post('/folder/' + id, { id, name })
+    return response
+  }
+
+  deleteFolder = async (id) => {
+    console.log(id)
+    const response = await userInstance.delete('/folder/' + id)
     return response
   }
 

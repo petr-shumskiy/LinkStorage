@@ -10,8 +10,7 @@ class FolderController extends ControllerBase {
     try {
       const folders = await this.folderLogic.createFolder(email, folderName)
 
-      console.log(folders)
-      return this.response.status(201).json({ folders })
+      return this.response.status(201).json(folders)
     } catch (err) {
       console.log(err)
       return this.response.status(500).json()
@@ -31,9 +30,12 @@ class FolderController extends ControllerBase {
 
   async updateFolder(email, folderId, folderName) {
     try {
-      await this.folderLogic.updateFolder(email, folderId, folderName)
-
-      return this.response.status(204).json()
+      const folders = await this.folderLogic.updateFolder(
+        email,
+        folderId,
+        folderName
+      )
+      return this.response.status(200).json(folders)
     } catch (err) {
       console.log(err)
       return this.response.status(500).json()
@@ -42,9 +44,9 @@ class FolderController extends ControllerBase {
 
   async deleteFolder(email, folderId) {
     try {
-      await this.folderLogic.deleteFolder(email, folderId)
+      const folders = await this.folderLogic.deleteFolder(email, folderId)
 
-      return this.response.status(204).json()
+      return this.response.status(200).json(folders)
     } catch (err) {
       console.log(err)
       return this.response.status(500).json()

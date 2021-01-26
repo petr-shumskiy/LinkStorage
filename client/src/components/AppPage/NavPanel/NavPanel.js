@@ -19,10 +19,10 @@ import {
 } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search'
 import MenuIcon from '@material-ui/icons/Menu'
-import { theme } from '../../theme'
+import { theme } from '../../../theme'
 import { useDispatch } from 'react-redux'
-import { logout } from '../../redux/authReducer'
-import { addItemThunk } from '../../redux/userReducer'
+import { logout } from '../../../redux/authReducer'
+import { addItemThunk } from '../../../redux/userReducer'
 const { ReactTinyLink } = require('react-tiny-link')
 
 const NavButton = styled(Button)({
@@ -206,38 +206,30 @@ function AddLinkDialog({ handleClose, open }) {
       ) : null}
 
       <DialogTitle id='form-dialog-title'>{'Add a link'}</DialogTitle>
-      <DialogContent>
-        <Grid container alignItems='center' justify='space-between' spacing={1}>
-          <Grid item xs={10}>
-            <TextField
-              variant='outlined'
-              placeholder='www.example.com/article.html'
-              autoFocus
-              margin='dense'
-              id='name'
-              label='url'
-              onChange={(e) => setInputValue(e.currentTarget.value)}
-              value={inputValue}
-              onSubmit={() => setSubmitted(true)}
-              classes={{
-                root: classes.addLinkInput
-              }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={2}
-            style={{ display: 'flex', justifyContent: 'flex-end' }}
-          >
-            <Button
-              onClick={() => setSubmitted(true)}
-              color='primary'
-              variant='contained'
-            >
-              Add
-            </Button>
-          </Grid>
-        </Grid>
+      <DialogContent style={{ display: 'flex', alignItems: 'center' }}>
+        <TextField
+          variant='outlined'
+          placeholder='www.example.com/article.html'
+          autoFocus
+          margin='dense'
+          id='name'
+          label='url'
+          onChange={(e) => setInputValue(e.currentTarget.value)}
+          value={inputValue}
+          onSubmit={() => setSubmitted(true)}
+          classes={{
+            root: classes.addLinkInput
+          }}
+        />
+        <Button
+          onClick={() => setSubmitted(true)}
+          color='secondary'
+          variant='contained'
+          size='large'
+          style={{ marginLeft: 16, marginTop: 2 }}
+        >
+          Add
+        </Button>
       </DialogContent>
     </Dialog>
   )
