@@ -1,5 +1,11 @@
 import { createStyles, makeStyles, Typography } from '@material-ui/core'
-import React from 'react'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  fetchItemsThunk,
+  updateItemContentThunk
+} from '../../../../redux/userReducer'
+import { EditItemDialog } from './ItemActions/EditItemDialog'
 import { StyledButton } from './ItemActions/StyledButtons'
 
 const useStyles = makeStyles((theme) =>
@@ -15,18 +21,48 @@ const useStyles = makeStyles((theme) =>
   })
 )
 
-export function EditButton({ isActive }) {
+export function EditButton({ isActive, item, onCloseEditDialog }) {
+  const dispatch = useDispatch()
+  const token = useSelector(({ auth }) => auth.token)
+  const [isItemEditDialogOpen, setIsItemEditDialogOpen] = useState(false)
+
+  const editItemHandler = async (title, url, description) => {
+    dispatch(
+      updateItemContentThunk(token, item._id, { title, url, description })
+    )
+    setIsItemEditDialogOpen(false)
+  }
+
+  const openItemEditDialog = () => {
+    setIsItemEditDialogOpen(true)
+  }
+
+  const closeItemEditDialog = () => {
+    setIsItemEditDialogOpen(false)
+    onCloseEditDialog()
+  }
+
   const classes = useStyles()
   return (
-    <StyledButton
-      className={classes.editButton}
-      style={{
-        display: [isActive ? 'block' : 'none']
-      }}
-    >
-      <Typography variant='body1' color='inherit'>
-        edit
-      </Typography>
-    </StyledButton>
+    <>
+      <EditItemDialog
+        open={isItemEditDialogOpen}
+        onClose={closeItemEditDialog}
+        onSave={editItemHandler}
+        item={item}
+      />
+
+      <StyledButton
+        onClick={openItemEditDialog}
+        className={classes.editButton}
+        style={{
+          display: [isActive ? 'block' : 'none']
+        }}
+      >
+        <Typography variant='body1' color='inherit'>
+          edit
+        </Typography>
+      </StyledButton>
+    </>
   )
 }

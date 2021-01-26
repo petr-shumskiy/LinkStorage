@@ -84,8 +84,13 @@ class API {
     return response
   }
 
-  updateItem = async (id, payload) => {
+  updateItemStatus = async (id, payload) => {
     const response = await userInstance.patch('/link/' + id, payload)
+    return response
+  }
+
+  updateItemContent = async (id, content) => {
+    const response = await userInstance.put('/link/' + id, content)
     return response
   }
 

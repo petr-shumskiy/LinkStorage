@@ -28,7 +28,15 @@ router.delete('/link/:itemId', hasAuth, (req, res) => {
 })
 
 router.patch('/link/:itemId', hasAuth, (req, res) => {
-  return createItemController(req, res).updateItem(
+  return createItemController(req, res).updateItemStatus(
+    req.user.email,
+    req.params.itemId,
+    req.body
+  )
+})
+
+router.put('/link/:itemId', hasAuth, (req, res) => {
+  return createItemController(req, res).updateItemContent(
     req.user.email,
     req.params.itemId,
     req.body

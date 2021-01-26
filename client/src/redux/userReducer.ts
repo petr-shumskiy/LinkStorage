@@ -136,15 +136,25 @@ export const deleteItemThunk = (id: string, token: string) => async (dispatch: D
   }
 }
 
-export const updateItemThunk = (
+export const updateItemStatusThunk = (
   id: string,
   payload: UpdateObjectType,
   token: string
 ) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.updateItem(id, payload)
+    const res = await API.updateItemStatus(id, payload)
     dispatch(setItems(res.data))
+    const foldersRes = await API.fetchFolders(token)
+    dispatch(setListOfFolders(foldersRes.data))
+  } catch (error) {
+    console.log(error)
+  }
+}
 
+export const updateItemContentThunk = (token: string, id: string, content: { title: string, url: string, description: string }) => async (dispatch: Dispatch) => {
+  try {
+    const res = await API.updateItemContent(id, content)
+    dispatch(setItems(res.data))
     const foldersRes = await API.fetchFolders(token)
     dispatch(setListOfFolders(foldersRes.data))
   } catch (error) {

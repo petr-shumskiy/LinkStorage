@@ -10,13 +10,15 @@ import {
 import { Favorite } from '@material-ui/icons'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteItemThunk, updateItemThunk } from '../../../../redux/userReducer'
+import {
+  deleteItemThunk,
+  updateItemStatusThunk
+} from '../../../../redux/userReducer'
 import { theme } from '../../../../theme'
 import { EditButton } from './EditButton'
 import { DateOfTitle } from './ItemActions/DateOfTitle'
 import { ItemActions } from './ItemActions/ItemActions'
 import { StyledIconButton } from './ItemActions/StyledButtons'
-import lodash from 'lodash'
 
 const useStyle = makeStyles((theme) =>
   createStyles({
@@ -74,15 +76,15 @@ export function Item({ item, category }) {
   }
 
   const handleAddItemToFolder = (folderId) => {
-    dispatch(updateItemThunk(id, { folderId }, token))
+    dispatch(updateItemStatusThunk(id, { folderId }, token))
   }
 
   const handleLikeItem = () => {
-    dispatch(updateItemThunk(id, { liked: !item.liked }, token))
+    dispatch(updateItemStatusThunk(id, { liked: !item.liked }, token))
   }
 
   const handleArchiveItem = () => {
-    dispatch(updateItemThunk(id, { archived: !item.archived }, token))
+    dispatch(updateItemStatusThunk(id, { archived: !item.archived }, token))
   }
 
   return (
@@ -109,7 +111,11 @@ export function Item({ item, category }) {
             position: 'relative'
           }}
         >
-          <EditButton isActive={isActive} />
+          <EditButton
+            isActive={isActive}
+            item={item}
+            onCloseEditDialog={() => setActive(false)}
+          />
           {/* title */}
           <Grid item className={classes.restrictedMaxWidth}>
             <Typography
@@ -150,6 +156,7 @@ export function Item({ item, category }) {
               onItemArchived={handleArchiveItem}
               isItemArchived={item.archived}
               category={category}
+              item={item}
             />
             <StyledIconButton
               style={{

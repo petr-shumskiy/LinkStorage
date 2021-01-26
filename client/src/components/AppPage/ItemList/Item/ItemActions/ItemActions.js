@@ -22,7 +22,7 @@ export function ItemActions({
   category
 }) {
   const [isOpen, setIsOpen] = useState(false)
-  console.log(isOpen)
+
   const [isFolderSelectorOpen, setFolderSelectorOpen] = useState(false)
 
   const [anchorEl, setAnchorEl] = useState(null)
@@ -56,8 +56,6 @@ export function ItemActions({
         onAddItemToFolder={onAddItemToFolder}
         category={category}
       />
-
-      {/* <ItemEditDialog /> */}
 
       <Box
         style={{

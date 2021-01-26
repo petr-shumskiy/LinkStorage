@@ -55,7 +55,9 @@ class ItemLogic {
     return this.getItems(email)
   }
 
-  async updateItem(email, itemId, item) {
+  // async u
+
+  async updateItemStatus(email, itemId, item) {
     const user = await User.findOne({ email })
 
     const findFolderWithItemId = (id) => {
@@ -132,6 +134,38 @@ class ItemLogic {
       }
     }
 
+    await user.save()
+    return this.getItems(email)
+  }
+
+  async updateItemContent(email, itemId, content) {
+    const findFolderWithItemId = (id) => {
+      for (const folder of user.folders) {
+        for (const item of folder.items) {
+          if (item._id.toString() === itemId) {
+            return [item, folder]
+          }
+        }
+      }
+      return [null, null]
+    }
+    const { title, url, description } = content
+    const user = await User.findOne({ email })
+    let currentItem = await user.items.id(itemId)
+
+    let currentFolder
+    if (!currentItem) {
+      ;[currentItem, currentFolder] = findFolderWithItemId(itemId)
+      console.log(currentItem, currentFolder)
+    }
+
+    if (!title || !url) {
+      throw Error('title or url is empty')
+    } else {
+      currentItem.title = title
+      currentItem.url = url
+      currentItem.description = description
+    }
     await user.save()
     return this.getItems(email)
   }
