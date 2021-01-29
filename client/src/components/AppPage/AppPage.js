@@ -13,6 +13,7 @@ import { ItemsList } from './ItemList/ItemList'
 import { NavPanel } from './NavPanel/NavPanel'
 import { AsideNav } from './AsideNav/AsideNav'
 import { fetchFoldersThunk } from '../../redux/userReducer'
+import { Redirect, useHistory } from 'react-router-dom'
 
 const drawerWidth = 220
 const useStyles = makeStyles((theme) => ({
@@ -53,9 +54,13 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function App({ width }) {
+  const { location } = useHistory()
   const classes = useStyles()
   const dispatch = useDispatch()
   const items = useSelector(({ user }) => user.items)
+  const possiblePathes = useSelector(({ user }) =>
+    user.folders.map((folder) => folder.name).concat(user.categories)
+  )
   const token = useSelector(({ auth }) => auth.token)
 
   useEffect(() => {
@@ -81,6 +86,9 @@ function App({ width }) {
       </Grid>
     </Grid>
   )
+  if (!possiblePathes.includes(location.pathname.split('/')[1])) {
+    return <Redirect to='/home' />
+  }
 
   return (
     <div className='App'>

@@ -1,12 +1,14 @@
+import React from 'react'
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   Typography
 } from '@material-ui/core'
-import React from 'react'
+import CloseIcon from '@material-ui/icons/Close'
 
 export function DeleteDialog({
   isOpen,
@@ -16,8 +18,19 @@ export function DeleteDialog({
 }) {
   return (
     <Dialog open={isOpen} onClose={onCancelClicked}>
-      <DialogTitle disableTypography>
-        <Typography variant='h2'>Are you sure?</Typography>
+      <DialogTitle
+        disableTypography
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingRight: 8
+        }}
+      >
+        <Typography>Are you sure?</Typography>
+        <IconButton onClick={onCancelClicked}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent>
         <Typography variant='subtitle1'>

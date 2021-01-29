@@ -47,10 +47,11 @@ function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
     setInputValue(e.target.value)
   }
 
-  const handleClick = async () => {
-    onDialogClosed()
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     await dispatch(renameFolderThunk(token, folderId, inputValue))
-    push('/' + inputValue)
+    onDialogClosed()
+    push('/' + inputValue.trimRight())
   }
 
   const handleDeleteFolder = async () => {
@@ -82,29 +83,31 @@ function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
           <DeleteOutlined />
         </StyledDeleteIcon>
       </Box>
-      <DialogContent style={{ display: 'flex', alignItems: 'center' }}>
-        <InputLabel htmlFor='edit-folder' style={{ marginRight: 16 }}>
-          Title
-        </InputLabel>
-        <TextField
-          id='edit-folder'
-          autoFocus
-          variant='outlined'
-          type='text'
-          value={inputValue}
-          onChange={handleChange}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button
-          size='large'
-          variant='contained'
-          color='secondary'
-          onClick={handleClick}
-        >
-          save
-        </Button>
-      </DialogActions>
+      <form onSubmit={handleSubmit}>
+        <DialogContent style={{ display: 'flex', alignItems: 'center' }}>
+          <InputLabel htmlFor='edit-folder' style={{ marginRight: 16 }}>
+            Title
+          </InputLabel>
+          <TextField
+            id='edit-folder'
+            autoFocus
+            variant='outlined'
+            type='text'
+            value={inputValue}
+            onChange={handleChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            typs='submit'
+            size='large'
+            variant='contained'
+            color='secondary'
+          >
+            save
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   )
 }

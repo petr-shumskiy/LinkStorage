@@ -18,6 +18,7 @@ import {
   Typography
 } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search'
+import CloseIcon from '@material-ui/icons/Close'
 import MenuIcon from '@material-ui/icons/Menu'
 import { theme } from '../../../theme'
 import { useDispatch, useSelector } from 'react-redux'
@@ -196,15 +197,29 @@ function AddLinkDialog({ handleClose, open }) {
       maxWidth='xl'
     >
       {isSubmitted ? (
-        <ReactTinyLink
-          url={inputValue}
-          onSuccess={handleScrappedData}
-          style={{ display: 'none' }}
-        />
+        <div style={{ display: 'none' }}>
+          <ReactTinyLink url={inputValue} onSuccess={handleScrappedData} />
+        </div>
       ) : null}
 
-      <DialogTitle id='form-dialog-title'>{'Add a link'}</DialogTitle>
-      <DialogContent style={{ display: 'flex', alignItems: 'center' }}>
+      <DialogTitle
+        disableTypography
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingBottom: 8
+        }}
+      >
+        <Typography>Add alink</Typography>
+        <IconButton onClick={handleClose}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <Divider />
+      <DialogContent
+        style={{ display: 'flex', alignItems: 'center', padding: '16px 24px' }}
+      >
         <TextField
           variant='outlined'
           placeholder='www.example.com/article.html'

@@ -5,10 +5,9 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import Confirmation from './AuthPage/Confirmation'
 import { ThemeProvider } from '@material-ui/core'
 import { theme } from '../theme'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 const App = () => {
-  const dispatch = useDispatch()
   const token = useSelector(({ auth }) => auth.token)
 
   return (

@@ -95,7 +95,11 @@ class API {
   }
 
   updateItemStatus = async (token, id, payload) => {
-    const response = await userInstance.patch('/link/' + id, payload)
+    const response = await userInstance.patch(
+      '/link/' + id,
+      payload,
+      setHeader(token)
+    )
     return response
   }
 

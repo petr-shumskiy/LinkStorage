@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import {
   Box,
   Button,
@@ -7,11 +8,13 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  IconButton,
   InputLabel,
   makeStyles,
-  TextField
+  TextField,
+  Typography
 } from '@material-ui/core'
-import React, { useState } from 'react'
+import CloseIcon from '@material-ui/icons/Close'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -58,13 +61,24 @@ export function EditItemDialog({ open, onClose, onSave, item }) {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    console.log(title, url, description)
     onSave(title, url, description)
   }
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit link</DialogTitle>
+      <DialogTitle
+        disableTypography
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Typography>Edit link</Typography>
+        <IconButton onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <Divider style={{ marginBottom: 16 }} />
       <form onSubmit={submitHandler}>
         <DialogContent className={classes.dialogContent}>
