@@ -20,7 +20,7 @@ import {
 import SearchIcon from '@material-ui/icons/Search'
 import MenuIcon from '@material-ui/icons/Menu'
 import { theme } from '../../../theme'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
 import { addItemThunk } from '../../../redux/userReducer'
 const { ReactTinyLink } = require('react-tiny-link')
@@ -112,6 +112,7 @@ const useStyles = makeStyles((theme) =>
     },
     logoTitle: {
       paddingTop: 15,
+      whiteSpace: 'nowrap',
       [theme.breakpoints.down('sm')]: {
         position: 'absolute',
         left: '50%',
@@ -141,10 +142,6 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
       open={anchorEl !== null}
       onClose={onMenuClosed}
       variant='menu'
-      // anchorOrigin={{
-      //   vertical: null,
-      //   horizontal: 'center'
-      // }}
       transformOrigin={{
         vertical: -45,
         horizontal: -50
@@ -167,6 +164,7 @@ const mockImageUrl =
 
 function AddLinkDialog({ handleClose, open }) {
   const classes = useStyles()
+  const token = useSelector(({ auth }) => auth.token)
   const [isSubmitted, setSubmitted] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const dispatch = useDispatch()
@@ -184,7 +182,7 @@ function AddLinkDialog({ handleClose, open }) {
       description: description || content || '',
       logoUrl: image[0] || mockImageUrl
     }
-    await dispatch(addItemThunk(item))
+    await dispatch(addItemThunk(token, item))
     setSubmitted(false)
     handleClose()
   }
@@ -226,7 +224,7 @@ function AddLinkDialog({ handleClose, open }) {
           color='secondary'
           variant='contained'
           size='large'
-          style={{ marginLeft: 16, marginTop: 2 }}
+          style={{ marginLeft: 16, marginTop: 4 }}
         >
           Add
         </Button>
@@ -236,6 +234,7 @@ function AddLinkDialog({ handleClose, open }) {
 }
 
 export function NavPanel({ openDrawer }) {
+  const email = useSelector(({ auth }) => auth.email)
   const [open, setOpen] = useState(false)
 
   const [anchorEl, setAnchorEl] = useState(null)
@@ -304,7 +303,7 @@ export function NavPanel({ openDrawer }) {
             <AddLinkDialog handleClose={handleClose} open={open} />
             <NavButton style={{ marginLeft: '0.5rem' }} onClick={onMenuClicked}>
               <Typography variant='body1' color='inherit'>
-                fwshumskiy@gmail.com
+                {email}
               </Typography>
             </NavButton>
             <AccountMenu anchorEl={anchorEl} onMenuClosed={onMenuClosed} />

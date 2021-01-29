@@ -1,7 +1,7 @@
 import { makeStyles, TextField } from '@material-ui/core'
 import { FolderOutlined } from '@material-ui/icons'
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { addFolderThunk } from '../../../redux/userReducer'
 
 const useStyles = makeStyles({
@@ -18,11 +18,13 @@ const useStyles = makeStyles({
 
 export function AddFolderInput({ onAddFolderClicked }) {
   const classes = useStyles()
+  const token = useSelector(({ auth }) => auth.token)
   const dispatch = useDispatch()
   const [folderName, setFolderName] = useState('')
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(addFolderThunk(folderName))
+    console.log(token)
+    dispatch(addFolderThunk(token, folderName))
     setFolderName('')
     onAddFolderClicked()
   }

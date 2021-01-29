@@ -8,9 +8,7 @@ class ItemController extends ControllerBase {
 
   async addItem(email, item) {
     try {
-      console.log(item)
       const items = await this.itemLogic.addItem(email, item)
-      console.log('ITEMS FOR RESPONSE', items)
       return this.response.status(201).json(items)
     } catch (err) {
       console.log(err._message)
@@ -32,7 +30,6 @@ class ItemController extends ControllerBase {
   async deleteItem(email, itemId) {
     try {
       const items = await this.itemLogic.deleteItem(email, itemId)
-      console.log('ITEMS FOR RESPONSE', items)
       return this.response.status(200).json(items)
     } catch (err) {
       console.log(err)

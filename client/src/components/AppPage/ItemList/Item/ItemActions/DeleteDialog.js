@@ -15,7 +15,7 @@ export function DeleteDialog({
   isFolder
 }) {
   return (
-    <Dialog open={isOpen}>
+    <Dialog open={isOpen} onClose={onCancelClicked}>
       <DialogTitle disableTypography>
         <Typography variant='h2'>Are you sure?</Typography>
       </DialogTitle>

@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core'
 import { DeleteOutlined } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import {
   deleteFolderThunk,
@@ -32,6 +32,7 @@ const StyledDeleteIcon = styled(IconButton)({
 })
 
 function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
+  const token = useSelector(({ auth }) => auth.token)
   const dispatch = useDispatch()
   const { push } = useHistory()
   const [inputValue, setInputValue] = useState(folderName)
@@ -48,14 +49,14 @@ function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
 
   const handleClick = async () => {
     onDialogClosed()
-    await dispatch(renameFolderThunk(folderId, inputValue))
+    await dispatch(renameFolderThunk(token, folderId, inputValue))
     push('/' + inputValue)
   }
 
   const handleDeleteFolder = async () => {
     setDeleteDialogOpen(false)
     onDialogClosed()
-    await dispatch(deleteFolderThunk(folderId))
+    await dispatch(deleteFolderThunk(token, folderId))
   }
 
   const onDeleteFolderClicked = async () => {

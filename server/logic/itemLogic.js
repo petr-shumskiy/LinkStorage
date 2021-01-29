@@ -77,7 +77,7 @@ class ItemLogic {
       if (currentItem) {
         currentItem.set({ liked: !currentItem.liked })
       } else {
-        const [currentItem, currentFolder] = findFolderWithItemId(itemId)
+        const currentItem = findFolderWithItemId(itemId)
         currentItem.set({ liked: !currentItem.liked })
       }
     }

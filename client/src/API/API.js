@@ -1,7 +1,4 @@
-// create different apis for different reducers, create instancec of axios
 import { create } from 'axios'
-
-const token = localStorage.getItem('token')
 
 function setHeader(token) {
   return {
@@ -16,8 +13,7 @@ const userInstance = create({
   baseURL: '/api/user',
   timeout: 5000,
   headers: {
-    'Access-Control-Allow-Origin': '*',
-    Authorization: 'Bearer ' + token
+    'Access-Control-Allow-Origin': '*'
   }
 })
 
@@ -26,9 +22,7 @@ const authInstance = create({
   header: { 'Access-Control-Allow-Origin': '*' }
 })
 
-// FIXME catch errors
 class API {
-  // AUTH
   sendRegistrationData = async ({ url }) => {
     const response = await authInstance.post('/registration', url)
     return response
@@ -47,24 +41,36 @@ class API {
   }
 
   // USER
+
   fetchFolders = async (token) => {
     const response = await userInstance.get('/folder', setHeader(token))
     return response
   }
 
-  addFolder = async (name) => {
-    const response = await userInstance.post('/folder', { name })
+  addFolder = async (token, name) => {
+    console.log(token)
+    const response = await userInstance.post(
+      '/folder',
+      { name },
+      setHeader(token)
+    )
     return response
   }
 
-  updateFolder = async (id, name) => {
-    const response = await userInstance.post('/folder/' + id, { id, name })
+  updateFolder = async (token, id, name) => {
+    const response = await userInstance.post(
+      '/folder/' + id,
+      { id, name },
+      setHeader(token)
+    )
     return response
   }
 
-  deleteFolder = async (id) => {
-    console.log(id)
-    const response = await userInstance.delete('/folder/' + id)
+  deleteFolder = async (token, id) => {
+    const response = await userInstance.delete(
+      '/folder/' + id,
+      setHeader(token)
+    )
     return response
   }
 
@@ -73,29 +79,32 @@ class API {
     return response
   }
 
-  addItem = async (item) => {
-    const response = await userInstance.post('/link', { item })
+  addItem = async (token, item) => {
+    console.log(token)
+    const response = await userInstance.post(
+      '/link',
+      { item },
+      setHeader(token)
+    )
     return response
   }
 
-  deleteItem = async (id) => {
-    const response = await userInstance.delete('/link/' + id)
-    console.log(response)
+  deleteItem = async (token, id) => {
+    const response = await userInstance.delete('/link/' + id, setHeader(token))
     return response
   }
 
-  updateItemStatus = async (id, payload) => {
+  updateItemStatus = async (token, id, payload) => {
     const response = await userInstance.patch('/link/' + id, payload)
     return response
   }
 
-  updateItemContent = async (id, content) => {
-    const response = await userInstance.put('/link/' + id, content)
-    return response
-  }
-
-  toggleLikeItem = async (id) => {
-    const response = await userInstance.post(`/link/${id}/like`)
+  updateItemContent = async (token, id, content) => {
+    const response = await userInstance.put(
+      '/link/' + id,
+      content,
+      setHeader(token)
+    )
     return response
   }
 }

@@ -72,19 +72,19 @@ export function Item({ item, category }) {
   const [isActive, setActive] = useState(false)
 
   const handleDeleteItem = () => {
-    dispatch(deleteItemThunk(id, token))
+    dispatch(deleteItemThunk(token, id))
   }
 
   const handleAddItemToFolder = (folderId) => {
-    dispatch(updateItemStatusThunk(id, { folderId }, token))
+    dispatch(updateItemStatusThunk(token, id, { folderId }))
   }
 
   const handleLikeItem = () => {
-    dispatch(updateItemStatusThunk(id, { liked: !item.liked }, token))
+    dispatch(updateItemStatusThunk(token, id, { liked: !item.liked }))
   }
 
   const handleArchiveItem = () => {
-    dispatch(updateItemStatusThunk(id, { archived: !item.archived }, token))
+    dispatch(updateItemStatusThunk(token, id, { archived: !item.archived }))
   }
 
   return (

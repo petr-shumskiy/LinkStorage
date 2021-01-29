@@ -1,10 +1,7 @@
 import { createStyles, makeStyles, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  fetchItemsThunk,
-  updateItemContentThunk
-} from '../../../../redux/userReducer'
+import { updateItemContentThunk } from '../../../../redux/userReducer'
 import { EditItemDialog } from './ItemActions/EditItemDialog'
 import { StyledButton } from './ItemActions/StyledButtons'
 

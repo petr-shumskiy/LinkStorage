@@ -42,6 +42,12 @@ export type Folder = {
   items: Item[]
 }
 
+export type ContentType = {
+  title: string
+  url: string
+  description: string
+}
+
 const initialState: State = {
   items: [],
   categories: [
@@ -76,29 +82,28 @@ export const fetchFoldersThunk = (token: string) => async (dispatch: Dispatch) =
   }
 }
 
-export const renameFolderThunk = (folderId: string, folderName: string) => async (dispatch: Dispatch) => {
+export const renameFolderThunk = (token: string, folderId: string, folderName: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.updateFolder(folderId, folderName)
+    const res = await API.updateFolder(token, folderId, folderName)
     dispatch(setListOfFolders(res.data))
   } catch (error) {
     console.log(error)
   }
 }
 
-export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
+export const addFolderThunk = (token: string, name: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.addFolder(name)
+    console.log(token)
+    const res = await API.addFolder(token, name)
     dispatch(setListOfFolders(res.data))
   } catch (error) {
     console.log(error)
   }
 }
 
-export const deleteFolderThunk = (folderId: string) => async (dispatch: Dispatch) => {
+export const deleteFolderThunk = (token: string, folderId: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.deleteFolder(folderId)
-
-    console.log(res.data)
+    const res = await API.deleteFolder(token, folderId)
     dispatch(setListOfFolders(res.data))
   } catch (error) {
     console.log(error)
@@ -107,42 +112,42 @@ export const deleteFolderThunk = (folderId: string) => async (dispatch: Dispatch
 
 export const fetchItemsThunk = (token: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.fetchAllItems(token) // TODO catch
+    const res = await API.fetchAllItems(token)
     dispatch(setItems(res.data))
   } catch (error) {
     console.log(error)
   }
 }
 
-export const addItemThunk = (item: Item) => async (dispatch: Dispatch) => {
+export const addItemThunk = (token: string, item: Item) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.addItem(item)
+    console.log(token)
+    const res = await API.addItem(token, item)
     dispatch(setItems(res.data))
   } catch (error) {
     console.log(error.message)
   }
 }
 
-export const deleteItemThunk = (id: string, token: string) => async (dispatch: Dispatch) => {
+export const deleteItemThunk = (token: string, id: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.deleteItem(id)
+    const res = await API.deleteItem(token, id)
     dispatch(setItems(res.data))
 
     const foldersRes = await API.fetchFolders(token)
     dispatch(setListOfFolders(foldersRes.data))
   } catch (error) {
-    // TODO logic for catch
     console.log(error.message)
   }
 }
 
 export const updateItemStatusThunk = (
+  token: string,
   id: string,
-  payload: UpdateObjectType,
-  token: string
+  payload: UpdateObjectType
 ) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.updateItemStatus(id, payload)
+    const res = await API.updateItemStatus(token, id, payload)
     dispatch(setItems(res.data))
     const foldersRes = await API.fetchFolders(token)
     dispatch(setListOfFolders(foldersRes.data))
@@ -151,9 +156,9 @@ export const updateItemStatusThunk = (
   }
 }
 
-export const updateItemContentThunk = (token: string, id: string, content: { title: string, url: string, description: string }) => async (dispatch: Dispatch) => {
+export const updateItemContentThunk = (token: string, id: string, content: ContentType) => async (dispatch: Dispatch) => {
   try {
-    const res = await API.updateItemContent(id, content)
+    const res = await API.updateItemContent(token, id, content)
     dispatch(setItems(res.data))
     const foldersRes = await API.fetchFolders(token)
     dispatch(setListOfFolders(foldersRes.data))

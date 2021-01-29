@@ -9,7 +9,7 @@ export const authReducer = createSlice({
     validationError: null,
     showRegistration: false,
     showSignIn: false,
-    email: null,
+    email: null || localStorage.getItem('email'),
     token: null || localStorage.getItem('token'),
     signInRequestInProgress: false,
     signInRequestUpProgress: false
@@ -66,8 +66,10 @@ export const sendSignInData = (data) => async (dispatch) => {
   dispatch(toggleProgressSignIn())
   try {
     const res = await API.sendSignInData(data)
+    dispatch(login(data.email))
     dispatch(toggleProgressSignIn())
     localStorage.setItem('token', res.data.token)
+    localStorage.setItem('email', data.email)
     dispatch(setToken(res.data.token))
   } catch (err) {
     dispatch({ type: 'RESET_SIGN_IN_PASSWORD' })
