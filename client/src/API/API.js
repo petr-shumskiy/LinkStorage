@@ -79,13 +79,9 @@ class API {
     return response
   }
 
-  addItem = async (token, item) => {
-    console.log(token)
-    const response = await userInstance.post(
-      '/link',
-      { item },
-      setHeader(token)
-    )
+  addItem = async (token, url) => {
+    console.log(url)
+    const response = await userInstance.post('/link', { url }, setHeader(token))
     return response
   }
 

@@ -1,11 +1,41 @@
 const User = require('../models/User')
+const metascraper = require('metascraper')([
+  require('metascraper-description')(),
+  require('metascraper-image')(),
+  require('metascraper-title')(),
+  require('metascraper-url')()
+])
+const got = require('got')
+
+// {
+// description: 'GitHub is where over 56 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and feat...',
+// image: 'https://github.githubassets.com/images/modules/site/social-cards/github-social.png',
+// logo: null,
+// title: 'GitHub: Where the world builds software',
+// url: 'https://github.com'
+// }
 
 class ItemLogic {
-  async addItem(email, item) {
-    const user = await User.findOne({ email })
+  async addItem(email, targetUrl) {
+    let user = await User.findOne({ email })
 
+    const { body: html, url } = await got(targetUrl)
+    const { title, description, image: logoUrl } = await metascraper({
+      html,
+      url
+    })
+    const item = {
+      title: title || url,
+      description,
+      url,
+      logoUrl:
+        logoUrl ||
+        'https://storage.googleapis.com/stateless-muslimdc-asia/raudhah-grocer/2020/08/9799f00a-no_image_available.jpg'
+    }
     user.items.push(item)
     await user.save()
+    user = await User.findOne({ email })
+    console.log(user.items)
 
     return this.getItems(email)
   }

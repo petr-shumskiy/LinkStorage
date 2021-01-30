@@ -47,12 +47,12 @@ const useStyle = makeStyles((theme) =>
     },
 
     bgImage: {
-      height: '70%',
+      height: '100%',
       width: '100%',
       borderRadius: theme.shape.borderRadius,
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center',
-      backgroundSize: 'cover'
+      backgroundSize: 'contain'
     },
     hide: {
       display: 'none'

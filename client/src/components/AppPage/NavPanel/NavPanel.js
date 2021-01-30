@@ -23,8 +23,11 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { theme } from '../../../theme'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
-import { addItemThunk } from '../../../redux/userReducer'
-const { ReactTinyLink } = require('react-tiny-link')
+import {
+  addItemThunk,
+  setLoader,
+  setPreloadItem
+} from '../../../redux/userReducer'
 
 const NavButton = styled(Button)({
   '&:hover': {
@@ -160,31 +163,16 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
   )
 }
 
-const mockImageUrl =
-  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBvg8J2136rRRC-MGBdmSfYXV56XKO-yKqyg&usqp=CAU'
-
 function AddLinkDialog({ handleClose, open }) {
   const classes = useStyles()
-  const token = useSelector(({ auth }) => auth.token)
-  const [isSubmitted, setSubmitted] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const dispatch = useDispatch()
+  const token = useSelector(({ auth }) => auth.token)
 
-  const handleScrappedData = async ({
-    title,
-    url,
-    description,
-    content,
-    image
-  }) => {
-    const item = {
-      title: title || 'The Valid title must be here but it does not :)',
-      url: inputValue,
-      description: description || content || '',
-      logoUrl: image[0] || mockImageUrl
-    }
-    await dispatch(addItemThunk(token, item))
-    setSubmitted(false)
+  const handleSubmit = () => {
+    dispatch(setLoader(true))
+    dispatch(addItemThunk(token, inputValue))
+    setInputValue('')
     handleClose()
   }
 
@@ -196,12 +184,6 @@ function AddLinkDialog({ handleClose, open }) {
       aria-describedby='alert-dialog-description'
       maxWidth='xl'
     >
-      {isSubmitted ? (
-        <div style={{ display: 'none' }}>
-          <ReactTinyLink url={inputValue} onSuccess={handleScrappedData} />
-        </div>
-      ) : null}
-
       <DialogTitle
         disableTypography
         style={{
@@ -211,7 +193,7 @@ function AddLinkDialog({ handleClose, open }) {
           paddingBottom: 8
         }}
       >
-        <Typography>Add alink</Typography>
+        <Typography>Add a link</Typography>
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>
@@ -229,13 +211,13 @@ function AddLinkDialog({ handleClose, open }) {
           label='url'
           onChange={(e) => setInputValue(e.currentTarget.value)}
           value={inputValue}
-          onSubmit={() => setSubmitted(true)}
           classes={{
             root: classes.addLinkInput
           }}
         />
         <Button
-          onClick={() => setSubmitted(true)}
+          // onClick={() => setSubmitted(true)}
+          onClick={handleSubmit}
           color='secondary'
           variant='contained'
           size='large'

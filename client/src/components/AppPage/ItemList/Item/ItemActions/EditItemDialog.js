@@ -25,15 +25,17 @@ const useStyles = makeStyles((theme) =>
     },
     inputRow: {
       display: 'flex',
+      justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 24
+      marginBottom: 24,
+      width: '100%'
     },
     label: {
       marginRight: 48,
       opacity: 0.7
     },
     TextField: {
-      minWidth: 360
+      minWidth: 560
     }
   })
 )
@@ -65,7 +67,7 @@ export function EditItemDialog({ open, onClose, onSave, item }) {
   }
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} maxWidth='md'>
       <DialogTitle
         disableTypography
         style={{

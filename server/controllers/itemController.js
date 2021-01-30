@@ -6,12 +6,12 @@ class ItemController extends ControllerBase {
     this.itemLogic = itemLogic
   }
 
-  async addItem(email, item) {
+  async addItem(email, url) {
     try {
-      const items = await this.itemLogic.addItem(email, item)
+      const items = await this.itemLogic.addItem(email, url)
       return this.response.status(201).json(items)
     } catch (err) {
-      console.log(err._message)
+      console.log('error')
       return this.response.status(500).json()
     }
   }
@@ -19,7 +19,6 @@ class ItemController extends ControllerBase {
   async getItems(email) {
     try {
       const items = await this.itemLogic.getItems(email)
-
       return this.response.status(200).json(items)
     } catch (err) {
       console.log(err)

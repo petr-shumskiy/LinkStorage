@@ -23,7 +23,9 @@ export type AsideMenuItem = {
   isSelected: boolean
   handleClickItem?: any
 }
+
 export interface State {
+  isLoading: boolean
   items: Item[]
   categories: string[]
   folders: Folder[]
@@ -49,6 +51,7 @@ export type ContentType = {
 }
 
 const initialState: State = {
+  isLoading: false,
   items: [],
   categories: [
     'home',
@@ -63,12 +66,14 @@ export const userReducer = createSlice({
   initialState,
   reducers: {
     setItems(state: State, action: PayloadAction<Item[]>) {
-      state.items = action.payload
+      state.items = action.payload.reverse()
     },
 
     setListOfFolders(state: State, action: PayloadAction<Folder[]>) {
-      const { payload } = action
-      state.folders = payload
+      state.folders = action.payload
+    },
+    setLoader(state: State, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload
     }
   }
 })
@@ -119,10 +124,11 @@ export const fetchItemsThunk = (token: string) => async (dispatch: Dispatch) => 
   }
 }
 
-export const addItemThunk = (token: string, item: Item) => async (dispatch: Dispatch) => {
+export const addItemThunk = (token: string, url: string) => async (dispatch: Dispatch) => {
   try {
-    console.log(token)
-    const res = await API.addItem(token, item)
+    console.log(url)
+    const res = await API.addItem(token, url)
+    dispatch(setLoader(false))
     dispatch(setItems(res.data))
   } catch (error) {
     console.log(error.message)
@@ -169,7 +175,8 @@ export const updateItemContentThunk = (token: string, id: string, content: Conte
 
 export const {
   setItems,
-  setListOfFolders
+  setListOfFolders,
+  setLoader
 } = userReducer.actions
 
 export default userReducer
