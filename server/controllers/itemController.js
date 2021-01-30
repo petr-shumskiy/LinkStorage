@@ -11,7 +11,7 @@ class ItemController extends ControllerBase {
       const items = await this.itemLogic.addItem(email, url)
       return this.response.status(201).json(items)
     } catch (err) {
-      console.log('error')
+      console.log(err)
       return this.response.status(500).json()
     }
   }

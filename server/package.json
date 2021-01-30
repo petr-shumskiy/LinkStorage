@@ -40,6 +40,8 @@
     "metascraper-url": "^5.16.16",
     "mocha": "^8.2.1",
     "mongoose": "^5.10.8",
+    "url-exist": "^3.0.0",
+    "url-exists": "^1.0.3",
     "validator": "^13.1.17"
   },
   "devDependencies": {

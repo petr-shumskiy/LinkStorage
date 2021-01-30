@@ -23,11 +23,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { theme } from '../../../theme'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
-import {
-  addItemThunk,
-  setLoader,
-  setPreloadItem
-} from '../../../redux/userReducer'
+import { addItemThunk, setLoader } from '../../../redux/userReducer'
 
 const NavButton = styled(Button)({
   '&:hover': {
@@ -169,11 +165,19 @@ function AddLinkDialog({ handleClose, open }) {
   const dispatch = useDispatch()
   const token = useSelector(({ auth }) => auth.token)
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     dispatch(setLoader(true))
+
     dispatch(addItemThunk(token, inputValue))
+    dispatch(setLoader(false))
+
     setInputValue('')
     handleClose()
+  }
+
+  const handleChange = async (e) => {
+    setInputValue(e.currentTarget.value)
   }
 
   return (
@@ -199,33 +203,40 @@ function AddLinkDialog({ handleClose, open }) {
         </IconButton>
       </DialogTitle>
       <Divider />
-      <DialogContent
-        style={{ display: 'flex', alignItems: 'center', padding: '16px 24px' }}
-      >
-        <TextField
-          variant='outlined'
-          placeholder='www.example.com/article.html'
-          autoFocus
-          margin='dense'
-          id='name'
-          label='url'
-          onChange={(e) => setInputValue(e.currentTarget.value)}
-          value={inputValue}
-          classes={{
-            root: classes.addLinkInput
+      <form onSubmit={handleSubmit}>
+        <DialogContent
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '16px 24px'
           }}
-        />
-        <Button
-          // onClick={() => setSubmitted(true)}
-          onClick={handleSubmit}
-          color='secondary'
-          variant='contained'
-          size='large'
-          style={{ marginLeft: 16, marginTop: 4 }}
         >
-          Add
-        </Button>
-      </DialogContent>
+          <TextField
+            variant='outlined'
+            placeholder='www.example.com/article.html'
+            autoFocus
+            margin='dense'
+            id='name'
+            label='url'
+            // error={!isValid}
+            // helperText={isValid ? null : "url isn't valid"}
+            value={inputValue}
+            classes={{
+              root: classes.addLinkInput
+            }}
+            onChange={handleChange}
+          />
+          <Button
+            type='submit'
+            color='secondary'
+            variant='contained'
+            size='large'
+            style={{ marginLeft: 16, marginTop: 4 }}
+          >
+            Add
+          </Button>
+        </DialogContent>
+      </form>
     </Dialog>
   )
 }

@@ -6,6 +6,7 @@ const metascraper = require('metascraper')([
   require('metascraper-url')()
 ])
 const got = require('got')
+const urlExist = require('url-exists')
 
 // {
 // description: 'GitHub is where over 56 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and feat...',
@@ -17,6 +18,16 @@ const got = require('got')
 
 class ItemLogic {
   async addItem(email, targetUrl) {
+    let isExist = null
+    urlExist(targetUrl, (_, exist) => {
+      isExist = exist
+    })
+
+    if (!isExist) {
+      console.log('invalid url')
+      return
+    }
+
     let user = await User.findOne({ email })
 
     const { body: html, url } = await got(targetUrl)

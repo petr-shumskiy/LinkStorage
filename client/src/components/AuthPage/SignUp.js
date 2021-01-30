@@ -14,7 +14,6 @@ import {
   CssBaseline,
   Dialog,
   Fade,
-  Snackbar,
   Tooltip,
   Typography,
   Zoom
@@ -122,7 +121,6 @@ const SignUp = ({ handleSubmit, pristine, valid, error }) => {
               </Tooltip>
             )}
           </Form>
-          <Snackbar></Snackbar>
         </div>
       </Container>
     </Dialog>
