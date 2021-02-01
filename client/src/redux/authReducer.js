@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { reset, stopSubmit } from 'redux-form'
-import API from '../API/API'
+import { AuthAPI } from '../API/AuthAPI'
 
 export const authReducer = createSlice({
   name: 'auth',
@@ -49,7 +49,7 @@ export const authReducer = createSlice({
 export const sendRegistrationData = (data) => async (dispatch) => {
   dispatch(toggleProgressSignUp())
   try {
-    const res = await API.sendRegistrationData(data)
+    const res = await new AuthAPI().sendRegistrationData(data)
     dispatch(toggleProgressSignUp())
     dispatch(toggleEmailSended(res.data.message))
     dispatch(reset('registration'))
@@ -65,7 +65,7 @@ export const sendRegistrationData = (data) => async (dispatch) => {
 export const sendSignInData = (data) => async (dispatch) => {
   dispatch(toggleProgressSignIn())
   try {
-    const res = await API.sendSignInData(data)
+    const res = await new AuthAPI().sendSignInData(data)
     dispatch(login(data.email))
     dispatch(toggleProgressSignIn())
     localStorage.setItem('token', res.data.token)
@@ -80,7 +80,7 @@ export const sendSignInData = (data) => async (dispatch) => {
 
 export const validateEmail = (confirmationToken) => async (dispatch) => {
   try {
-    await API.sendConfirmationRequest(confirmationToken)
+    await new AuthAPI().sendConfirmationRequest(confirmationToken)
     dispatch(setToken(confirmationToken))
     localStorage.setItem('token', confirmationToken)
   } catch (err) {

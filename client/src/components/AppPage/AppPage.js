@@ -61,12 +61,11 @@ function App({ width }) {
   const possiblePathes = useSelector(({ user }) =>
     user.folders.map((folder) => folder.name).concat(user.categories)
   )
-  const token = useSelector(({ auth }) => auth.token)
 
   useEffect(() => {
-    dispatch(fetchFoldersThunk(token))
-    dispatch(fetchItemsThunk(token))
-  }, [dispatch, token])
+    dispatch(fetchFoldersThunk())
+    dispatch(fetchItemsThunk())
+  }, [dispatch])
 
   const [isDrawerOpen, setDrawerState] = useState(false)
 

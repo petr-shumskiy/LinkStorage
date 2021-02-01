@@ -67,24 +67,23 @@ export function Item({ item, category }) {
   const { _id: id, url, title, description, logoUrl } = item
   const classes = useStyle()
   const dispatch = useDispatch()
-  const token = useSelector(({ auth }) => auth.token)
 
   const [isActive, setActive] = useState(false)
 
   const handleDeleteItem = () => {
-    dispatch(deleteItemThunk(token, id))
+    dispatch(deleteItemThunk(id))
   }
 
   const handleAddItemToFolder = (folderId) => {
-    dispatch(updateItemStatusThunk(token, id, { folderId }))
+    dispatch(updateItemStatusThunk(id, { folderId }))
   }
 
   const handleLikeItem = () => {
-    dispatch(updateItemStatusThunk(token, id, { liked: !item.liked }))
+    dispatch(updateItemStatusThunk(id, { liked: !item.liked }))
   }
 
   const handleArchiveItem = () => {
-    dispatch(updateItemStatusThunk(token, id, { archived: !item.archived }))
+    dispatch(updateItemStatusThunk(id, { archived: !item.archived }))
   }
 
   return (

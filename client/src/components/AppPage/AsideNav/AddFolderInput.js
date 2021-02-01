@@ -18,7 +18,6 @@ const useStyles = makeStyles({
 
 export function AddFolderInput({ onAddFolderClicked }) {
   const classes = useStyles()
-  const token = useSelector(({ auth }) => auth.token)
   const dispatch = useDispatch()
   const [folderName, setFolderName] = useState('')
   const folderNames = useSelector(getFolderNames)
@@ -29,7 +28,7 @@ export function AddFolderInput({ onAddFolderClicked }) {
     if (isFolderExixts) {
       return
     }
-    dispatch(addFolderThunk(token, folderName))
+    dispatch(addFolderThunk(folderName))
     setFolderName('')
     onAddFolderClicked()
   }

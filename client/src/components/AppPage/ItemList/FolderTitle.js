@@ -33,7 +33,6 @@ const StyledDeleteIcon = styled(IconButton)({
 })
 
 function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
-  const token = useSelector(({ auth }) => auth.token)
   const folderNames = useSelector(getFolderNames)
   const dispatch = useDispatch()
   const { push } = useHistory()
@@ -68,14 +67,14 @@ function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
       onDialogClosed()
       return
     }
-    await dispatch(renameFolderThunk(token, folderId, inputFolderName))
+    await dispatch(renameFolderThunk(folderId, inputFolderName))
     push('/' + inputFolderName.trimRight())
   }
 
   const handleDeleteFolder = async () => {
     setDeleteDialogOpen(false)
     onDialogClosed()
-    await dispatch(deleteFolderThunk(token, folderId))
+    await dispatch(deleteFolderThunk(folderId))
   }
 
   const onDeleteFolderClicked = async () => {

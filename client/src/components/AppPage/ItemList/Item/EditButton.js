@@ -20,13 +20,10 @@ const useStyles = makeStyles((theme) =>
 
 export function EditButton({ isActive, item, onCloseEditDialog }) {
   const dispatch = useDispatch()
-  const token = useSelector(({ auth }) => auth.token)
   const [isItemEditDialogOpen, setIsItemEditDialogOpen] = useState(false)
 
   const editItemHandler = async (title, url, description) => {
-    dispatch(
-      updateItemContentThunk(token, item._id, { title, url, description })
-    )
+    dispatch(updateItemContentThunk(item._id, { title, url, description }))
     setIsItemEditDialogOpen(false)
   }
 

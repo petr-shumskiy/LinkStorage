@@ -29,7 +29,7 @@ import {
   fetchItemsThunk,
   getAllItems,
   getDefaultItems,
-  searchItems
+  searchItemsThunk
 } from '../../../redux/userReducer'
 import { trimUrl } from '../../../utils/trimUrl'
 
@@ -171,17 +171,16 @@ function AddLinkDialog({ handleClose, open }) {
   const classes = useStyles()
   const [inputUrl, setInputUrl] = useState('')
   const dispatch = useDispatch()
-  const token = useSelector(({ auth }) => auth.token)
   const allItemsUrls = useSelector(getAllItems)
 
-  console.log(allItemsUrls)
   const isItemExists = allItemsUrls.includes(trimUrl(inputUrl))
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setInputUrl('')
     handleClose()
-    dispatch(addItemThunk(token, inputUrl))
+    console.log(inputUrl)
+    dispatch(addItemThunk(inputUrl))
   }
 
   const handleChange = async (e) => {
@@ -227,9 +226,7 @@ function AddLinkDialog({ handleClose, open }) {
             id='name'
             label='url'
             error={isItemExists}
-            helperText={
-              isItemExists ? 'Item with such url has already exists' : null
-            }
+            helperText={isItemExists ? 'Item with such url has already exists' : null}
             value={inputUrl}
             classes={{
               root: classes.addLinkInput
@@ -253,28 +250,26 @@ function AddLinkDialog({ handleClose, open }) {
 }
 
 export function NavPanel({ openDrawer }) {
-  const token = useSelector(({ auth }) => auth.token)
   const dispatch = useDispatch()
   const email = useSelector(({ auth }) => auth.email)
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
 
   const debouncedSave = useCallback(
-    debounce((nextValue) => dispatch(searchItems(token, nextValue)), 300),
+    debounce((nextValue) => dispatch(searchItemsThunk(nextValue)), 300),
     []
   )
   const items = useSelector(getDefaultItems)
 
   const [anchorEl, setAnchorEl] = useState(null)
 
-  console.log(items)
   const handleSearch = (e) => {
     setSearchValue(e.target.value)
     if (e.target.value) {
       debouncedSave(e.target.value)
       return
     }
-    dispatch(fetchItemsThunk(token))
+    dispatch(fetchItemsThunk())
   }
   const onMenuClicked = (e) => {
     setAnchorEl(e.currentTarget)
