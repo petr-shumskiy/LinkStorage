@@ -59,6 +59,16 @@ class ItemController extends ControllerBase {
       return this.response.status(500).json()
     }
   }
+
+  async searchItems(email, searchPattern) {
+    try {
+      const items = await this.itemLogic.searchItems(email, searchPattern)
+      return this.response.status(200).json(items)
+    } catch (err) {
+      console.log(err)
+      return this.response.status(500).json()
+    }
+  }
 }
 
 module.exports = { ItemController }

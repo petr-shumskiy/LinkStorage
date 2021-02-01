@@ -46,7 +46,6 @@ export function EditItemDialog({ open, onClose, onSave, item }) {
   const [title, setTitle] = useState(item.title)
   const [url, setUrl] = useState(item.url)
   const [description, setDescription] = useState(item.description)
-
   // useEffect(() => setTitle(item.title), [item])
   // useEffect(() => setUrl(item.url), [item])
   // useEffect(() => setDescription(item.description), [item])
@@ -63,6 +62,14 @@ export function EditItemDialog({ open, onClose, onSave, item }) {
 
   const submitHandler = (e) => {
     e.preventDefault()
+    if (
+      title === item.title &&
+      url === item.url &&
+      description === item.description
+    ) {
+      onClose()
+      return
+    }
     onSave(title, url, description)
   }
 
@@ -97,6 +104,8 @@ export function EditItemDialog({ open, onClose, onSave, item }) {
               className={classes.TextField}
               value={title}
               onChange={onTitleChange}
+              error={!title}
+              helperText={!title ? "the title can't be empty" : null}
             />
           </Box>
           <Box className={classes.inputRow}>
@@ -137,6 +146,7 @@ export function EditItemDialog({ open, onClose, onSave, item }) {
             size='large'
             variant='contained'
             color='secondary'
+            disabled={!title}
           >
             save changes
           </Button>

@@ -86,6 +86,7 @@ function App({ width }) {
       </Grid>
     </Grid>
   )
+  // FIXME redirect from folder to /home on refresh
   if (!possiblePathes.includes(location.pathname.split('/')[1])) {
     return <Redirect to='/home' />
   }

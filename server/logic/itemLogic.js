@@ -6,48 +6,131 @@ const metascraper = require('metascraper')([
   require('metascraper-url')()
 ])
 const got = require('got')
-const urlExist = require('url-exists')
-
-// {
-// description: 'GitHub is where over 56 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and feat...',
-// image: 'https://github.githubassets.com/images/modules/site/social-cards/github-social.png',
-// logo: null,
-// title: 'GitHub: Where the world builds software',
-// url: 'https://github.com'
-// }
 
 class ItemLogic {
+  async searchItems(email, searchPattern) {
+    const pattern = new RegExp(searchPattern)
+    let items = await User.aggregate([
+      {
+        $match: {
+          email
+        }
+      },
+      {
+        $unwind: {
+          path: '$items'
+        }
+      },
+      {
+        $project: {
+          item: '$items'
+        }
+      },
+      {
+        $match: {
+          $or: [
+            {
+              'item.title': {
+                $regex: pattern,
+                $options: 'i'
+              }
+            },
+            {
+              'item.description': {
+                $regex: pattern,
+                $options: 'i'
+              }
+            }
+          ]
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          values: { $addToSet: '$item' }
+        }
+      }
+    ])
+
+    let folderItems = await User.aggregate([
+      {
+        $match: {
+          email
+        }
+      },
+      {
+        $unwind: {
+          path: '$folders'
+        }
+      },
+      {
+        $project: {
+          folderItem: '$folders.items'
+        }
+      },
+      {
+        $unwind: {
+          path: '$folderItem'
+        }
+      },
+      {
+        $match: {
+          $or: [
+            {
+              'folderItem.title': {
+                $regex: pattern,
+                $options: 'i'
+              }
+            },
+            {
+              'folderItem.description': {
+                $regex: pattern,
+                $options: 'i'
+              }
+            }
+          ]
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          values: { $addToSet: '$folderItem' }
+        }
+      }
+    ])
+    items = items.length ? items[0].values : items
+
+    folderItems = folderItems.length
+      ? folderItems[0].values.map((item) => ({ ...item, home: true }))
+      : folderItems
+    console.log('items', items)
+    console.log('folderItems', folderItems)
+    return items.concat(folderItems)
+  }
+
   async addItem(email, targetUrl) {
-    let isExist = null
-    urlExist(targetUrl, (_, exist) => {
-      isExist = exist
-    })
+    const user = await User.findOne({ email })
+    try {
+      const { body: html, url } = await got(targetUrl)
+      const { title, description, image: logoUrl } = await metascraper({
+        html,
+        url
+      })
 
-    if (!isExist) {
-      console.log('invalid url')
-      return
+      const item = {
+        title: title || url,
+        description,
+        url: url.endsWith('/') ? url.slice(0, url.length - 1) : url,
+        logoUrl:
+          logoUrl ||
+          'https://storage.googleapis.com/stateless-muslimdc-asia/raudhah-grocer/2020/08/9799f00a-no_image_available.jpg'
+      }
+
+      user.items.push(item)
+    } catch (error) {
+      throw Error(error)
     }
-
-    let user = await User.findOne({ email })
-
-    const { body: html, url } = await got(targetUrl)
-    const { title, description, image: logoUrl } = await metascraper({
-      html,
-      url
-    })
-    const item = {
-      title: title || url,
-      description,
-      url,
-      logoUrl:
-        logoUrl ||
-        'https://storage.googleapis.com/stateless-muslimdc-asia/raudhah-grocer/2020/08/9799f00a-no_image_available.jpg'
-    }
-    user.items.push(item)
     await user.save()
-    user = await User.findOne({ email })
-    console.log(user.items)
-
     return this.getItems(email)
   }
 
@@ -96,8 +179,6 @@ class ItemLogic {
     return this.getItems(email)
   }
 
-  // async u
-
   async updateItemStatus(email, itemId, item) {
     const user = await User.findOne({ email })
 
@@ -118,7 +199,8 @@ class ItemLogic {
       if (currentItem) {
         currentItem.set({ liked: !currentItem.liked })
       } else {
-        const currentItem = findFolderWithItemId(itemId)
+        const currentItem = findFolderWithItemId(itemId)[0]
+        console.log(currentItem)
         currentItem.set({ liked: !currentItem.liked })
       }
     }

@@ -1,4 +1,4 @@
-import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
+import { createSelector, createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit'
 import API from '../API/API'
 import { OverridableComponent } from '@material-ui/core/OverridableComponent'
 import { SvgIconTypeMap } from '@material-ui/core'
@@ -126,12 +126,15 @@ export const fetchItemsThunk = (token: string) => async (dispatch: Dispatch) => 
 
 export const addItemThunk = (token: string, url: string) => async (dispatch: Dispatch) => {
   try {
-    console.log(url)
+    dispatch(setLoader(true))
     const res = await API.addItem(token, url)
-    dispatch(setLoader(false))
+    console.log('Data', res.data)
     dispatch(setItems(res.data))
+    dispatch(setLoader(false))
   } catch (error) {
     console.log(error.message)
+    console.log(error)
+    dispatch(setLoader(false))
   }
 }
 
@@ -172,6 +175,43 @@ export const updateItemContentThunk = (token: string, id: string, content: Conte
     console.log(error)
   }
 }
+
+export const searchItems = (token: string, searchPattern: string) => async (dispatch: Dispatch) => {
+  try {
+    const res = await API.searchItems(token, searchPattern)
+    console.log(res.data)
+    dispatch(setItems(res.data))
+  } catch (error) {
+
+  }
+}
+
+// selectors
+export const getDefaultItems = ({ user }: { user: State }) => user.items
+export const getFolders = ({ user }: { user: State }) => user.folders
+export const getCategories = ({ user }: { user: State }) => user.categories
+export const getCurrentFolder = (category: string, { user }: { user: State }) => {
+  return user.folders.filter(folder => folder.name === category)[0]
+}
+
+type Category = 'liked' | 'home' | 'archived'
+export const getCurrentCategoryItems = (category: Category, { user }: { user: State }) => {
+  if (user.categories.includes(category)) {
+    return user.items.filter(item => item[category])
+  }
+  return null
+}
+
+export const getAllItems = createSelector(getDefaultItems, getFolders, (items, folders: Folder[]) => folders.flatMap(folder => folder.items).concat(items).map(item => item.url)
+)
+export const getAllLikedItems = createSelector(getDefaultItems, getFolders, (items, folders) => {
+  const foldersItems = folders.flatMap(folder => folder.items).filter(item => item.liked)
+  const defalutItems = items.filter(item => item.liked)
+  return defalutItems.concat(foldersItems)
+}
+)
+
+export const getFolderNames = createSelector(getFolders, (folders) => folders.map(folder => folder.name))
 
 export const {
   setItems,

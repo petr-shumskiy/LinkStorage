@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import {
   deleteFolderThunk,
+  getFolderNames,
   renameFolderThunk
 } from '../../../redux/userReducer'
 import { theme } from '../../../theme'
@@ -33,25 +34,42 @@ const StyledDeleteIcon = styled(IconButton)({
 
 function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
   const token = useSelector(({ auth }) => auth.token)
+  const folderNames = useSelector(getFolderNames)
   const dispatch = useDispatch()
   const { push } = useHistory()
-  const [inputValue, setInputValue] = useState(folderName)
+  const [inputFolderName, setInputFolderName] = useState(folderName)
 
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
+  const isFolderNameExists = folderNames.includes(inputFolderName)
+
+  const getErrorMessage = () => {
+    if (isFolderNameExists && inputFolderName !== folderName) {
+      return 'folder with a such name has already exists'
+    } else if (!inputFolderName) {
+      return "folder name can't be empty"
+    }
+    return null
+  }
+  // let errorMessage
+  // if (isFolderNameExists) {}
+
   useEffect(() => {
-    setInputValue(folderName)
+    setInputFolderName(folderName)
   }, [folderName])
 
   const handleChange = (e) => {
-    setInputValue(e.target.value)
+    setInputFolderName(e.target.value)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await dispatch(renameFolderThunk(token, folderId, inputValue))
-    onDialogClosed()
-    push('/' + inputValue.trimRight())
+    if (folderName === inputFolderName) {
+      onDialogClosed()
+      return
+    }
+    await dispatch(renameFolderThunk(token, folderId, inputFolderName))
+    push('/' + inputFolderName.trimRight())
   }
 
   const handleDeleteFolder = async () => {
@@ -93,16 +111,22 @@ function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
             autoFocus
             variant='outlined'
             type='text'
-            value={inputValue}
+            value={inputFolderName}
             onChange={handleChange}
+            error={!!getErrorMessage()}
+            helperText={getErrorMessage()}
           />
         </DialogContent>
         <DialogActions>
           <Button
-            typs='submit'
+            type='sumbit'
             size='large'
             variant='contained'
             color='secondary'
+            disabled={
+              !inputFolderName ||
+              (isFolderNameExists && folderName !== inputFolderName)
+            }
           >
             save
           </Button>

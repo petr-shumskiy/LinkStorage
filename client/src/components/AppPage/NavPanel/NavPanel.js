@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   Button,
   createStyles,
@@ -20,10 +20,18 @@ import {
 import SearchIcon from '@material-ui/icons/Search'
 import CloseIcon from '@material-ui/icons/Close'
 import MenuIcon from '@material-ui/icons/Menu'
+import debounce from 'lodash.debounce'
 import { theme } from '../../../theme'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
-import { addItemThunk, setLoader } from '../../../redux/userReducer'
+import {
+  addItemThunk,
+  fetchItemsThunk,
+  getAllItems,
+  getDefaultItems,
+  searchItems
+} from '../../../redux/userReducer'
+import { trimUrl } from '../../../utils/trimUrl'
 
 const NavButton = styled(Button)({
   '&:hover': {
@@ -161,23 +169,23 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
 
 function AddLinkDialog({ handleClose, open }) {
   const classes = useStyles()
-  const [inputValue, setInputValue] = useState('')
+  const [inputUrl, setInputUrl] = useState('')
   const dispatch = useDispatch()
   const token = useSelector(({ auth }) => auth.token)
+  const allItemsUrls = useSelector(getAllItems)
 
-  const handleSubmit = async (e) => {
+  console.log(allItemsUrls)
+  const isItemExists = allItemsUrls.includes(trimUrl(inputUrl))
+
+  const handleSubmit = (e) => {
     e.preventDefault()
-    dispatch(setLoader(true))
-
-    dispatch(addItemThunk(token, inputValue))
-    dispatch(setLoader(false))
-
-    setInputValue('')
+    setInputUrl('')
     handleClose()
+    dispatch(addItemThunk(token, inputUrl))
   }
 
   const handleChange = async (e) => {
-    setInputValue(e.currentTarget.value)
+    setInputUrl(e.currentTarget.value)
   }
 
   return (
@@ -218,9 +226,11 @@ function AddLinkDialog({ handleClose, open }) {
             margin='dense'
             id='name'
             label='url'
-            // error={!isValid}
-            // helperText={isValid ? null : "url isn't valid"}
-            value={inputValue}
+            error={isItemExists}
+            helperText={
+              isItemExists ? 'Item with such url has already exists' : null
+            }
+            value={inputUrl}
             classes={{
               root: classes.addLinkInput
             }}
@@ -231,6 +241,7 @@ function AddLinkDialog({ handleClose, open }) {
             color='secondary'
             variant='contained'
             size='large'
+            disabled={isItemExists}
             style={{ marginLeft: 16, marginTop: 4 }}
           >
             Add
@@ -242,11 +253,29 @@ function AddLinkDialog({ handleClose, open }) {
 }
 
 export function NavPanel({ openDrawer }) {
+  const token = useSelector(({ auth }) => auth.token)
+  const dispatch = useDispatch()
   const email = useSelector(({ auth }) => auth.email)
   const [open, setOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+
+  const debouncedSave = useCallback(
+    debounce((nextValue) => dispatch(searchItems(token, nextValue)), 300),
+    []
+  )
+  const items = useSelector(getDefaultItems)
 
   const [anchorEl, setAnchorEl] = useState(null)
 
+  console.log(items)
+  const handleSearch = (e) => {
+    setSearchValue(e.target.value)
+    if (e.target.value) {
+      debouncedSave(e.target.value)
+      return
+    }
+    dispatch(fetchItemsThunk(token))
+  }
   const onMenuClicked = (e) => {
     setAnchorEl(e.currentTarget)
   }
@@ -301,6 +330,8 @@ export function NavPanel({ openDrawer }) {
                   input: classes.inputInput
                 }}
                 inputProps={{ 'aria-label': 'search' }}
+                value={searchValue}
+                onChange={handleSearch}
               />
             </div>
             <NavButton onClick={handleClickOpen}>

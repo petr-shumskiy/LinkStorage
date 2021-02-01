@@ -107,6 +107,14 @@ class API {
     )
     return response
   }
+
+  searchItems = async (token, searchPattern) => {
+    const response = await userInstance.get(
+      '/items/?search=' + searchPattern,
+      setHeader(token)
+    )
+    return response
+  }
 }
 
 export default new API()

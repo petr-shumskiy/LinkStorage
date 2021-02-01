@@ -1,33 +1,81 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
+import {
+  getCategories,
+  getCurrentFolder,
+  getAllLikedItems,
+  getCurrentCategoryItems
+} from '../../../redux/userReducer'
 
 import { FolderTitle } from './FolderTitle'
 import { NoContent } from './NoContent'
 import { Item } from './Item/Item'
-import { addItemThunk, setPreloadItem } from '../../../redux/userReducer'
 import { Box, Divider, Grid, Hidden, Typography } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
 
 export function ItemsList({ items }) {
-  // const token = useSelector(({ auth }) => auth.token)
-  // const { url, isLoaded, hasErrorOnLoading } = useSelector(
-  // ({ user }) => user.preloadingItem
-  // )
+  const currentCategory = useLocation().pathname.split('/')[1]
+
   const isLoading = useSelector(({ user }) => user.isLoading)
+  const categories = useSelector(getCategories)
+  const currentFolder = useSelector((state) =>
+    getCurrentFolder(currentCategory, state)
+  )
+  const isCategoryDefault = categories.includes(currentCategory)
 
-  const category = useLocation().pathname.split('/')[1]
-  const categories = useSelector(({ user }) => user.categories)
+  let currentCategoryItems = useSelector((state) =>
+    getCurrentCategoryItems(currentCategory, state)
+  )
+  const likedItems = useSelector(getAllLikedItems).map((item) => (
+    <Item key={item._id} item={item} category='liked' />
+  ))
 
-  const folders = useSelector(({ user }) => user.folders)
-  const folder = folders.filter((folder) => folder.name === category)[0]
+  if (isCategoryDefault) {
+    currentCategoryItems = currentCategoryItems.map((item) => (
+      <Item key={item._id} item={item} category={currentCategory} />
+    ))
 
-  const currentCategoryItems = items
-    .filter((item) => item[category])
-    .map((item) => <Item key={item._id} item={item} category={category} />)
+    if (isLoading && currentCategory === 'home') {
+      currentCategoryItems.unshift(<PreviewLink />)
+    }
 
-  const previewLink = (
-    <Box>
+    if (currentCategory === 'liked') {
+      return likedItems.length ? (
+        likedItems
+      ) : (
+        <NoContent label={currentCategory} />
+      )
+    }
+
+    if (isCategoryDefault && !currentCategoryItems.length) {
+      return <NoContent label={currentCategory} />
+    }
+    return currentCategoryItems
+  } else {
+    if (currentFolder && !currentFolder.items.length) {
+      return (
+        <>
+          <FolderTitle id={currentFolder._id} label={currentFolder.name} />
+          <NoContent label='' />
+        </>
+      )
+    }
+    const currentFolderItems = currentFolder.items.map((item) => (
+      <Item key={item._id} item={item} category={currentCategory} />
+    ))
+    return (
+      <>
+        <FolderTitle id={currentFolder._id} label={currentFolder.name} />
+        {currentFolderItems}
+      </>
+    )
+  }
+}
+
+function PreviewLink() {
+  return (
+    <Box key='link-preview-item'>
       <Grid
         container
         spacing={2}
@@ -80,54 +128,4 @@ export function ItemsList({ items }) {
       <Divider style={{ marginBottom: 16, marginTop: 16 }} />
     </Box>
   )
-
-  // if (url && !isLoaded && category === 'home') {
-  if (isLoading) {
-    currentCategoryItems.unshift(previewLink)
-  }
-
-  const likedItemsInFolders = []
-  for (const folder of folders) {
-    for (const item of folder.items) {
-      if (item.liked) {
-        likedItemsInFolders.push(
-          <Item key={item._id} item={item} category={category} />
-        )
-      }
-    }
-  }
-
-  if (category === 'liked') {
-    if (currentCategoryItems.length || likedItemsInFolders.length) {
-      return [...currentCategoryItems, likedItemsInFolders]
-    }
-    return <NoContent label={category} />
-  }
-
-  const currentFolderItems =
-    folder && folder.items.length ? (
-      <>
-        <FolderTitle id={folder._id} label={folder.name} />
-        {folder.items.map((item) => {
-          return <Item key={item._id} item={item} category={folder.name} />
-        })}
-      </>
-    ) : null
-
-  if (!currentCategoryItems.length && categories.includes(category)) {
-    return <NoContent label={category} />
-  }
-
-  if (folder && !folder.items.length) {
-    return (
-      <>
-        <FolderTitle id={folder._id} label={folder.name} />
-        <NoContent label='' />
-      </>
-    )
-  }
-
-  return categories.includes(category)
-    ? currentCategoryItems
-    : currentFolderItems
 }

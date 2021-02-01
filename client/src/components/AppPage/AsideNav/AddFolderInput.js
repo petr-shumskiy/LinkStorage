@@ -2,7 +2,7 @@ import { makeStyles, TextField } from '@material-ui/core'
 import { FolderOutlined } from '@material-ui/icons'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addFolderThunk } from '../../../redux/userReducer'
+import { addFolderThunk, getFolderNames } from '../../../redux/userReducer'
 
 const useStyles = makeStyles({
   addFolder: {
@@ -21,9 +21,14 @@ export function AddFolderInput({ onAddFolderClicked }) {
   const token = useSelector(({ auth }) => auth.token)
   const dispatch = useDispatch()
   const [folderName, setFolderName] = useState('')
+  const folderNames = useSelector(getFolderNames)
+  const isFolderExixts = folderNames.includes(folderName)
+
   const submitHandler = (e) => {
     e.preventDefault()
-    console.log(token)
+    if (isFolderExixts) {
+      return
+    }
     dispatch(addFolderThunk(token, folderName))
     setFolderName('')
     onAddFolderClicked()
@@ -53,6 +58,8 @@ export function AddFolderInput({ onAddFolderClicked }) {
           value={folderName}
           onChange={(e) => setFolderName(e.target.value)}
           onBlur={onAddFolderClicked}
+          error={isFolderExixts}
+          helperText={isFolderExixts ? 'such name has already exists' : null}
         />
       </form>
     </div>

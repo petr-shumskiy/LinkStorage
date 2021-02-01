@@ -43,4 +43,11 @@ router.put('/link/:itemId', hasAuth, (req, res) => {
   )
 })
 
+router.get('/items/', hasAuth, (req, res) => {
+  return createItemController(req, res).searchItems(
+    req.user.email,
+    req.query.search
+  )
+})
+
 module.exports = router
