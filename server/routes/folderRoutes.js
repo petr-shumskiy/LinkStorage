@@ -13,7 +13,6 @@ function createFolderController(req, res) {
 }
 
 router.post('/folder', hasAuth, (req, res) => {
-  console.log(req.body.name)
   return createFolderController(req, res).createFolder(
     req.user.email,
     req.body.name
@@ -27,7 +26,7 @@ router.get('/folder', hasAuth, (req, res) => {
 router.post('/folder/:folderId', hasAuth, (req, res) => {
   return createFolderController(req, res).updateFolder(
     req.user.email,
-    req.body.id,
+    req.params.folderId,
     req.body.name
   )
 })

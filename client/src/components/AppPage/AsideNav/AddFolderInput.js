@@ -21,7 +21,7 @@ export function AddFolderInput({ onAddFolderClicked }) {
   const dispatch = useDispatch()
   const [folderName, setFolderName] = useState('')
   const folderNames = useSelector(getFolderNames)
-  const isFolderExixts = folderNames.includes(folderName)
+  const isFolderExixts = folderNames.includes(folderName.toLowerCase())
 
   const submitHandler = (e) => {
     e.preventDefault()

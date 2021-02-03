@@ -15,7 +15,7 @@ export class UserAPI {
   // Folders
   fetchFolders = async () => this.api.get('/folder')
   addFolder = async (name) => this.api.post('/folder', { name })
-  updateFolder = async (id, name) => this.api.post('/folder/' + id, { id, name })
+  updateFolder = async (id, name) => this.api.post('/folder/' + id, { name })
   deleteFolder = async (id) => this.api.delete('/folder/' + id)
 
   // Links
@@ -24,5 +24,5 @@ export class UserAPI {
   deleteItem = async (id) => this.api.delete('/link/' + id)
   updateItemStatus = async (id, payload) => this.api.patch('/link/' + id, payload)
   updateItemContent = async (id, content) => this.api.put('/link/' + id, content)
-  searchItems = async (pattern) => this.api.get('/items/?search=' + pattern)
+  searchItems = async (searchPattern) => this.api.get('/items/?search=' + searchPattern)
 }

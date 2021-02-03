@@ -1,6 +1,6 @@
 import { createStyles, makeStyles, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { updateItemContentThunk } from '../../../../redux/userReducer'
 import { EditItemDialog } from './ItemActions/EditItemDialog'
 import { StyledButton } from './ItemActions/StyledButtons'
@@ -9,10 +9,10 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     editButton: {
       position: 'absolute',
-      top: -theme.spacing(1),
+      top: theme.spacing(-1),
       right: 0,
       [theme.breakpoints.down('md')]: {
-        top: -theme.spacing(2)
+        top: theme.spacing(-2)
       }
     }
   })

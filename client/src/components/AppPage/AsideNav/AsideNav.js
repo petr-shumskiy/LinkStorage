@@ -1,17 +1,14 @@
 import { Button, Divider, Grid, List, Typography } from '@material-ui/core'
-import {
-  ArchiveOutlined,
-  FavoriteBorderOutlined,
-  HomeOutlined
-} from '@material-ui/icons'
+import { ArchiveOutlined, FavoriteBorderOutlined, HomeOutlined } from '@material-ui/icons'
 import { makeStyles, createStyles } from '@material-ui/core/styles'
 import React, { useState } from 'react'
 import { AddFolderInput } from './AddFolderInput'
 import { NavItem } from './NavItem'
 import { AddFolder } from './AddFolder'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
 import { Folders } from './Folders'
+import { getFolders, resetState } from '../../../redux/userReducer'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -49,25 +46,15 @@ export function AsideNav({ swipeable }) {
     setInputActive((prev) => {
       return !prev
     })
-    // dispatch(addFolder(folderName))
   }
 
   return (
-    <Grid
-      container
-      direction='column'
-      alignItems='flex-start'
-      className={classes.root}
-    >
+    <Grid container direction='column' alignItems='flex-start' className={classes.root}>
       <Grid item style={{ width: '100%' }}>
         <List>
           <NavItem text={'home'} Icon={HomeOutlined} to='/home' />
-          <NavItem text={'liked'} Icon={ArchiveOutlined} to='/liked' />
-          <NavItem
-            text={'archived'}
-            Icon={FavoriteBorderOutlined}
-            to='/archived'
-          />
+          <NavItem text={'liked'} Icon={FavoriteBorderOutlined} to='/liked' />
+          <NavItem text={'archived'} Icon={ArchiveOutlined} to='/archived' />
         </List>
       </Grid>
       <Grid item className={classes.asideDividerWrapper}>
@@ -88,6 +75,7 @@ export function AsideNav({ swipeable }) {
           fullWidth
           onClick={() => {
             dispatch(logout())
+            dispatch(resetState())
           }}
           variant='contained'
           style={{ marginTop: 'auto', alignSelf: 'center' }}

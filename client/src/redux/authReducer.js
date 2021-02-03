@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { reset, stopSubmit } from 'redux-form'
 import { AuthAPI } from '../API/AuthAPI'
+import { handleError } from './errorService'
 
 export const authReducer = createSlice({
   name: 'auth',
@@ -27,7 +28,7 @@ export const authReducer = createSlice({
     login(state, action) {
       state.email = action.payload
     },
-    logout(state, action) {
+    logout(state) {
       localStorage.removeItem('token')
       state.token = null
     },
@@ -56,9 +57,12 @@ export const sendRegistrationData = (data) => async (dispatch) => {
     setTimeout(() => {
       dispatch(toggleEmailSended(false))
     }, 6000)
-  } catch (err) {
-    dispatch(stopSubmit('registration', { _error: err.response.data.message }))
+  } catch (error) {
+    if (error.response?.data) {
+      dispatch(stopSubmit('registration', { _error: error.response.data.message }))
+    }
     dispatch(toggleProgressSignUp())
+    handleError(error, dispatch)
   }
 }
 
@@ -71,10 +75,14 @@ export const sendSignInData = (data) => async (dispatch) => {
     localStorage.setItem('token', res.data.token)
     localStorage.setItem('email', data.email)
     dispatch(setToken(res.data.token))
-  } catch (err) {
+  } catch (error) {
     dispatch({ type: 'RESET_SIGN_IN_PASSWORD' })
-    dispatch(stopSubmit('signIn', { _error: err.response.data.message }))
+    if (error.response && error.response.data) {
+      dispatch(stopSubmit('signIn', { _error: error.response.data.message }))
+    }
     dispatch(toggleProgressSignIn())
+    console.log('go in handler')
+    handleError(error, dispatch)
   }
 }
 
@@ -83,8 +91,9 @@ export const validateEmail = (confirmationToken) => async (dispatch) => {
     await new AuthAPI().sendConfirmationRequest(confirmationToken)
     dispatch(setToken(confirmationToken))
     localStorage.setItem('token', confirmationToken)
-  } catch (err) {
-    dispatch(setValidationError(err.response.data.message))
+  } catch (error) {
+    dispatch(setValidationError(error.response.data.message))
+    handleError(error, dispatch)
   }
 }
 

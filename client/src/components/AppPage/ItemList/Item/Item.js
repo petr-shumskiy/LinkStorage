@@ -9,11 +9,8 @@ import {
 } from '@material-ui/core'
 import { Favorite } from '@material-ui/icons'
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  deleteItemThunk,
-  updateItemStatusThunk
-} from '../../../../redux/userReducer'
+import { useDispatch } from 'react-redux'
+import { deleteItemThunk, updateItemStatusThunk } from '../../../../redux/userReducer'
 import { theme } from '../../../../theme'
 import { EditButton } from './EditButton'
 import { DateOfTitle } from './ItemActions/DateOfTitle'
@@ -70,6 +67,14 @@ export function Item({ item, category }) {
 
   const [isActive, setActive] = useState(false)
 
+  const handleMouseEnter = (e) => {
+    setActive(true)
+  }
+
+  const handleMouseLeave = (e) => {
+    setActive(false)
+  }
+
   const handleDeleteItem = () => {
     dispatch(deleteItemThunk(id))
   }
@@ -87,18 +92,8 @@ export function Item({ item, category }) {
   }
 
   return (
-    <Box
-      onMouseOver={() => setActive(true)}
-      onMouseOut={() => setActive(false)}
-    >
-      <Grid
-        container
-        spacing={1}
-        item
-        xs={12}
-        md={12}
-        style={{ color: 'black' }}
-      >
+    <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <Grid container spacing={1} item xs={12} md={12} style={{ color: 'black' }}>
         <Grid
           container
           item

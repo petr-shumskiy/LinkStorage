@@ -40,7 +40,7 @@ function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
 
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-  const isFolderNameExists = folderNames.includes(inputFolderName)
+  const isFolderNameExists = folderNames.includes(inputFolderName.toLowerCase())
 
   const getErrorMessage = () => {
     if (isFolderNameExists && inputFolderName !== folderName) {
@@ -123,8 +123,7 @@ function EditFolderDialog({ open, onDialogClosed, folderId, folderName }) {
             variant='contained'
             color='secondary'
             disabled={
-              !inputFolderName ||
-              (isFolderNameExists && folderName !== inputFolderName)
+              !inputFolderName || (isFolderNameExists && folderName !== inputFolderName)
             }
           >
             save

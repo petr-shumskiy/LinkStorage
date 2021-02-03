@@ -24,7 +24,9 @@ const useStyles = makeStyles((theme) =>
     listText: {
       textTransform: 'capitalize',
       color: 'inherit',
-      fontWeight: 'inherit'
+      fontWeight: 'inherit',
+      overflowX: 'hidden',
+      textOverflow: 'ellipsis'
     },
     resetLinkStyle: {
       textDecoration: 'none',
@@ -44,11 +46,7 @@ export function NavItem({ text, Icon, to }) {
 
   return (
     <Link to={to} className={classes.resetLinkStyle}>
-      <ListItem
-        button
-        classes={{ root: classes.root }}
-        className={optionalActiveClass}
-      >
+      <ListItem button classes={{ root: classes.root }} className={optionalActiveClass}>
         <ListItemIcon
           className={optionalActiveClass}
           style={{

@@ -9,7 +9,11 @@ class ItemController extends ControllerBase {
   async addItem(email, url) {
     try {
       const items = await this.itemLogic.addItem(email, url)
-      return this.response.status(201).json(items)
+      if (items instanceof Array) {
+        return this.response.status(201).json(items)
+      } else {
+        return this.response.status(400).json()
+      }
     } catch (err) {
       console.log(err)
       return this.response.status(500).json()

@@ -127,11 +127,11 @@ class ItemLogic {
       }
 
       user.items.push(item)
+      await user.save()
+      return this.getItems(email)
     } catch (error) {
-      throw Error(error)
+      return error
     }
-    await user.save()
-    return this.getItems(email)
   }
 
   async getItems(email) {

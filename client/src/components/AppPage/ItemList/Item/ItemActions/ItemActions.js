@@ -10,6 +10,9 @@ import { DeleteDialog } from './DeleteDialog'
 import { FoldersMenu } from './FoldersMenu'
 import { StyledIconButton } from './StyledButtons'
 import FolderIcon from '@material-ui/icons/Folder'
+import { getFolders } from '../../../../../redux/userReducer'
+import { useSelector } from 'react-redux'
+import { useSnackbar } from 'notistack'
 
 export function ItemActions({
   isActive,
@@ -21,11 +24,13 @@ export function ItemActions({
   isItemArchived,
   category
 }) {
+  const folders = useSelector(getFolders)
   const [isOpen, setIsOpen] = useState(false)
-
   const [isFolderSelectorOpen, setFolderSelectorOpen] = useState(false)
-
   const [anchorEl, setAnchorEl] = useState(null)
+
+  const { enqueueSnackbar } = useSnackbar()
+  const isFoldersExists = !!useSelector(getFolders).length
 
   const deleteItemHandler = () => {
     onItemDeleted()
@@ -35,6 +40,16 @@ export function ItemActions({
   const onMenuClicked = (e) => {
     setAnchorEl(e.currentTarget)
     setFolderSelectorOpen((prev) => !prev)
+    if (category === 'home' && !isFoldersExists) {
+      enqueueSnackbar("You haven't added any folders yet", {
+        variant: 'info',
+        anchorOrigin: {
+          horizontal: 'right',
+          vertical: 'top'
+        },
+        preventDuplicate: true
+      })
+    }
   }
 
   const onMenuClosed = (e) => {
@@ -49,13 +64,15 @@ export function ItemActions({
         onCancelClicked={() => setIsOpen(false)}
         onDeleteClicked={deleteItemHandler}
       />
-
-      <FoldersMenu
-        anchorEl={anchorEl}
-        onMenuClosed={onMenuClosed}
-        onAddItemToFolder={onAddItemToFolder}
-        category={category}
-      />
+      {(category === 'home' && !folders.length) || (
+        <FoldersMenu
+          anchorEl={anchorEl}
+          onMenuClosed={onMenuClosed}
+          onAddItemToFolder={onAddItemToFolder}
+          category={category}
+          folders={folders}
+        />
+      )}
 
       <Box
         style={{

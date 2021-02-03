@@ -87,6 +87,6 @@ exports.login = async (req, res) => {
     res.status(201).json({ token })
   } catch (error) {
     console.log(error)
-    return res.status(400).json({ message: constants.LOGIN_ERROR_SERVER })
+    return res.status(500).json({ message: constants.LOGIN_ERROR_SERVER })
   }
 }

@@ -3,12 +3,29 @@ import Main from './AppPage/AppPage'
 import Auth from './AuthPage/Auth'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import Confirmation from './AuthPage/Confirmation'
-import { ThemeProvider } from '@material-ui/core'
-import { theme } from '../theme'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useSnackbar } from 'notistack'
+import { checkErrors, resetErrors } from '../redux/userReducer'
 
 const App = () => {
   const token = useSelector(({ auth }) => auth.token)
+  const dispatch = useDispatch()
+  const { enqueueSnackbar } = useSnackbar()
+  const [hasError, errorMessage] = useSelector(checkErrors)
+
+  // Error handling
+  if (hasError) {
+    enqueueSnackbar(errorMessage, {
+      variant: 'error',
+      anchorOrigin: {
+        horizontal: 'right',
+        vertical: 'top'
+      },
+      preventDuplicate: true
+    })
+    //
+    dispatch(resetErrors())
+  }
 
   return (
     <Switch>
@@ -25,28 +42,9 @@ const App = () => {
       <Route
         path='/home'
         exact
-        render={() =>
-          token ? (
-            <ThemeProvider theme={theme}>
-              <Main />
-            </ThemeProvider>
-          ) : (
-            <Redirect to='/auth' />
-          )
-        }
+        render={() => (token ? <Main /> : <Redirect to='/auth' />)}
       />
-      <Route
-        path='/'
-        render={() =>
-          token ? (
-            <ThemeProvider theme={theme}>
-              <Main />
-            </ThemeProvider>
-          ) : (
-            <Redirect to='/auth' />
-          )
-        }
-      />
+      <Route path='/' render={() => (token ? <Main /> : <Redirect to='/auth' />)} />
     </Switch>
   )
 }

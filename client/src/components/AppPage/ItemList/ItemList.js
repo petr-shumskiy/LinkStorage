@@ -19,14 +19,13 @@ export function ItemsList({ items }) {
 
   const isLoading = useSelector(({ user }) => user.isLoading)
   const categories = useSelector(getCategories)
-  const currentFolder = useSelector((state) =>
-    getCurrentFolder(currentCategory, state)
-  )
+  const currentFolder = useSelector((state) => getCurrentFolder(currentCategory, state))
   const isCategoryDefault = categories.includes(currentCategory)
 
-  let currentCategoryItems = useSelector((state) =>
-    getCurrentCategoryItems(currentCategory, state)
-  )
+  let currentCategoryItems = useSelector((state) => {
+    return getCurrentCategoryItems(currentCategory, state)
+  })
+
   const likedItems = useSelector(getAllLikedItems).map((item) => (
     <Item key={item._id} item={item} category='liked' />
   ))
@@ -37,15 +36,11 @@ export function ItemsList({ items }) {
     ))
 
     if (isLoading && currentCategory === 'home') {
-      currentCategoryItems.unshift(<PreviewLink />)
+      currentCategoryItems.unshift(<PreviewLink key='preview-link-item' />)
     }
 
     if (currentCategory === 'liked') {
-      return likedItems.length ? (
-        likedItems
-      ) : (
-        <NoContent label={currentCategory} />
-      )
+      return likedItems.length ? likedItems : <NoContent label={currentCategory} />
     }
 
     if (isCategoryDefault && !currentCategoryItems.length) {
@@ -75,15 +70,8 @@ export function ItemsList({ items }) {
 
 function PreviewLink() {
   return (
-    <Box key='link-preview-item'>
-      <Grid
-        container
-        spacing={2}
-        item
-        xs={12}
-        md={12}
-        style={{ color: 'black' }}
-      >
+    <Box>
+      <Grid container spacing={2} item xs={12} md={12} style={{ color: 'black' }}>
         <Grid container item md={10} sm={10} xs={12} direction='column'>
           <Grid item>
             <Typography variant='h2'>

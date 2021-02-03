@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import React, { useCallback, useState } from 'react'
 import {
   Button,
@@ -24,11 +25,11 @@ import debounce from 'lodash.debounce'
 import { theme } from '../../../theme'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
+import { resetState } from '../../../redux/userReducer.ts'
 import {
   addItemThunk,
   fetchItemsThunk,
   getAllItems,
-  getDefaultItems,
   searchItemsThunk
 } from '../../../redux/userReducer'
 import { trimUrl } from '../../../utils/trimUrl'
@@ -143,6 +144,11 @@ const useStyles = makeStyles((theme) =>
 
 function AccountMenu({ anchorEl, onMenuClosed }) {
   const dispatch = useDispatch()
+  const handleClick = () => {
+    onMenuClosed()
+    dispatch(logout())
+    dispatch(resetState())
+  }
   return (
     <Menu
       anchorEl={anchorEl}
@@ -155,36 +161,34 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
         horizontal: -50
       }}
     >
-      <MenuItem
-        onClick={() => {
-          onMenuClosed()
-          dispatch(logout())
-        }}
-      >
-        Logout
-      </MenuItem>
+      <MenuItem onClick={handleClick}>Logout</MenuItem>
     </Menu>
   )
 }
 
-function AddLinkDialog({ handleClose, open }) {
+function AddLinkDialog({ onClose, open }) {
   const classes = useStyles()
   const [inputUrl, setInputUrl] = useState('')
+  const [isTouched, setIsTouched] = useState(false)
   const dispatch = useDispatch()
   const allItemsUrls = useSelector(getAllItems)
 
   const isItemExists = allItemsUrls.includes(trimUrl(inputUrl))
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const handleClose = () => {
+    setIsTouched(false)
     setInputUrl('')
-    handleClose()
-    console.log(inputUrl)
-    dispatch(addItemThunk(inputUrl))
+    onClose()
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    handleClose()
+    dispatch(addItemThunk(inputUrl))
+  }
   const handleChange = async (e) => {
     setInputUrl(e.currentTarget.value)
+    isTouched || setIsTouched(true)
   }
 
   return (
@@ -225,8 +229,14 @@ function AddLinkDialog({ handleClose, open }) {
             margin='dense'
             id='name'
             label='url'
-            error={isItemExists}
-            helperText={isItemExists ? 'Item with such url has already exists' : null}
+            error={isItemExists || (isTouched && !inputUrl)}
+            helperText={
+              isItemExists
+                ? 'Item with such url has already exists'
+                : isTouched && !inputUrl
+                ? "url can't be empty"
+                : null
+            }
             value={inputUrl}
             classes={{
               root: classes.addLinkInput
@@ -238,7 +248,7 @@ function AddLinkDialog({ handleClose, open }) {
             color='secondary'
             variant='contained'
             size='large'
-            disabled={isItemExists}
+            disabled={isItemExists || !inputUrl}
             style={{ marginLeft: 16, marginTop: 4 }}
           >
             Add
@@ -259,7 +269,6 @@ export function NavPanel({ openDrawer }) {
     debounce((nextValue) => dispatch(searchItemsThunk(nextValue)), 300),
     []
   )
-  const items = useSelector(getDefaultItems)
 
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -334,7 +343,7 @@ export function NavPanel({ openDrawer }) {
                 Add Link
               </Typography>
             </NavButton>
-            <AddLinkDialog handleClose={handleClose} open={open} />
+            <AddLinkDialog onClose={handleClose} open={open} />
             <NavButton style={{ marginLeft: '0.5rem' }} onClick={onMenuClicked}>
               <Typography variant='body1' color='inherit'>
                 {email}

@@ -1,15 +1,29 @@
-import { Menu, MenuItem } from '@material-ui/core'
+import { createStyles, makeStyles, Menu, MenuItem, Typography } from '@material-ui/core'
+import { useSnackbar } from 'notistack'
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { getFolders, getFoldersExceptCurrent } from '../../../../../redux/userReducer'
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    list: {
+      minWidth: 120,
+      maxWidth: 240
+    }
+  })
+)
 
 export function FoldersMenu({
   anchorEl,
   onMenuClosed,
   onAddItemToFolder,
-  category
+  category,
+  folders
 }) {
-  const folders = useSelector(({ user }) => user.folders)
-
+  const foldersExceptCurrent = useSelector((state) =>
+    getFoldersExceptCurrent(category, state)
+  )
+  const classes = useStyles()
   return (
     <Menu
       anchorEl={anchorEl}
@@ -18,9 +32,10 @@ export function FoldersMenu({
       onClose={onMenuClosed}
       variant='menu'
       transformOrigin={{
-        vertical: 90,
-        horizontal: 50
+        vertical: 'top',
+        horizontal: 'left'
       }}
+      classes={{ list: classes.list }}
     >
       {category !== 'home' ? (
         <MenuItem
@@ -29,22 +44,21 @@ export function FoldersMenu({
             onMenuClosed()
           }}
         >
-          Home
+          <Typography noWrap>Home</Typography>
         </MenuItem>
       ) : null}
-      {folders.map((folder) => {
-        return folder.name !== category ? (
-          <MenuItem
-            key={folder._id}
-            onClick={() => {
-              onMenuClosed()
-              onAddItemToFolder(folder._id)
-            }}
-          >
-            {folder.name}
-          </MenuItem>
-        ) : null
-      })}
+      {foldersExceptCurrent.map((folder) => (
+        <MenuItem
+          key={folder._id}
+          onClick={() => {
+            onMenuClosed()
+            onAddItemToFolder(folder._id)
+          }}
+          style={{ textTransform: 'capitalize', textOverflow: 'ellipsis' }}
+        >
+          <Typography noWrap>{folder.name}</Typography>
+        </MenuItem>
+      ))}
     </Menu>
   )
 }

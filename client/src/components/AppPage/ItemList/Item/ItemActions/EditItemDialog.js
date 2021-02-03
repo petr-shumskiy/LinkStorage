@@ -62,11 +62,7 @@ export function EditItemDialog({ open, onClose, onSave, item }) {
 
   const submitHandler = (e) => {
     e.preventDefault()
-    if (
-      title === item.title &&
-      url === item.url &&
-      description === item.description
-    ) {
+    if (title === item.title && url === item.url && description === item.description) {
       onClose()
       return
     }
@@ -135,7 +131,7 @@ export function EditItemDialog({ open, onClose, onSave, item }) {
               size='small'
               className={classes.TextField}
               placeholder='Summary (optional)'
-              value={description}
+              value={description || ''}
               onChange={onDescriptionChange}
             />
           </Box>

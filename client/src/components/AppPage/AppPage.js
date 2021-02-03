@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Container,
-  Grid,
-  Hidden,
-  SwipeableDrawer,
-  withWidth
-} from '@material-ui/core'
+import { Box, Container, Grid, Hidden, SwipeableDrawer } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchItemsThunk } from '../../redux/userReducer.ts'
 import { ItemsList } from './ItemList/ItemList'
 import { NavPanel } from './NavPanel/NavPanel'
 import { AsideNav } from './AsideNav/AsideNav'
-import { fetchFoldersThunk } from '../../redux/userReducer'
+import { fetchFoldersThunk, getPossiblePathes } from '../../redux/userReducer'
 import { Redirect, useHistory } from 'react-router-dom'
 
 const drawerWidth = 220
@@ -53,14 +47,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-function App({ width }) {
+function App() {
   const { location } = useHistory()
   const classes = useStyles()
   const dispatch = useDispatch()
   const items = useSelector(({ user }) => user.items)
-  const possiblePathes = useSelector(({ user }) =>
-    user.folders.map((folder) => folder.name).concat(user.categories)
-  )
+  const possiblePathes = useSelector(getPossiblePathes)
 
   useEffect(() => {
     dispatch(fetchFoldersThunk())
@@ -69,14 +61,16 @@ function App({ width }) {
 
   const [isDrawerOpen, setDrawerState] = useState(false)
 
+  if (!possiblePathes.includes(location.pathname.split('/')[1])) {
+    return <Redirect to='/home' />
+  }
+
   const closeDrawer = () => {
     setDrawerState(false)
   }
   const openDrawer = () => {
     setDrawerState(true)
   }
-
-  const small = ['xs', 'sm']
 
   const main = (
     <Grid container direction='column'>
@@ -85,13 +79,9 @@ function App({ width }) {
       </Grid>
     </Grid>
   )
-  // FIXME redirect from folder to /home on refresh
-  if (!possiblePathes.includes(location.pathname.split('/')[1])) {
-    return <Redirect to='/home' />
-  }
 
   return (
-    <div className='App'>
+    <Box>
       <Container maxWidth='lg' className={classes.mainContainer}>
         <Grid container className={classes.GridContainer}>
           <Grid
@@ -105,10 +95,10 @@ function App({ width }) {
           >
             <NavPanel openDrawer={openDrawer} />
           </Grid>
-          <Hidden only={['xs', 'sm']}>
+          <Hidden smDown>
             <AsideNav swipeable={false} />
           </Hidden>
-          {small.includes(width) ? (
+          <Hidden mdUp>
             <SwipeableDrawer
               anchor={'left'}
               disableBackdropTransition
@@ -123,14 +113,14 @@ function App({ width }) {
             >
               <AsideNav swipeable={true} />
             </SwipeableDrawer>
-          ) : null}
+          </Hidden>
           <Grid item xs={12} md={8} className={classes.MainContent}>
             {main}
           </Grid>
         </Grid>
       </Container>
-    </div>
+    </Box>
   )
 }
 
-export default withWidth()(App)
+export default App

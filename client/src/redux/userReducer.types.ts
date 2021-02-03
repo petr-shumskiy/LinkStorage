@@ -24,7 +24,14 @@ export type AsideMenuItem = {
   handleClickItem?: any
 }
 
+export type AppError = {
+  name: string
+  message: string
+  isActive: boolean
+}
+
 export interface State {
+  errors: AppError[]
   isLoading: boolean
   items: Item[]
   categories: string[]
