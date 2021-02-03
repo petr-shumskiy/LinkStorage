@@ -8,7 +8,7 @@ export class AuthAPI {
     })
   }
 
-  sendRegistrationData = async ({ url }) => this.api.post('/registration', url)
+  sendRegistrationData = async (data) => this.api.post('/registration', data)
   sendSignInData = async (data) => await this.api.post('/login', data)
   sendConfirmationRequest = async (token) => this.api.post('/validate-email/' + token)
 }

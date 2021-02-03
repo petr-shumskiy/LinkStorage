@@ -40,6 +40,12 @@ class ItemLogic {
                 $regex: pattern,
                 $options: 'i'
               }
+            },
+            {
+              'item.url': {
+                $regex: pattern,
+                $options: 'i'
+              }
             }
           ]
         }
@@ -52,60 +58,9 @@ class ItemLogic {
       }
     ])
 
-    let folderItems = await User.aggregate([
-      {
-        $match: {
-          email
-        }
-      },
-      {
-        $unwind: {
-          path: '$folders'
-        }
-      },
-      {
-        $project: {
-          folderItem: '$folders.items'
-        }
-      },
-      {
-        $unwind: {
-          path: '$folderItem'
-        }
-      },
-      {
-        $match: {
-          $or: [
-            {
-              'folderItem.title': {
-                $regex: pattern,
-                $options: 'i'
-              }
-            },
-            {
-              'folderItem.description': {
-                $regex: pattern,
-                $options: 'i'
-              }
-            }
-          ]
-        }
-      },
-      {
-        $group: {
-          _id: '$_id',
-          values: { $addToSet: '$folderItem' }
-        }
-      }
-    ])
     items = items.length ? items[0].values : items
 
-    folderItems = folderItems.length
-      ? folderItems[0].values.map((item) => ({ ...item, home: true }))
-      : folderItems
-    console.log('items', items)
-    console.log('folderItems', folderItems)
-    return items.concat(folderItems)
+    return items
   }
 
   async addItem(email, targetUrl) {
@@ -136,151 +91,60 @@ class ItemLogic {
 
   async getItems(email) {
     const user = await User.findOne({ email })
-
     return user.items
   }
 
   async deleteItem(email, itemId) {
     const user = await User.findOne({ email })
 
-    const findFolderWithItemId = (id) => {
-      for (const folder of user.folders) {
-        for (const item of folder.items) {
-          if (item._id.toString() === itemId) {
-            return [item, folder]
+    await User.findOneAndUpdate(
+      { email },
+      {
+        $pull: {
+          items: {
+            _id: itemId
           }
         }
       }
-      return [null, null]
-    }
-
-    const currentItem = await user.items.id(itemId)
-    if (currentItem) {
-      await User.findOneAndUpdate(
-        { email },
-        {
-          $pull: {
-            items: {
-              _id: itemId
-            }
-          }
-        }
-      )
-    } else {
-      const [currentItem, currentFolder] = findFolderWithItemId(itemId)
-      console.log(currentItem, currentFolder)
-      currentFolder.items = currentFolder.items.filter(
-        (item) => item._id.toString() !== itemId
-      )
-      console.log('currentFolder.items\n', currentFolder.items)
-    }
-
+    )
     await user.save()
     return this.getItems(email)
   }
 
-  async updateItemStatus(email, itemId, item) {
+  async updateItemStatus(email, item) {
     const user = await User.findOne({ email })
 
-    const findFolderWithItemId = (id) => {
-      for (const folder of user.folders) {
-        for (const item of folder.items) {
-          if (item._id.toString() === itemId) {
-            return [item, folder]
-          }
-        }
-      }
-      return [null, null]
-    }
-
-    const currentItem = await user.items.id(itemId)
+    const currentItem = await user.items.id(item.id)
 
     if (item.liked !== undefined) {
-      if (currentItem) {
-        currentItem.set({ liked: !currentItem.liked })
-      } else {
-        const currentItem = findFolderWithItemId(itemId)[0]
-        console.log(currentItem)
-        currentItem.set({ liked: !currentItem.liked })
-      }
+      currentItem.set({ liked: !currentItem.liked })
     }
     if (item.archived !== undefined) {
-      if (currentItem) {
-        currentItem.set({ archived: item.archived, home: !item.archived })
-      } else {
-        const [currentItem, currentFolder] = findFolderWithItemId(itemId)
-        currentItem.set({ archived: true })
-        user.items.push(currentItem)
-        currentFolder.items = currentFolder.items.filter(
-          (item) => item._id.toString() !== itemId
-        )
-      }
+      currentItem.set({ archived: item.archived, home: !item.archived })
     }
-
     if (item.folderId !== undefined) {
-      const folderToPush = user.folders.filter(
-        (folder) => folder._id.toString() === item.folderId
-      )[0]
-      if (currentItem) {
-        if (item.folderId === 'home') {
-          // move from archive to home
-          currentItem.set({ home: true, archived: false })
-        } else {
-          // move from home or archive to folder
-          currentItem.set({ archived: false, home: false })
-          folderToPush.items.push(currentItem)
-          user.items = user.items.filter(
-            (item) => item._id.toString() !== itemId
-          )
-        }
-      } else if (item.folderId === 'home') {
-        // move grom folder to home
-        const [currentItem, currentFolder] = findFolderWithItemId(itemId)
-        currentItem.set({ home: true })
-        user.items.push(currentItem)
-        currentFolder.items = currentFolder.items.filter(
-          (item) => item._id.toString() !== itemId
-        )
+      if (item.folderId === 'home') {
+        // move from archive to home
+        currentItem.set({ home: true, archived: false, currentFolder: null })
       } else {
-        // move from folder to folder
-        const [currentItem, currentFolder] = findFolderWithItemId(itemId)
-        if (currentItem && currentFolder) {
-          folderToPush.items.push(currentItem)
-          currentFolder.items = currentFolder.items.filter(
-            (item) => item._id.toString() !== itemId
-          )
-        } else {
-          throw new Error(
-            'Error occurs while trying move item from one folder to another'
-          )
-        }
+        // move from home or archive to folder
+        const folderToPush = user.folders.id(item.folderId)
+
+        currentItem.set({
+          archived: false,
+          home: false,
+          currentFolder: folderToPush.name
+        })
       }
     }
 
     await user.save()
-    return this.getItems(email)
   }
 
   async updateItemContent(email, itemId, content) {
-    const findFolderWithItemId = (id) => {
-      for (const folder of user.folders) {
-        for (const item of folder.items) {
-          if (item._id.toString() === itemId) {
-            return [item, folder]
-          }
-        }
-      }
-      return [null, null]
-    }
     const { title, url, description } = content
     const user = await User.findOne({ email })
-    let currentItem = await user.items.id(itemId)
-
-    let currentFolder
-    if (!currentItem) {
-      ;[currentItem, currentFolder] = findFolderWithItemId(itemId)
-      console.log(currentItem, currentFolder)
-    }
+    const currentItem = await user.items.id(itemId)
 
     if (!title || !url) {
       throw Error('title or url is empty')
@@ -290,7 +154,6 @@ class ItemLogic {
       currentItem.description = description
     }
     await user.save()
-    return this.getItems(email)
   }
 }
 

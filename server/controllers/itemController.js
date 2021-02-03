@@ -32,18 +32,18 @@ class ItemController extends ControllerBase {
 
   async deleteItem(email, itemId) {
     try {
-      const items = await this.itemLogic.deleteItem(email, itemId)
-      return this.response.status(200).json(items)
+      await this.itemLogic.deleteItem(email, itemId)
+      return this.response.status(204).json()
     } catch (err) {
       console.log(err)
       return this.response.status(500).json()
     }
   }
 
-  async updateItemStatus(email, itemId, item) {
+  async updateItemStatus(email, item) {
     try {
-      const items = await this.itemLogic.updateItemStatus(email, itemId, item)
-      return this.response.status(201).json(items)
+      await this.itemLogic.updateItemStatus(email, item)
+      return this.response.status(201).json()
     } catch (err) {
       console.log(err)
       return this.response.status(500).json()

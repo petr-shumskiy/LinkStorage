@@ -1,20 +1,20 @@
-const plugin = require('mongoose-partial-search')
 const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 
 const itemSchema = new Schema({
-  title: { type: String, trim: true, searchable: true },
-  url: { type: String, unique: true, required: true, trim: true, text: true },
-  description: { type: String, trim: true, text: true },
+  title: { type: String, trim: true },
+  url: { type: String, unique: true, required: true, trim: true },
+  description: { type: String, trim: true },
   logoUrl: { type: String },
   home: { type: Boolean, default: true },
   liked: { type: Boolean, default: false },
-  archived: { type: Boolean, default: false }
+  archived: { type: Boolean, default: false },
+  currentFolder: { type: String, default: null, trim: true }
 })
 
 const folderSchema = new Schema({
-  name: { type: String, required: true, trim: true },
-  items: [itemSchema]
+  name: { type: String, required: true, trim: true }
+  // items: [itemSchema]
 })
 
 const userSchema = new Schema({
@@ -25,6 +25,5 @@ const userSchema = new Schema({
   folders: [folderSchema],
   items: [itemSchema]
 })
-userSchema.plugin(plugin)
 
 module.exports = model('User', userSchema)

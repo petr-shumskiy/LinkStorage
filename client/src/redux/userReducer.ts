@@ -29,8 +29,64 @@ export const userReducer = createSlice({
       state.items = action.payload.reverse()
     },
 
+    deleteItem(state: State, action: PayloadAction<string>) {
+      state.items = state.items.filter(item => item._id !== action.payload)
+    },
+    updateItemStatus(state: State, action: PayloadAction<UpdateObjectType>) {
+      const { payload } = action
+      const currentItemIndex = state.items.findIndex(item => item._id === payload.id)
+      if (payload.liked !== undefined) {
+        state.items[currentItemIndex].liked = !state.items[currentItemIndex].liked
+      } else if (payload.archived !== undefined) {
+        state.items[currentItemIndex].archived = payload.archived
+        state.items[currentItemIndex].home = !payload.archived
+        state.items[currentItemIndex].currentFolder = null
+      } else if (payload.folderId !== undefined) {
+        if (payload.folderId === 'home') {
+          state.items[currentItemIndex].home = true
+          state.items[currentItemIndex].archived = false
+          state.items[currentItemIndex].currentFolder = null
+        } else {
+          const currentFolder = state.folders.find(folder => folder._id === payload.folderId)
+          if (currentFolder) {
+            state.items[currentItemIndex].home = false
+            state.items[currentItemIndex].archived = false
+            state.items[currentItemIndex].currentFolder = currentFolder.name
+          }
+        }
+      }
+    },
+    updateItemContent(state: State, action: PayloadAction<{ id: string, content: ContentType }>) {
+      const { content } = action.payload
+      const itemIdx = state.items.findIndex(item => item._id === action.payload.id)
+      state.items[itemIdx] = {
+        ...state.items[itemIdx],
+        title: content.title,
+        url: content.url,
+        description: content.description
+      }
+    },
     setListOfFolders(state: State, action: PayloadAction<Folder[]>) {
       state.folders = action.payload
+    },
+    addFolder(state: State, action: PayloadAction<Folder>) {
+      state.folders.push(action.payload)
+    },
+    deleteFolder(state: State, action: PayloadAction<string>) {
+      const folderName = state.folders.find(folder => folder._id === action.payload)?.name
+      state.folders = state.folders.filter(folder => folder._id !== action.payload)
+      state.items = state.items.filter(item => item.currentFolder !== folderName)
+    },
+    renameFolder(state: State, action: PayloadAction<{ id: string, name: string }>) {
+      const folderIdx = state.folders.findIndex(folder => folder._id === action.payload.id)
+      const currentFolderName = state.folders[folderIdx].name
+      state.folders[folderIdx].name = action.payload.name
+      state.items = state.items.map(item => {
+        if (item.currentFolder === currentFolderName) {
+          item.currentFolder = action.payload.name
+        }
+        return item
+      })
     },
     setLoader(state: State, action: PayloadAction<boolean>) {
       state.isLoading = action.payload
@@ -65,8 +121,8 @@ export const renameFolderThunk = (folderId: string, folderName: string) => async
   dispatch: Dispatch
 ) => {
   try {
-    const res = await new UserAPI().updateFolder(folderId, folderName)
-    dispatch(setListOfFolders(res.data))
+    await new UserAPI().updateFolder(folderId, folderName)
+    dispatch(renameFolder({ id: folderId, name: folderName }))
   } catch (error) {
     handleError(error, dispatch)
   }
@@ -75,7 +131,7 @@ export const renameFolderThunk = (folderId: string, folderName: string) => async
 export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
   try {
     const res = await new UserAPI().addFolder(name)
-    dispatch(setListOfFolders(res.data))
+    dispatch(addFolder(res.data))
   } catch (error) {
     handleError(error, dispatch)
   }
@@ -83,8 +139,8 @@ export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
 
 export const deleteFolderThunk = (folderId: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await new UserAPI().deleteFolder(folderId)
-    dispatch(setListOfFolders(res.data))
+    await new UserAPI().deleteFolder(folderId)
+    dispatch(deleteFolder(folderId))
   } catch (error) {
     handleError(error, dispatch)
   }
@@ -102,7 +158,6 @@ export const fetchItemsThunk = () => async (dispatch: Dispatch) => {
 
 export const addItemThunk = (url: string) => async (dispatch: Dispatch) => {
   try {
-    console.log(url)
     dispatch(setLoader(true))
     const res = await new UserAPI().addItem(url)
     dispatch(setItems(res.data))
@@ -120,24 +175,19 @@ export const addItemThunk = (url: string) => async (dispatch: Dispatch) => {
 
 export const deleteItemThunk = (id: string) => async (dispatch: Dispatch) => {
   try {
-    const res = await new UserAPI().deleteItem(id)
-    dispatch(setItems(res.data))
-
-    const foldersRes = await new UserAPI().fetchFolders()
-    dispatch(setListOfFolders(foldersRes.data))
+    await new UserAPI().deleteItem(id)
+    dispatch(deleteItem(id))
   } catch (error) {
     handleError(error, dispatch)
   }
 }
 
-export const updateItemStatusThunk = (id: string, payload: UpdateObjectType) => async (
+export const updateItemStatusThunk = (payload: UpdateObjectType) => async (
   dispatch: Dispatch
 ) => {
   try {
-    const res = await new UserAPI().updateItemStatus(id, payload)
-    dispatch(setItems(res.data))
-    const foldersRes = await new UserAPI().fetchFolders()
-    dispatch(setListOfFolders(foldersRes.data))
+    await new UserAPI().updateItemStatus(payload)
+    dispatch(updateItemStatus(payload))
   } catch (error) {
     handleError(error, dispatch)
   }
@@ -147,10 +197,8 @@ export const updateItemContentThunk = (id: string, content: ContentType) => asyn
   dispatch: Dispatch
 ) => {
   try {
-    const res = await new UserAPI().updateItemContent(id, content)
-    dispatch(setItems(res.data))
-    const foldersRes = await new UserAPI().fetchFolders()
-    dispatch(setListOfFolders(foldersRes.data))
+    await new UserAPI().updateItemContent(id, content)
+    dispatch(updateItemContent({ id, content }))
   } catch (error) {
     handleError(error, dispatch)
   }
@@ -168,16 +216,19 @@ export const searchItemsThunk = (searchPattern: string) => async (
 }
 
 // Selectors
-export const getDefaultItems = ({ user }: { user: State }) => user.items
+export const getItems = ({ user }: { user: State }) => user.items
 export const getFolders = ({ user }: { user: State }) => user.folders
 export const getCategories = ({ user }: { user: State }) => user.categories
 export const getCurrentFolder = (category: string, { user }: { user: State }) => {
-  return user.folders.filter(folder => folder.name === category)[0]
+  return user.folders.find(folder => folder.name === category)
 }
-export const getFoldersExceptCurrent = (category: string, { user }: { user: State }) => {
-  return user.folders.filter(folder => folder.name !== category)
-}
-export const getErrors = ({ user }: { user: State }) => user.errors
+export const getFoldersExceptCurrent = (category: string, { user }: { user: State }) => (
+  user.folders.filter(folder => folder.name !== category)
+)
+
+export const getCurrentFolderItems = (category: string, state: any) => (
+  getItems(state).filter(item => item.currentFolder === category)
+)
 
 export const getCurrentCategoryItems = (
   category: Category,
@@ -188,6 +239,8 @@ export const getCurrentCategoryItems = (
   }
   return null
 }
+
+export const getErrors = ({ user }: { user: State }) => user.errors
 
 export const checkErrors = createSelector(
   [getErrors],
@@ -200,22 +253,14 @@ export const checkErrors = createSelector(
     return [false, null]
   })
 
-export const getAllItems = createSelector(
-  [getDefaultItems, getFolders],
-  (items, folders: Folder[]) => folders
-    .flatMap(folder => folder.items)
-    .concat(items)
-    .map(item => item.url)
+export const getAllItemsUrls = createSelector(
+  [getItems],
+  (items) => items.map(item => item.url)
 )
 export const getAllLikedItems = createSelector(
-  [getDefaultItems, getFolders],
-  (items, folders) => {
-    const foldersItems = folders
-      .flatMap(folder => folder.items)
-      .filter(item => item.liked)
-    const defalutItems = items.filter(item => item.liked)
-    return defalutItems.concat(foldersItems)
-  })
+  [getItems],
+  (items) => items.filter(item => item.liked)
+)
 
 export const getFolderNames = createSelector(
   [getFolders],
@@ -230,6 +275,12 @@ export const getPossiblePathes = createSelector(
 export const {
   setItems,
   setListOfFolders,
+  addFolder,
+  deleteFolder,
+  renameFolder,
+  deleteItem,
+  updateItemStatus,
+  updateItemContent,
   setLoader,
   setError,
   resetErrors,

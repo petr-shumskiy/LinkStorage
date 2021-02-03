@@ -1,8 +1,7 @@
 import { createStyles, makeStyles, Menu, MenuItem, Typography } from '@material-ui/core'
-import { useSnackbar } from 'notistack'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { getFolders, getFoldersExceptCurrent } from '../../../../../redux/userReducer'
+import { getFoldersExceptCurrent } from '../../../../../redux/userReducer'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -18,7 +17,8 @@ export function FoldersMenu({
   onMenuClosed,
   onAddItemToFolder,
   category,
-  folders
+  folders,
+  item
 }) {
   const foldersExceptCurrent = useSelector((state) =>
     getFoldersExceptCurrent(category, state)
@@ -47,18 +47,20 @@ export function FoldersMenu({
           <Typography noWrap>Home</Typography>
         </MenuItem>
       ) : null}
-      {foldersExceptCurrent.map((folder) => (
-        <MenuItem
-          key={folder._id}
-          onClick={() => {
-            onMenuClosed()
-            onAddItemToFolder(folder._id)
-          }}
-          style={{ textTransform: 'capitalize', textOverflow: 'ellipsis' }}
-        >
-          <Typography noWrap>{folder.name}</Typography>
-        </MenuItem>
-      ))}
+      {foldersExceptCurrent.map((folder) =>
+        item.currentFolder !== folder.name ? (
+          <MenuItem
+            key={folder._id}
+            onClick={() => {
+              onMenuClosed()
+              onAddItemToFolder(folder._id)
+            }}
+            style={{ textTransform: 'capitalize', textOverflow: 'ellipsis' }}
+          >
+            <Typography noWrap>{folder.name}</Typography>
+          </MenuItem>
+        ) : null
+      )}
     </Menu>
   )
 }

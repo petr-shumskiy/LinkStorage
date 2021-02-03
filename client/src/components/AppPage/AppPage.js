@@ -79,7 +79,6 @@ function App() {
       </Grid>
     </Grid>
   )
-
   return (
     <Box>
       <Container maxWidth='lg' className={classes.mainContainer}>

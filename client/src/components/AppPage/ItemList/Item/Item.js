@@ -10,6 +10,7 @@ import {
 import { Favorite } from '@material-ui/icons'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { deleteItemThunk, updateItemStatusThunk } from '../../../../redux/userReducer'
 import { theme } from '../../../../theme'
 import { EditButton } from './EditButton'
@@ -80,15 +81,15 @@ export function Item({ item, category }) {
   }
 
   const handleAddItemToFolder = (folderId) => {
-    dispatch(updateItemStatusThunk(id, { folderId }))
+    dispatch(updateItemStatusThunk({ id, folderId }))
   }
 
   const handleLikeItem = () => {
-    dispatch(updateItemStatusThunk(id, { liked: !item.liked }))
+    dispatch(updateItemStatusThunk({ id, liked: !item.liked }))
   }
 
   const handleArchiveItem = () => {
-    dispatch(updateItemStatusThunk(id, { archived: !item.archived }))
+    dispatch(updateItemStatusThunk({ id, archived: !item.archived }))
   }
 
   return (
@@ -123,9 +124,11 @@ export function Item({ item, category }) {
 
           {/* url */}
           <Grid item className={classes.restrictedMaxWidth}>
-            <Typography variant='subtitle1' classes={{ root: classes.root }}>
-              {url}
-            </Typography>
+            <a href={url} style={{ textDecoration: 'none' }}>
+              <Typography variant='subtitle1' classes={{ root: classes.root }}>
+                {url}
+              </Typography>
+            </a>
           </Grid>
 
           {/* description */}

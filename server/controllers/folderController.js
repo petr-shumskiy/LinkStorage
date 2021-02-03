@@ -8,9 +8,8 @@ class FolderController extends ControllerBase {
 
   async createFolder(email, folderName) {
     try {
-      const folders = await this.folderLogic.createFolder(email, folderName)
-
-      return this.response.status(201).json(folders)
+      const folder = await this.folderLogic.createFolder(email, folderName)
+      return this.response.status(201).json(folder)
     } catch (err) {
       console.log(err)
       return this.response.status(500).json()
@@ -20,7 +19,6 @@ class FolderController extends ControllerBase {
   async getFolders(email) {
     try {
       const folders = await this.folderLogic.getFolders(email)
-
       return this.response.status(200).json(folders)
     } catch (err) {
       console.log(err)

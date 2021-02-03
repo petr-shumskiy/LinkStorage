@@ -22,7 +22,7 @@ export class UserAPI {
   fetchAllItems = async () => this.api.get('/link')
   addItem = async (url) => this.api.post('/link', { url })
   deleteItem = async (id) => this.api.delete('/link/' + id)
-  updateItemStatus = async (id, payload) => this.api.patch('/link/' + id, payload)
+  updateItemStatus = async (payload) => this.api.patch('/link/' + payload.id, payload)
   updateItemContent = async (id, content) => this.api.put('/link/' + id, content)
   searchItems = async (searchPattern) => this.api.get('/items/?search=' + searchPattern)
 }

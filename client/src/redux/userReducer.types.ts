@@ -12,7 +12,8 @@ export type Item = {
   title: string
   description: string
   imageUrl: string
-  folders: Array<string>
+  folders: Array<Folder>
+  currentFolder: string | null
 }
 
 export type AsideMenuItem = {
@@ -48,7 +49,6 @@ export type UpdateObjectType = {
 export type Folder = {
   _id: string
   name: string
-  items: Item[]
 }
 
 export type ContentType = {

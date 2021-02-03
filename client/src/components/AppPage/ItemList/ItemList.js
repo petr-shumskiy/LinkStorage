@@ -5,7 +5,8 @@ import {
   getCategories,
   getCurrentFolder,
   getAllLikedItems,
-  getCurrentCategoryItems
+  getCurrentCategoryItems,
+  getCurrentFolderItems
 } from '../../../redux/userReducer'
 
 import { FolderTitle } from './FolderTitle'
@@ -16,7 +17,6 @@ import Skeleton from '@material-ui/lab/Skeleton'
 
 export function ItemsList({ items }) {
   const currentCategory = useLocation().pathname.split('/')[1]
-
   const isLoading = useSelector(({ user }) => user.isLoading)
   const categories = useSelector(getCategories)
   const currentFolder = useSelector((state) => getCurrentFolder(currentCategory, state))
@@ -25,6 +25,11 @@ export function ItemsList({ items }) {
   let currentCategoryItems = useSelector((state) => {
     return getCurrentCategoryItems(currentCategory, state)
   })
+
+  let currentFolderItems = useSelector((state) => {
+    return getCurrentFolderItems(currentCategory, state)
+  })
+  console.log(currentFolderItems)
 
   const likedItems = useSelector(getAllLikedItems).map((item) => (
     <Item key={item._id} item={item} category='liked' />
@@ -48,7 +53,7 @@ export function ItemsList({ items }) {
     }
     return currentCategoryItems
   } else {
-    if (currentFolder && !currentFolder.items.length) {
+    if (!currentFolderItems) {
       return (
         <>
           <FolderTitle id={currentFolder._id} label={currentFolder.name} />
@@ -56,7 +61,7 @@ export function ItemsList({ items }) {
         </>
       )
     }
-    const currentFolderItems = currentFolder.items.map((item) => (
+    currentFolderItems = currentFolderItems.map((item) => (
       <Item key={item._id} item={item} category={currentCategory} />
     ))
     return (

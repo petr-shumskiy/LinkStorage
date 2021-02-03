@@ -22,7 +22,8 @@ export function ItemActions({
   isItemLiked,
   onItemArchived,
   isItemArchived,
-  category
+  category,
+  item
 }) {
   const folders = useSelector(getFolders)
   const [isOpen, setIsOpen] = useState(false)
@@ -38,8 +39,6 @@ export function ItemActions({
   }
 
   const onMenuClicked = (e) => {
-    setAnchorEl(e.currentTarget)
-    setFolderSelectorOpen((prev) => !prev)
     if (category === 'home' && !isFoldersExists) {
       enqueueSnackbar("You haven't added any folders yet", {
         variant: 'info',
@@ -49,7 +48,10 @@ export function ItemActions({
         },
         preventDuplicate: true
       })
+      return
     }
+    setAnchorEl(e.currentTarget)
+    setFolderSelectorOpen((prev) => !prev)
   }
 
   const onMenuClosed = (e) => {
@@ -71,6 +73,7 @@ export function ItemActions({
           onAddItemToFolder={onAddItemToFolder}
           category={category}
           folders={folders}
+          item={item}
         />
       )}
 
