@@ -10,7 +10,7 @@ import { DeleteDialog } from './DeleteDialog'
 import { FoldersMenu } from './FoldersMenu'
 import { StyledIconButton } from './StyledButtons'
 import FolderIcon from '@material-ui/icons/Folder'
-import { getFolders } from '../../../../../redux/userReducer'
+import { getFolders, getTheme } from '../../../../../redux/userReducer'
 import { useSelector } from 'react-redux'
 import { useSnackbar } from 'notistack'
 
@@ -25,6 +25,7 @@ export function ItemActions({
   category,
   item
 }) {
+  const theme = useSelector(getTheme)
   const folders = useSelector(getFolders)
   const [isOpen, setIsOpen] = useState(false)
   const [isFolderSelectorOpen, setFolderSelectorOpen] = useState(false)
@@ -90,7 +91,7 @@ export function ItemActions({
           )}
         </StyledIconButton>
         <StyledIconButton onClick={onMenuClicked}>
-          <FolderIcon fontSize='inherit' />
+          <FolderIcon fontSize='inherit' style={{}} />
         </StyledIconButton>
         {category === 'liked' ? null : (
           <StyledIconButton onClick={onItemArchived}>

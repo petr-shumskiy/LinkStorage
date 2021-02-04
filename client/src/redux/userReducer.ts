@@ -2,9 +2,9 @@ import { createSelector, createSlice, Dispatch, PayloadAction } from '@reduxjs/t
 import { UserAPI } from '../API/UserAPI'
 import { State, Item, Folder, UpdateObjectType, ContentType, Category } from './userReducer.types'
 import { handleError } from './errorService'
-import AxiosError from 'axios-error'
 
 const initialState: State = {
+  themeType: localStorage.getItem('theme') || 'light',
   errors: [
     { name: 'network', message: 'check your internet connection', isActive: false },
     { name: 'url', message: 'url is invalid', isActive: false },
@@ -25,6 +25,10 @@ export const userReducer = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    changeTheme(state: State, action: PayloadAction<string>) {
+      state.themeType = action.payload
+      localStorage.setItem('theme', action.payload)
+    },
     setItems(state: State, action: PayloadAction<Item[]>) {
       state.items = action.payload.reverse()
     },
@@ -95,9 +99,10 @@ export const userReducer = createSlice({
       state.items = []
       state.folders = []
       state.isLoading = false
+      state.themeType = 'light'
     },
     setError(state: State, action: PayloadAction<{ name: string, isActve: boolean }>) {
-      const error = state.errors.filter(error => error.name === action.payload.name)[0]
+      const error = state.errors.find(error => error.name === action.payload.name)
       if (error) {
         error.isActive = action.payload.isActve
       }
@@ -163,12 +168,7 @@ export const addItemThunk = (url: string) => async (dispatch: Dispatch) => {
     dispatch(setItems(res.data))
     dispatch(setLoader(false))
   } catch (error) {
-    if (new AxiosError(error).status === 400) {
-      dispatch(setError({ name: 'url', isActve: true }))
-      return
-    }
     handleError(error, dispatch)
-  } finally {
     dispatch(setLoader(false))
   }
 }
@@ -216,6 +216,7 @@ export const searchItemsThunk = (searchPattern: string) => async (
 }
 
 // Selectors
+export const getTheme = ({ user }: { user: State }) => user.themeType
 export const getItems = ({ user }: { user: State }) => user.items
 export const getFolders = ({ user }: { user: State }) => user.folders
 export const getCategories = ({ user }: { user: State }) => user.categories
@@ -273,6 +274,7 @@ export const getPossiblePathes = createSelector(
 )
 
 export const {
+  changeTheme,
   setItems,
   setListOfFolders,
   addFolder,

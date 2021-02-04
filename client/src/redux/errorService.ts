@@ -12,11 +12,13 @@ export function handleError(e: any, dispatch: Dispatch) {
   if (!status) {
     console.log(error)
     dispatch(setError({ name: 'network', isActve: true }))
-  } else if (status === 404) {
-    console.log(status, error)
   } else if (status === 403) {
     dispatch(logout())
     dispatch(resetState())
+  } else if (status === 404) {
+    console.log(status, error)
+  } else if (status === 406) {
+    dispatch(setError({ name: 'url', isActve: true }))
   } else if (status >= 500) {
     dispatch(setError({ name: 'server', isActve: true }))
   } else {

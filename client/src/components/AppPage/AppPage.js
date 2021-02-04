@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Container, Grid, Hidden, SwipeableDrawer } from '@material-ui/core'
+import { Container, Grid, Hidden, SwipeableDrawer } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchItemsThunk } from '../../redux/userReducer.ts'
@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   mainContainer: {
+    height: '100%',
     [theme.breakpoints.down('sm')]: {
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1)
@@ -80,45 +81,43 @@ function App() {
     </Grid>
   )
   return (
-    <Box>
-      <Container maxWidth='lg' className={classes.mainContainer}>
-        <Grid container className={classes.GridContainer}>
-          <Grid
-            item
-            container
-            xs={12}
-            color='black'
-            style={{
-              color: 'black'
-            }}
-          >
-            <NavPanel openDrawer={openDrawer} />
-          </Grid>
-          <Hidden smDown>
-            <AsideNav swipeable={false} />
-          </Hidden>
-          <Hidden mdUp>
-            <SwipeableDrawer
-              anchor={'left'}
-              disableBackdropTransition
-              onClose={closeDrawer}
-              onOpen={openDrawer}
-              variant='temporary'
-              ModalProps={{ keepMounted: true }}
-              classes={{
-                paper: classes.drawerPaper
-              }}
-              open={isDrawerOpen}
-            >
-              <AsideNav swipeable={true} />
-            </SwipeableDrawer>
-          </Hidden>
-          <Grid item xs={12} md={8} className={classes.MainContent}>
-            {main}
-          </Grid>
+    <Container maxWidth='lg' className={classes.mainContainer}>
+      <Grid container className={classes.GridContainer}>
+        <Grid
+          item
+          container
+          xs={12}
+          color='black'
+          style={{
+            color: 'black'
+          }}
+        >
+          <NavPanel openDrawer={openDrawer} />
         </Grid>
-      </Container>
-    </Box>
+        <Hidden smDown>
+          <AsideNav swipeable={false} />
+        </Hidden>
+        <Hidden mdUp>
+          <SwipeableDrawer
+            anchor={'left'}
+            disableBackdropTransition
+            onClose={closeDrawer}
+            onOpen={openDrawer}
+            variant='temporary'
+            ModalProps={{ keepMounted: true }}
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            open={isDrawerOpen}
+          >
+            <AsideNav swipeable={true} />
+          </SwipeableDrawer>
+        </Hidden>
+        <Grid item xs={12} md={8} className={classes.MainContent}>
+          {main}
+        </Grid>
+      </Grid>
+    </Container>
   )
 }
 

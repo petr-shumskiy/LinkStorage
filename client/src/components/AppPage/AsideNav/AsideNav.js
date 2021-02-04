@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) =>
       paddingBottom: theme.spacing(0.5),
       maxWidth: 210,
       position: 'fixed',
-      color: theme.palette.common.black,
+      color: theme.palette.secondary.main,
       [theme.breakpoints.down('sm')]: {
         marginTop: theme.spacing(0),
         width: 'inherit',

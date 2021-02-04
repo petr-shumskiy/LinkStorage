@@ -53,7 +53,7 @@ export function ItemsList({ items }) {
     }
     return currentCategoryItems
   } else {
-    if (!currentFolderItems) {
+    if (!currentFolderItems.length) {
       return (
         <>
           <FolderTitle id={currentFolder._id} label={currentFolder.name} />

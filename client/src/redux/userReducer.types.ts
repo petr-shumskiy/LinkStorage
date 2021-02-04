@@ -32,6 +32,7 @@ export type AppError = {
 }
 
 export interface State {
+  themeType: string
   errors: AppError[]
   isLoading: boolean
   items: Item[]

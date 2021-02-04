@@ -99,10 +99,10 @@ describe('Links', function () {
 
       expect(response.status).to.eql(201)
       const user = await User.findOne({ email })
-      const item = user.items.filter((item) => {
+      const item = user.items.find((item) => {
         console.log(item)
         return item._id.toString() === linkIdUpdated
-      })[0]
+      })
       // console.log('ITEM', item)
       expect(item.liked).to.be.true
       expect(item.home).to.be.true
@@ -119,9 +119,9 @@ describe('Links', function () {
       const user = await User.findOne({ email })
       // console.log(linkIdUpdated)
       // console.log(user.items)
-      const item = user.items.filter(
+      const item = user.items.find(
         (item) => item._id.toString() === linkIdUpdated
-      )[0]
+      )
       // console.log('ITEM', item)
 
       expect(item.liked).to.be.false
@@ -137,9 +137,9 @@ describe('Links', function () {
 
       expect(response.status).to.eql(201)
       const user = await User.findOne({ email })
-      const item = user.items.filter(
+      const item = user.items.find(
         (item) => item._id.toString() === linkIdUpdated
-      )[0]
+      )
 
       expect(item.home).to.be.false
       expect(item.archived).to.be.true
@@ -153,9 +153,9 @@ describe('Links', function () {
 
       expect(response.status).to.eql(201)
       const user = await User.findOne({ email })
-      const item = user.items.filter(
+      const item = user.items.find(
         (item) => item._id.toString() === linkIdUpdated
-      )[0]
+      )
 
       expect(item.home).to.be.true
       expect(item.archived).to.be.false

@@ -10,7 +10,6 @@ import {
 import { Favorite } from '@material-ui/icons'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
 import { deleteItemThunk, updateItemStatusThunk } from '../../../../redux/userReducer'
 import { theme } from '../../../../theme'
 import { EditButton } from './EditButton'
@@ -188,10 +187,8 @@ export function Item({ item, category }) {
       </Grid>
       <Divider
         style={{
-          backgroundColor: 'black',
           width: '100%',
-          margin: '0.5rem 0 1rem 0rem',
-          opacity: 0.2
+          margin: '0.5rem 0 1rem 0rem'
         }}
       />
     </Box>

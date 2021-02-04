@@ -12,7 +12,7 @@ class ItemController extends ControllerBase {
       if (items instanceof Array) {
         return this.response.status(201).json(items)
       } else {
-        return this.response.status(400).json()
+        return this.response.status(406).json()
       }
     } catch (err) {
       console.log(err)

@@ -46,13 +46,7 @@ export function EditButton({ isActive, item, onCloseEditDialog }) {
         item={item}
       />
 
-      <StyledButton
-        onClick={openItemEditDialog}
-        className={classes.editButton}
-        style={{
-          display: [isActive ? 'block' : 'none']
-        }}
-      >
+      <StyledButton onClick={openItemEditDialog} className={classes.editButton}>
         <Typography variant='body1' color='inherit'>
           edit
         </Typography>

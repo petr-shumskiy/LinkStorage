@@ -154,7 +154,9 @@ export function FolderTitle({ id, label }) {
         folderName={label}
       />
       <Box display='flex' alignItems='center' marginBottom='1rem'>
-        <Typography variant='h3'>{label}</Typography>
+        <Typography variant='h3' style={{ textTransform: 'capitalize' }}>
+          {label}
+        </Typography>
         <StyledButton
           onClick={handleClickOpen}
           type='small'

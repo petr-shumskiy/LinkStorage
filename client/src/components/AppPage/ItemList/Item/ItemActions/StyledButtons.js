@@ -1,6 +1,5 @@
 import { Button, IconButton, styled } from '@material-ui/core'
 import { theme } from '../../../../../theme'
-
 const buttonStyles = {
   '&:hover': {
     color: theme.palette.primary.main,
@@ -9,7 +8,7 @@ const buttonStyles = {
   backgroundColor: 'transparent',
   boxShadow: 'none',
   fontSize: '1.2rem',
-  color: 'rgba(0, 0, 0, 0.7)',
+  color: '#656565',
   width: '40px',
   height: '40px'
 }

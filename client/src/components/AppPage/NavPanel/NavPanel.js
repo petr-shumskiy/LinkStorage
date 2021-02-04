@@ -7,14 +7,17 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  FormControlLabel,
   Grid,
   Hidden,
   IconButton,
   InputBase,
+  InputLabel,
   makeStyles,
   Menu,
   MenuItem,
   styled,
+  Switch,
   TextField,
   Typography
 } from '@material-ui/core'
@@ -22,17 +25,19 @@ import SearchIcon from '@material-ui/icons/Search'
 import CloseIcon from '@material-ui/icons/Close'
 import MenuIcon from '@material-ui/icons/Menu'
 import debounce from 'lodash.debounce'
-import { theme } from '../../../theme'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
 import { resetState } from '../../../redux/userReducer.ts'
 import {
   addItemThunk,
+  changeTheme,
   fetchItemsThunk,
   getAllItemsUrls,
+  getTheme,
   searchItemsThunk
 } from '../../../redux/userReducer'
 import { trimUrl } from '../../../utils/trimUrl'
+import { theme } from '../../../theme'
 
 const NavButton = styled(Button)({
   '&:hover': {
@@ -95,7 +100,6 @@ const useStyles = makeStyles((theme) =>
       maxWidth: 1200,
       position: 'fixed',
       top: 0,
-      backgroundColor: 'white',
       width: 'inherit',
       zIndex: 1,
       [theme.breakpoints.down('sm')]: {
@@ -149,6 +153,12 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
     dispatch(logout())
     dispatch(resetState())
   }
+  const theme = useSelector(getTheme)
+  const handleChange = (e) => {
+    console.log(e.target.value)
+    dispatch(changeTheme(e.target.value === 'dark' ? 'light' : 'dark'))
+    // dispatch()
+  }
   return (
     <Menu
       anchorEl={anchorEl}
@@ -162,6 +172,18 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
       }}
     >
       <MenuItem onClick={handleClick}>Logout</MenuItem>
+      <MenuItem disableRipple>
+        <Switch
+          onChange={handleChange}
+          value={theme}
+          id='dark-theme'
+          color='primary'
+          checked={theme === 'dark'}
+        />
+        <InputLabel htmlFor='dark-theme' style={{ cursor: 'pointer' }}>
+          <Typography variant='body1'>dark</Typography>
+        </InputLabel>
+      </MenuItem>
     </Menu>
   )
 }
