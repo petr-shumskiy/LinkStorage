@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { createSlice } from '@reduxjs/toolkit'
 import { reset, stopSubmit } from 'redux-form'
 import { AuthAPI } from '../API/AuthAPI'
@@ -26,7 +27,6 @@ export const authReducer = createSlice({
       state.token = action.payload
     },
     login(state, action) {
-      console.log(action.payload)
       state.email = action.payload
     },
     logout(state) {
@@ -97,7 +97,6 @@ export const validateEmail = (confirmationToken) => async (dispatch) => {
     localStorage.setItem('email', res.data.email)
     dispatch(setToken(confirmationToken))
   } catch (error) {
-    debugger
     if (error.response?.data) {
       dispatch(setValidationError(error.response.data.message))
     }

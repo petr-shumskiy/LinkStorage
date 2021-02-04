@@ -84,7 +84,7 @@ describe('Links', function () {
         .send({ email })
         .set('Authorization', bearerToken)
 
-      expect(response.status).to.eql(200)
+      expect(response.status).to.eql(204)
       const user = await User.findOne({ email: 'testUser' })
       expect(user.items.length).to.eql(items.length - 1)
     })
@@ -94,16 +94,14 @@ describe('Links', function () {
     it('Like item, should change field liked from false to true ', async function () {
       const response = await request
         .patch(`${LINK_PATH}/${linkIdUpdated}`)
-        .send({ liked: true })
+        .send({ id: linkIdUpdated, liked: true })
         .set('Authorization', bearerToken)
 
       expect(response.status).to.eql(201)
       const user = await User.findOne({ email })
-      const item = user.items.find((item) => {
-        console.log(item)
+      const item = user.items.filter((item) => {
         return item._id.toString() === linkIdUpdated
-      })
-      // console.log('ITEM', item)
+      })[0]
       expect(item.liked).to.be.true
       expect(item.home).to.be.true
       expect(item.archived).to.be.false
@@ -112,17 +110,14 @@ describe('Links', function () {
     it('Dislike item,should change field liked from true to false ', async function () {
       const response = await request
         .patch(`${LINK_PATH}/${linkIdUpdated}`)
-        .send({ liked: false })
+        .send({ id: linkIdUpdated, liked: false })
         .set('Authorization', bearerToken)
 
       expect(response.status).to.eql(201)
       const user = await User.findOne({ email })
-      // console.log(linkIdUpdated)
-      // console.log(user.items)
       const item = user.items.find(
         (item) => item._id.toString() === linkIdUpdated
       )
-      // console.log('ITEM', item)
 
       expect(item.liked).to.be.false
       expect(item.home).to.be.true
@@ -132,7 +127,7 @@ describe('Links', function () {
     it('Archive item,should change field archived from false to true, and home from true to false ', async function () {
       const response = await request
         .patch(`${LINK_PATH}/${linkIdUpdated}`)
-        .send({ archived: true })
+        .send({ id: linkIdUpdated, archived: true })
         .set('Authorization', bearerToken)
 
       expect(response.status).to.eql(201)
@@ -148,7 +143,7 @@ describe('Links', function () {
     it('Unarchive item,should change field archived from true to false, and home from false to true ', async function () {
       const response = await request
         .patch(`${LINK_PATH}/${linkIdUpdated}`)
-        .send({ archived: false })
+        .send({ id: linkIdUpdated, archived: false })
         .set('Authorization', bearerToken)
 
       expect(response.status).to.eql(201)

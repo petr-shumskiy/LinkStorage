@@ -10,7 +10,6 @@ const Confirmation = () => {
   const token = useSelector(({ auth }) => auth.token)
   const validationError = useSelector(({ auth }) => auth.validationError)
   const dispatch = useDispatch()
-  debugger
   useEffect(() => {
     dispatch(validateEmail(confirmationToken))
   }, [token, validationError, confirmationToken, dispatch])
