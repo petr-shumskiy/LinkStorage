@@ -9,7 +9,8 @@ const itemSchema = new Schema({
   home: { type: Boolean, default: true },
   liked: { type: Boolean, default: false },
   archived: { type: Boolean, default: false },
-  currentFolder: { type: String, default: null, trim: true }
+  currentFolder: { type: String, default: null, trim: true },
+  wasAdded: { type: Date, default: new Date() }
 })
 
 const folderSchema = new Schema({

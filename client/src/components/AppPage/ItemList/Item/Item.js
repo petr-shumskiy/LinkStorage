@@ -61,7 +61,7 @@ const useStyle = makeStyles((theme) =>
 )
 
 export function Item({ item, category }) {
-  const { _id: id, url, title, description, logoUrl } = item
+  const { _id: id, url, title, description, logoUrl, wasAdded } = item
   const classes = useStyle()
   const dispatch = useDispatch()
 
@@ -161,7 +161,11 @@ export function Item({ item, category }) {
             >
               <Favorite fontSize='inherit' color='primary' />
             </StyledIconButton>
-            <DateOfTitle isActive={!isActive} isItemLiked={item.liked} />
+            <DateOfTitle
+              isActive={!isActive}
+              isItemLiked={item.liked}
+              wasAdded={wasAdded}
+            />
           </Grid>
         </Grid>
 

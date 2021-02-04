@@ -14,19 +14,13 @@ import {
 } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { authStyles } from './authModalStyles'
-import {
-  RememberMe,
-  StyledEmailField,
-  StyledPassField
-} from './authStylesFields'
+import { RememberMe, StyledEmailField, StyledPassField } from './authStylesFields'
 import { formRequired } from '../../utils/validators'
 
 const SignIn = ({ handleSubmit, pristine, valid, error }) => {
   const showSignIn = useSelector(({ auth }) => auth.showSignIn)
   const dispatch = useDispatch()
-  const signInRequestInProgress = useSelector(
-    ({ auth }) => auth.signInRequestInProgress
-  )
+  const signInRequestInProgress = useSelector(({ auth }) => auth.signInRequestInProgress)
   const classes = authStyles()
   return (
     <Dialog open={showSignIn} onClose={() => dispatch(showSignInModal(false))}>
@@ -35,7 +29,7 @@ const SignIn = ({ handleSubmit, pristine, valid, error }) => {
         <div className={classes.paper}>
           {error ? (
             <div className={classes.additionalMessage}>
-              <Typography variant='h1' color='primary' align='center'>
+              <Typography component='h2' variant='h6' color='error' align='center'>
                 {error}
               </Typography>
             </div>
@@ -73,15 +67,13 @@ const SignIn = ({ handleSubmit, pristine, valid, error }) => {
   )
 }
 
-const SingInReduxForm = reduxForm({ form: 'signIn', touchOnChange: true })(
-  SignIn
-)
+const SingInReduxForm = reduxForm({ form: 'signIn', touchOnChange: true })(SignIn)
 
 const SignInContainer = () => {
   const dispatch = useDispatch()
 
   const submitHandler = async (formData) => {
-    await dispatch(sendSignInData(formData))
+    dispatch(sendSignInData(formData))
   }
   return <SingInReduxForm onSubmit={submitHandler} />
 }

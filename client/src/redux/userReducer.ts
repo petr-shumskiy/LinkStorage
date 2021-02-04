@@ -67,7 +67,8 @@ export const userReducer = createSlice({
         ...state.items[itemIdx],
         title: content.title,
         url: content.url,
-        description: content.description
+        description: content.description,
+        wasAdded: new Date().toString()
       }
     },
     setListOfFolders(state: State, action: PayloadAction<Folder[]>) {

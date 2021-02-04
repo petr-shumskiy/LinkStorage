@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core'
 import React from 'react'
 
-export function DateOfTitle({ isActive, isItemLiked }) {
+export function DateOfTitle({ isActive, isItemLiked, wasAdded }) {
   const marginLeft = isActive && !isItemLiked ? 11 : 0
   return (
     <div
@@ -11,7 +11,9 @@ export function DateOfTitle({ isActive, isItemLiked }) {
       }}
     >
       <Typography variant='subtitle1'>
-        {new Date().toLocaleDateString()}
+        {`${new Date(wasAdded).toLocaleDateString()}  ${new Date(
+          wasAdded
+        ).toLocaleTimeString()}`}
       </Typography>
     </div>
   )

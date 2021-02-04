@@ -33,8 +33,10 @@ const App = () => {
   return (
     <ThemeProvider theme={createMuiTheme(createTheme(theme))}>
       <Box
-        height='100vh'
-        style={{ backgroundColor: theme === 'dark' ? '#000000d9' : '#fafafa' }}
+        minWidth={420}
+        minHeight='100vh'
+        height='100%'
+        style={{ backgroundColor: theme === 'dark' ? '#212121' : '#ffffff' }}
       >
         <Switch>
           <Route

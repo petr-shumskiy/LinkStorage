@@ -78,7 +78,8 @@ class ItemLogic {
         url: url.endsWith('/') ? url.slice(0, url.length - 1) : url,
         logoUrl:
           logoUrl ||
-          'https://storage.googleapis.com/stateless-muslimdc-asia/raudhah-grocer/2020/08/9799f00a-no_image_available.jpg'
+          'https://storage.googleapis.com/stateless-muslimdc-asia/raudhah-grocer/2020/08/9799f00a-no_image_available.jpg',
+        wasAdded: new Date()
       }
 
       user.items.push(item)
@@ -152,6 +153,7 @@ class ItemLogic {
       currentItem.title = title
       currentItem.url = url
       currentItem.description = description
+      currentItem.wasAdded = new Date()
     }
     await user.save()
   }

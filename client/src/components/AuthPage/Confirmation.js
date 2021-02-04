@@ -1,3 +1,4 @@
+import { CircularProgress } from '@material-ui/core'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams, withRouter } from 'react-router-dom'
@@ -9,6 +10,7 @@ const Confirmation = () => {
   const token = useSelector(({ auth }) => auth.token)
   const validationError = useSelector(({ auth }) => auth.validationError)
   const dispatch = useDispatch()
+  debugger
   useEffect(() => {
     dispatch(validateEmail(confirmationToken))
   }, [token, validationError, confirmationToken, dispatch])
@@ -18,7 +20,7 @@ const Confirmation = () => {
   }
   return (
     <div>
-      <h1>{validationError || 'Awaiting..'}</h1>
+      <h1>{validationError || <CircularProgress />}</h1>
       <button onClick={() => history.push('/')}>go home</button>
     </div>
   )

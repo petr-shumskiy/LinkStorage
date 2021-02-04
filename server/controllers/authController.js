@@ -4,6 +4,7 @@ const mailgun = require('mailgun-js')
 const jwt = require('jsonwebtoken')
 const config = require('config')
 const bcrypt = require('bcryptjs')
+const { use } = require('chai')
 
 const CLIENT_URL = config.get('clientUrl')
 const JWT_SECRET = process.env.JWT_SECRET
@@ -22,27 +23,33 @@ exports.registration = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 1)
     const newUser = new User({ email, password: hashedPassword })
+    console.log(newUser)
     await newUser.save()
-    const activationToken = jwt.sign({ email, password }, JWT_SECRET, {
-      expiresIn: '10min'
-    })
-    const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: DOMAIN })
-    try {
-      mg.messages().send({
-        from: 'no-reply@linkStorage.org',
-        to: email,
-        subject: 'Activation link',
-        html: `
+    if (email === 'linkstorage@protonmail.com') {
+      const activationToken = jwt.sign({ email, password }, JWT_SECRET, {
+        expiresIn: '1h'
+      })
+      const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: DOMAIN })
+      try {
+        mg.messages().send({
+          from: 'no-reply@linkStorage.org',
+          to: email,
+          subject: 'Activation link',
+          html: `
       <h2>Please click on given link to activate your account</h2>
       <a href="${CLIENT_URL}/reg-confirmation/${activationToken}"><button>confirm email</button></a>
       `
-      })
-    } catch (e) {
-      console.log(e)
+        })
+      } catch (e) {
+        return res.status(500).json()
+      }
+      return res
+        .status(200)
+        .json({ message: constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL })
     }
     return res
       .status(200)
-      .json({ message: constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL })
+      .json({ message: 'The user has successfully created' })
   } catch (error) {
     console.log(error)
     res.send({ message: 'error while sending confirmation code' })
@@ -53,10 +60,11 @@ exports.validateEmail = async (req, res) => {
   try {
     const { token } = req.params
     const { email } = jwt.verify(token, JWT_SECRET)
+    console.log(token, email)
     await User.findOneAndUpdate({ email }, { isEmailConfirmed: true })
     return res
-      .status(200)
-      .json({ message: constants.REGISTRATION_SUCCESS_CONFIRMED_EMAIL })
+      .status(201)
+      .json({ message: constants.REGISTRATION_SUCCESS_CONFIRMED_EMAIL, email })
   } catch (error) {
     console.log(error)
     console.log(error.message)
@@ -81,6 +89,12 @@ exports.login = async (req, res) => {
       return res
         .status(400)
         .json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
+    }
+
+    if (user.email === 'linkstorage@protonmail.com' && !user.isEmailConfirmed) {
+      return res
+        .status(400)
+        .json({ message: constants.LOGIN_ERROR_UNCONFIRMED_EMAIL })
     }
 
     const token = jwt.sign({ email, password }, JWT_SECRET, { expiresIn: '1h' })

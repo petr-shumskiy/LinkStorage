@@ -14,11 +14,11 @@ export const authStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.error.dark
   },
   avatarSuccess: {
     margin: theme.spacing(1),
-    backgroundColor: 'green'
+    backgroundColor: theme.palette.success.main
   },
   successForm: {
     flexGrow: 1,

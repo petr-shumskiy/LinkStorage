@@ -14,6 +14,7 @@ export type Item = {
   imageUrl: string
   folders: Array<Folder>
   currentFolder: string | null
+  wasAdded: string
 }
 
 export type AsideMenuItem = {

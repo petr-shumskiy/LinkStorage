@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
   Grid,
   Hidden,
   IconButton,
@@ -54,12 +53,12 @@ const useStyles = makeStyles((theme) =>
       maxHeight: '40px',
       position: 'relative',
       borderRadius: theme.shape.borderRadius,
-      marginLeft: 0,
       flexGrow: 1,
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(0),
-        width: 'auto'
+      marginLeft: theme.spacing(0),
+      width: 'auto',
+      [theme.breakpoints.down('sm')]: {},
+      [theme.breakpoints.down('xs')]: {
+        marginRight: theme.spacing(1)
       }
     },
     searchIcon: {
@@ -70,24 +69,19 @@ const useStyles = makeStyles((theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '0.5rem'
+      [theme.breakpoints.down('sm')]: {
+        marginLeft: 'auto'
+      }
     },
     inputRoot: {
-      color: 'inherit',
       width: '100%'
     },
     inputInput: {
       padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+      paddingLeft: `calc(1rem + ${theme.spacing(4)}px)`,
       transition: theme.transitions.create('all'),
-      [theme.breakpoints.up('md')]: {
-        width: '70%',
-        '&:focus': {
-          width: '100%'
-        }
-      },
-      [theme.breakpoints.down('md')]: {
-        width: '70%',
+      [theme.breakpoints.down('sm')]: {
+        width: '50%',
         '&:focus': {
           width: '100%'
         }
@@ -107,8 +101,7 @@ const useStyles = makeStyles((theme) =>
         alignItems: 'center',
         whiteSpace: 'nowrap',
         left: 0,
-        paddingTop: 8,
-        paddingBottom: 8,
+        paddingBottom: theme.spacing(0.5),
         borderBottom: '0.5px solid rgba(0,0,0,0.1)',
         width: '100%'
       }
@@ -116,30 +109,33 @@ const useStyles = makeStyles((theme) =>
 
     navWrapper: {
       display: 'flex',
-      [theme.breakpoints.down('sm')]: {
-        maxWidth: 170,
+      [theme.breakpoints.down('md')]: {
+        minWidth: 210 - 12,
+        width: '100%',
         minHeight: 45,
         position: 'relative',
-        display: 'flex'
+        justifyContent: 'space-between',
+        alignItems: 'flex-end'
+      },
+      [theme.breakpoints.down('sm')]: {
+        marginLeft: theme.spacing(8)
       }
     },
     logoTitle: {
-      paddingTop: 15,
+      paddingTop: theme.spacing(2),
       whiteSpace: 'nowrap',
-      [theme.breakpoints.down('sm')]: {
-        position: 'absolute',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        fontSize: '1.2em',
-        top: 0
+      [theme.breakpoints.down('md')]: {
+        flexGrow: 3,
+        // paddingTop: theme.spacing(2),
+        marginRight: theme.spacing(3)
       },
-      [theme.breakpoints.up('md')]: {
-        textAlign: 'left'
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: theme.spacing(0)
       }
     },
     menuButton: {
       position: 'absolute',
-      top: 0,
+      top: 6,
       left: 20,
       color: 'black'
     }
@@ -155,9 +151,7 @@ function AccountMenu({ anchorEl, onMenuClosed }) {
   }
   const theme = useSelector(getTheme)
   const handleChange = (e) => {
-    console.log(e.target.value)
     dispatch(changeTheme(e.target.value === 'dark' ? 'light' : 'dark'))
-    // dispatch()
   }
   return (
     <Menu
@@ -286,6 +280,7 @@ export function NavPanel({ openDrawer }) {
   const email = useSelector(({ auth }) => auth.email)
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const theme = useSelector(getTheme)
 
   const debouncedSave = useCallback(
     debounce((nextValue) => dispatch(searchItemsThunk(nextValue)), 300),
@@ -319,8 +314,15 @@ export function NavPanel({ openDrawer }) {
   }
 
   const classes = useStyles()
+
   return (
-    <Grid container className={classes.navBar}>
+    <Grid
+      container
+      className={classes.navBar}
+      style={{ backgroundColor: theme === 'dark' ? '#212121' : '#ffffff' }}
+    >
+      <AddLinkDialog onClose={handleClose} open={open} />
+      <AccountMenu anchorEl={anchorEl} onMenuClosed={onMenuClosed} />
       <Hidden mdUp>
         <IconButton
           edge='start'
@@ -332,9 +334,47 @@ export function NavPanel({ openDrawer }) {
         </IconButton>
       </Hidden>
       <Grid item xs={12} md={2} className={classes.navWrapper}>
-        <Typography variant='h1' className={classes.logoTitle}>
-          Link Storage
-        </Typography>
+        <Hidden xsDown>
+          <Typography variant='h1' className={classes.logoTitle}>
+            Link Storage
+          </Typography>
+        </Hidden>
+        <Hidden mdUp>
+          <div
+            className={classes.search}
+            style={{
+              maxHeight: '35px',
+              border: `1px solid ${theme === 'dark' ? '#ffffff' : '#212121'}`,
+              borderRadius: 8
+            }}
+          >
+            <div className={classes.searchIcon}>
+              <SearchIcon fontSize='small' />
+            </div>
+            <InputBase
+              placeholder='Search…'
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput
+              }}
+              inputProps={{ 'aria-label': 'search' }}
+              value={searchValue}
+              onChange={handleSearch}
+            />
+          </div>
+          <NavButton onClick={handleClickOpen} size='small' style={{ paddingBottom: 0 }}>
+            <Typography variant='body1' color='inherit'>
+              Add
+            </Typography>
+          </NavButton>
+          <Hidden only='xs'>
+            <NavButton size='small' style={{ paddingBottom: 0 }} onClick={onMenuClicked}>
+              <Typography variant='body1' color='inherit'>
+                {email.split('@')[0]}
+              </Typography>
+            </NavButton>
+          </Hidden>
+        </Hidden>
       </Grid>
       <Hidden smDown>
         <Grid item md={9} sm={8} container style={{ paddingLeft: 20 }}>
@@ -365,13 +405,11 @@ export function NavPanel({ openDrawer }) {
                 Add Link
               </Typography>
             </NavButton>
-            <AddLinkDialog onClose={handleClose} open={open} />
             <NavButton style={{ marginLeft: '0.5rem' }} onClick={onMenuClicked}>
               <Typography variant='body1' color='inherit'>
                 {email}
               </Typography>
             </NavButton>
-            <AccountMenu anchorEl={anchorEl} onMenuClosed={onMenuClosed} />
           </Grid>
           <Grid container item xs={12}>
             <Divider style={{ width: '95%', height: 0.5 }}></Divider>

@@ -6,7 +6,7 @@ import { fetchItemsThunk } from '../../redux/userReducer.ts'
 import { ItemsList } from './ItemList/ItemList'
 import { NavPanel } from './NavPanel/NavPanel'
 import { AsideNav } from './AsideNav/AsideNav'
-import { fetchFoldersThunk, getPossiblePathes } from '../../redux/userReducer'
+import { fetchFoldersThunk, getPossiblePathes, getTheme } from '../../redux/userReducer'
 import { Redirect, useHistory } from 'react-router-dom'
 
 const drawerWidth = 220
@@ -24,8 +24,11 @@ const useStyles = makeStyles((theme) => ({
   },
 
   MainContent: {
+    maxWidth: 920,
+    paddingRight: 80,
     marginLeft: 220,
     marginTop: theme.spacing(9),
+    [theme.breakpoints.down('md')]: {},
     [theme.breakpoints.down('sm')]: {
       marginLeft: 0,
       paddingLeft: 0,
@@ -41,6 +44,9 @@ const useStyles = makeStyles((theme) => ({
   },
   mainContainer: {
     height: '100%',
+    [theme.breakpoints.down('md')]: {
+      paddingRight: 0
+    },
     [theme.breakpoints.down('sm')]: {
       paddingLeft: theme.spacing(1),
       paddingRight: theme.spacing(1)
@@ -50,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const { location } = useHistory()
+  const theme = useSelector(getTheme)
   const classes = useStyles()
   const dispatch = useDispatch()
   const items = useSelector(({ user }) => user.items)
@@ -83,17 +90,7 @@ function App() {
   return (
     <Container maxWidth='lg' className={classes.mainContainer}>
       <Grid container className={classes.GridContainer}>
-        <Grid
-          item
-          container
-          xs={12}
-          color='black'
-          style={{
-            color: 'black'
-          }}
-        >
-          <NavPanel openDrawer={openDrawer} />
-        </Grid>
+        <NavPanel openDrawer={openDrawer} />
         <Hidden smDown>
           <AsideNav swipeable={false} />
         </Hidden>
@@ -113,7 +110,15 @@ function App() {
             <AsideNav swipeable={true} />
           </SwipeableDrawer>
         </Hidden>
-        <Grid item xs={12} md={8} className={classes.MainContent}>
+        <Grid
+          item
+          xs={12}
+          md={12}
+          className={classes.MainContent}
+          style={{
+            backgroundColor: theme === 'dark' ? '#212121' : '#ffffff'
+          }}
+        >
           {main}
         </Grid>
       </Grid>

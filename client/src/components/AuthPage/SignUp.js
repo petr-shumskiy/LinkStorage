@@ -2,10 +2,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Field, Form, reduxForm } from 'redux-form'
-import {
-  sendRegistrationData,
-  showRegistrationModal
-} from '../../redux/authReducer'
+import { sendRegistrationData, showRegistrationModal } from '../../redux/authReducer'
 import {
   Avatar,
   Button,
@@ -29,9 +26,7 @@ import {
 
 const SignUp = ({ handleSubmit, pristine, valid, error }) => {
   const showRegistration = useSelector(({ auth }) => auth.showRegistration)
-  const signUpRequestInProgress = useSelector(
-    ({ auth }) => auth.signUpRequestInProgress
-  )
+  const signUpRequestInProgress = useSelector(({ auth }) => auth.signUpRequestInProgress)
   const success = useSelector(({ auth }) => auth.isEmailSended)
 
   const dispatch = useDispatch()
@@ -48,21 +43,12 @@ const SignUp = ({ handleSubmit, pristine, valid, error }) => {
         <div className={classes.paper}>
           {error ? (
             <div className={classes.additionalMessage}>
-              <Typography
-                component='h2'
-                variant='h6'
-                color='error'
-                align='center'
-              >
+              <Typography component='h2' variant='h6' color='error' align='center'>
                 {error}
               </Typography>
             </div>
           ) : null}
-          <Avatar
-            className={
-              !error && success ? classes.avatarSuccess : classes.avatar
-            }
-          >
+          <Avatar className={!error && success ? classes.avatarSuccess : classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component='h1' variant='h5'>
@@ -88,21 +74,15 @@ const SignUp = ({ handleSubmit, pristine, valid, error }) => {
               </>
             )}
             {!error && success ? (
-              <Typography
-                component='h2'
-                variant='h6'
-                align='center'
-                color='primary'
-              >
-                Email was sent
+              <Typography component='h2' variant='h6' align='center' color='primary'>
+                Email has successfully created (if you use test email - message with
+                confirmation link has sent)
               </Typography>
             ) : null}
 
             {!error && success ? null : (
               <Tooltip
-                title={
-                  isButtonDisabled ? 'input valid data' : 'create an account'
-                }
+                title={isButtonDisabled ? 'input valid data' : 'create an account'}
                 placement='top'
                 TransitionComponent={isButtonDisabled ? Zoom : Fade}
               >

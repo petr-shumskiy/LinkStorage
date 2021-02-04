@@ -26,10 +26,11 @@ export const authReducer = createSlice({
       state.token = action.payload
     },
     login(state, action) {
+      console.log(action.payload)
       state.email = action.payload
     },
     logout(state) {
-      localStorage.removeItem('token')
+      ;['token', 'theme', 'email'].forEach((item) => localStorage.removeItem(item))
       state.token = null
     },
     toggleEmailSended(state, action) {
@@ -56,13 +57,15 @@ export const sendRegistrationData = (data) => async (dispatch) => {
     dispatch(reset('registration'))
     setTimeout(() => {
       dispatch(toggleEmailSended(false))
-    }, 6000)
+    }, 10000)
   } catch (error) {
     if (error.response?.data) {
       dispatch(stopSubmit('registration', { _error: error.response.data.message }))
+    } else {
+      handleError(error, dispatch)
     }
+  } finally {
     dispatch(toggleProgressSignUp())
-    handleError(error, dispatch)
   }
 }
 
@@ -71,7 +74,6 @@ export const sendSignInData = (data) => async (dispatch) => {
   try {
     const res = await new AuthAPI().sendSignInData(data)
     dispatch(login(data.email))
-    dispatch(toggleProgressSignIn())
     localStorage.setItem('token', res.data.token)
     localStorage.setItem('email', data.email)
     dispatch(setToken(res.data.token))
@@ -79,20 +81,26 @@ export const sendSignInData = (data) => async (dispatch) => {
     dispatch({ type: 'RESET_SIGN_IN_PASSWORD' })
     if (error.response && error.response.data) {
       dispatch(stopSubmit('signIn', { _error: error.response.data.message }))
+    } else {
+      handleError(error, dispatch)
     }
+  } finally {
     dispatch(toggleProgressSignIn())
-    console.log('go in handler')
-    handleError(error, dispatch)
   }
 }
 
 export const validateEmail = (confirmationToken) => async (dispatch) => {
   try {
-    await new AuthAPI().sendConfirmationRequest(confirmationToken)
-    dispatch(setToken(confirmationToken))
+    const res = await new AuthAPI().sendConfirmationRequest(confirmationToken)
+    dispatch(login(res.data.email))
     localStorage.setItem('token', confirmationToken)
+    localStorage.setItem('email', res.data.email)
+    dispatch(setToken(confirmationToken))
   } catch (error) {
-    dispatch(setValidationError(error.response.data.message))
+    debugger
+    if (error.response?.data) {
+      dispatch(setValidationError(error.response.data.message))
+    }
     handleError(error, dispatch)
   }
 }

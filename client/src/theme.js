@@ -28,7 +28,20 @@ export const createTheme = (type) => ({
     h1: {
       fontSize: 'calc(12px + 2vmin)',
       color: type === 'light' ? '#000' : '#fff',
-      fontFamily: 'Bree Serif'
+      fontFamily: [
+        'Bree Serif',
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Open Sans"',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"'
+      ].join(',')
     },
     h2: {
       fontSize: 'calc(6px + 2vmin)',
