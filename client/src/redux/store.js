@@ -6,7 +6,6 @@ import { RESET_SIGN_IN_PASSWORD } from './types'
 
 const form = formReducer.plugin({
   signIn: (state, { type, payload }) => {
-    console.log('hello', type, payload, state)
     switch (type) {
       case RESET_SIGN_IN_PASSWORD: {
         return {

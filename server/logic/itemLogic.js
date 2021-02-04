@@ -114,7 +114,6 @@ class ItemLogic {
 
   async updateItemStatus(email, item) {
     const user = await User.findOne({ email })
-
     const currentItem = await user.items.id(item.id)
 
     if (item.liked !== undefined) {

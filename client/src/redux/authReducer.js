@@ -26,7 +26,6 @@ export const authReducer = createSlice({
       state.token = action.payload
     },
     login(state, action) {
-      console.log(action.payload)
       state.email = action.payload
     },
     logout(state) {

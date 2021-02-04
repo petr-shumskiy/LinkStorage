@@ -32,7 +32,6 @@ class FolderLogic {
   async deleteFolder(email, folderId) {
     const user = await User.findOne({ email })
     const name = await user.folders.id(folderId).name
-    console.log(name)
     await User.findOneAndUpdate(
       { email },
       {

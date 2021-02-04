@@ -29,7 +29,6 @@ export function ItemsList({ items }) {
   let currentFolderItems = useSelector((state) => {
     return getCurrentFolderItems(currentCategory, state)
   })
-  console.log(currentFolderItems)
 
   const likedItems = useSelector(getAllLikedItems).map((item) => (
     <Item key={item._id} item={item} category='liked' />

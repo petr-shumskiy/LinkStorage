@@ -23,7 +23,6 @@ exports.registration = async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 1)
     const newUser = new User({ email, password: hashedPassword })
-    console.log(newUser)
     await newUser.save()
     if (email === 'linkstorage@protonmail.com') {
       const activationToken = jwt.sign({ email, password }, JWT_SECRET, {
@@ -49,7 +48,7 @@ exports.registration = async (req, res) => {
     }
     return res
       .status(200)
-      .json({ message: 'The user has successfully created' })
+      .json({ message: constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL })
   } catch (error) {
     console.log(error)
     res.send({ message: 'error while sending confirmation code' })
@@ -60,7 +59,6 @@ exports.validateEmail = async (req, res) => {
   try {
     const { token } = req.params
     const { email } = jwt.verify(token, JWT_SECRET)
-    console.log(token, email)
     await User.findOneAndUpdate({ email }, { isEmailConfirmed: true })
     return res
       .status(201)
