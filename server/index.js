@@ -1,5 +1,4 @@
 const path = require('path')
-const helmet = require('helmet')
 const sslRedirect = require('heroku-ssl-redirect').default
 const express = require('express')
 const mongoose = require('mongoose')
@@ -20,8 +19,6 @@ const MONGO_OPTIONS = config.get('mongoOptions')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({ origin: '*' }))
-// app.use(helmet())
-// app.disable('x-powered-by')
 app.use(sslRedirect())
 
 app.use('/api/auth', authRouter)
