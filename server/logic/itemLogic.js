@@ -5,7 +5,8 @@ const metascraper = require('metascraper')([
   require('metascraper-title')(),
   require('metascraper-url')()
 ])
-const got = require('got')
+// const got = require('got')
+const fetch = require('node-fetch')
 
 class ItemLogic {
   async searchItems(email, searchPattern) {
@@ -63,14 +64,19 @@ class ItemLogic {
     return items
   }
 
-  async addItem(email, targetUrl) {
+  async addItem(email, url) {
     const user = await User.findOne({ email })
     try {
-      const { body: html, url } = await got(targetUrl)
+      const response = await fetch('https://github.com/')
+      const html = await response.text()
+      // const { body: html, urll } = await got(targetUrl)
+      // console.log(html, url)
       const { title, description, image: logoUrl } = await metascraper({
         html,
         url
       })
+
+      console.log(title, description, logoUrl)
 
       const item = {
         title: title || url,

@@ -1,3 +1,6 @@
+const path = require('path')
+const helmet = require('helmet')
+const sslRedirect = require('heroku-ssl-redirect').default
 const express = require('express')
 const mongoose = require('mongoose')
 const config = require('config')
@@ -10,17 +13,27 @@ const authRouter = require('./routes/authRoutes')
 const itemRouter = require('./routes/itemRoutes')
 const folderRouter = require('./routes/folderRoutes')
 
-const PORT = config.get('serverPort')
+const PORT = process.env.PORT || config.get('serverPort')
 const MONGO_URI = process.env.MONGO_URI
 const MONGO_OPTIONS = config.get('mongoOptions')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({ origin: '*' }))
+// app.use(helmet())
+// app.disable('x-powered-by')
+app.use(sslRedirect())
 
 app.use('/api/auth', authRouter)
 app.use('/api/user', itemRouter)
 app.use('/api/user', folderRouter)
+
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')))
+app.use(express.static(path.join(__dirname, '..', 'client', 'public')))
+
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'))
+})
 
 const start = async () => {
   try {

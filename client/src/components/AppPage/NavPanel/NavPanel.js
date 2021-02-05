@@ -282,10 +282,12 @@ export function NavPanel({ openDrawer }) {
   const [searchValue, setSearchValue] = useState('')
   const theme = useSelector(getTheme)
 
+  /* eslint-disable */
   const debouncedSave = useCallback(
     debounce((nextValue) => dispatch(searchItemsThunk(nextValue)), 300),
     []
   )
+  /* eslint-disable */
 
   const [anchorEl, setAnchorEl] = useState(null)
 

@@ -4,7 +4,6 @@ const mailgun = require('mailgun-js')
 const jwt = require('jsonwebtoken')
 const config = require('config')
 const bcrypt = require('bcryptjs')
-const { use } = require('chai')
 
 const CLIENT_URL = config.get('clientUrl')
 const JWT_SECRET = process.env.JWT_SECRET

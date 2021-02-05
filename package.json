@@ -1,0 +1,27 @@
+{
+    "name": "linkstorage",
+    "version": "1.0.0",
+    "description": "pet project",
+    "main": "server/index.js",
+    "engines": {
+        "node": "14.x"
+    },
+    "scripts": {
+        "build": "cd server && npm install && npm test && cd ../client && npm install && npm run build",
+        "start": "cd server && node index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MaxKalinin92/LinkStorage.git"
+    },
+    "keywords": [
+        "mern",
+        "material-ui"
+    ],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/MaxKalinin92/LinkStorage/issues"
+    },
+    "homepage": "https://github.com/MaxKalinin92/LinkStorage#readme"
+}
