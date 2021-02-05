@@ -67,10 +67,13 @@ class ItemLogic {
     const user = await User.findOne({ email })
     try {
       const { body: html, url } = await got(targetUrl)
+      console.log(html, url)
       const { title, description, image: logoUrl } = await metascraper({
         html,
         url
       })
+
+      console.log(title, description, logoUrl)
 
       const item = {
         title: title || url,

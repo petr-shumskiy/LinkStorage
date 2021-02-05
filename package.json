@@ -6,13 +6,9 @@
     "engines": {
         "node": "14.x"
     },
-    "cacheDirectories": [
-        "client/node_modules",
-        "server/node_modules"
-    ],
     "scripts": {
         "build": "cd server && npm install && npm test && cd ../client && npm install && npm run build",
-        "run": "cd server && node index.js"
+        "start": "cd server && node index.js"
     },
     "repository": {
         "type": "git",
