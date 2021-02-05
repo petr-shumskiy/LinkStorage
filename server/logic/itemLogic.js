@@ -67,7 +67,7 @@ class ItemLogic {
   async addItem(email, url) {
     const user = await User.findOne({ email })
     try {
-      const response = await fetch('https://github.com/')
+      const response = await fetch(url)
       const html = await response.text()
       // const { body: html, urll } = await got(targetUrl)
       // console.log(html, url)
