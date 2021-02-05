@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 const mongoose = require('mongoose')
 const config = require('config')
@@ -21,6 +22,13 @@ app.use(cors({ origin: '*' }))
 app.use('/api/auth', authRouter)
 app.use('/api/user', itemRouter)
 app.use('/api/user', folderRouter)
+
+app.use(express.static(path.join(__dirname, '..', 'client', 'build')))
+app.use(express.static(path.join(__dirname, '..', 'client', 'public')))
+
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'))
+})
 
 const start = async () => {
   try {
