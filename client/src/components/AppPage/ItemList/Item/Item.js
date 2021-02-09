@@ -16,6 +16,7 @@ import { EditButton } from './EditButton'
 import { DateOfTitle } from './ItemActions/DateOfTitle'
 import { ItemActions } from './ItemActions/ItemActions'
 import { StyledIconButton } from './ItemActions/StyledButtons'
+import { Fade } from 'react-awesome-reveal'
 
 const useStyle = makeStyles((theme) =>
   createStyles({
@@ -80,11 +81,11 @@ export function Item({ item, category }) {
   }
 
   const handleAddItemToFolder = (folderId) => {
-    dispatch(updateItemStatusThunk({ id, folderId }))
+    dispatch(updateItemStatusThunk({ id, folderId, category }))
   }
 
   const handleLikeItem = () => {
-    dispatch(updateItemStatusThunk({ id, liked: !item.liked }))
+    dispatch(updateItemStatusThunk({ id, liked: !item.liked, category }))
   }
 
   const handleArchiveItem = () => {
@@ -92,109 +93,117 @@ export function Item({ item, category }) {
   }
 
   return (
-    <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <Grid container spacing={1} item xs={12} md={12} style={{ color: 'black' }}>
-        <Grid
-          container
-          item
-          md={10}
-          sm={10}
-          xs={12}
-          direction='column'
-          style={{
-            position: 'relative'
-          }}
-        >
-          <EditButton
-            isActive={isActive}
-            item={item}
-            onCloseEditDialog={() => setActive(false)}
-          />
-          {/* title */}
-          <Grid item className={classes.restrictedMaxWidth}>
-            <Typography
-              variant='h2'
-              className={classes.wrapText}
-              style={{ paddingRight: theme.spacing(8) }}
-            >
-              {title}
-            </Typography>
-          </Grid>
-
-          {/* url */}
-          <Grid item className={classes.restrictedMaxWidth}>
-            <a href={url} style={{ textDecoration: 'none' }}>
-              <Typography variant='subtitle1' classes={{ root: classes.root }}>
-                {url}
-              </Typography>
-            </a>
-          </Grid>
-
-          {/* description */}
-          <Grid item className={classes.restrictedMaxWidth}>
-            <Typography variant='body2'>{description}</Typography>
-          </Grid>
+    <Fade
+      direction='right'
+      id={item._id + new Date().toString()}
+      triggerOnce
+      duration={item.markAsAnimated ? 1000 : 0}
+      reverse={item.markAsAnimated}
+    >
+      <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <Grid container spacing={1} item xs={12} md={12} style={{ color: 'black' }}>
           <Grid
-            item
             container
-            alignItems='center'
+            item
+            md={10}
+            sm={10}
+            xs={12}
+            direction='column'
             style={{
-              minHeight: '40px',
-              marginLeft: -12
+              position: 'relative'
             }}
           >
-            <ItemActions
+            <EditButton
               isActive={isActive}
-              onItemDeleted={handleDeleteItem}
-              onAddItemToFolder={handleAddItemToFolder}
-              onItemLiked={handleLikeItem}
-              isItemLiked={item.liked}
-              onItemArchived={handleArchiveItem}
-              isItemArchived={item.archived}
-              category={category}
               item={item}
+              onCloseEditDialog={() => setActive(false)}
             />
-            <StyledIconButton
+            {/* title */}
+            <Grid item className={classes.restrictedMaxWidth}>
+              <Typography
+                variant='h2'
+                className={classes.wrapText}
+                style={{ paddingRight: theme.spacing(8) }}
+              >
+                {title}
+              </Typography>
+            </Grid>
+
+            {/* url */}
+            <Grid item className={classes.restrictedMaxWidth}>
+              <a href={url} style={{ textDecoration: 'none' }}>
+                <Typography variant='subtitle1' classes={{ root: classes.root }}>
+                  {url}
+                </Typography>
+              </a>
+            </Grid>
+
+            {/* description */}
+            <Grid item className={classes.restrictedMaxWidth}>
+              <Typography variant='body2'>{description}</Typography>
+            </Grid>
+            <Grid
+              item
+              container
+              alignItems='center'
               style={{
-                display: [item.liked && !isActive ? '' : 'none']
+                minHeight: '40px',
+                marginLeft: -12
               }}
             >
-              <Favorite fontSize='inherit' color='primary' />
-            </StyledIconButton>
-            <DateOfTitle
-              isActive={!isActive}
-              isItemLiked={item.liked}
-              wasAdded={wasAdded}
-            />
+              <ItemActions
+                isActive={isActive}
+                onItemDeleted={handleDeleteItem}
+                onAddItemToFolder={handleAddItemToFolder}
+                onItemLiked={handleLikeItem}
+                isItemLiked={item.liked}
+                onItemArchived={handleArchiveItem}
+                isItemArchived={item.archived}
+                category={category}
+                item={item}
+              />
+              <StyledIconButton
+                style={{
+                  display: [item.liked && !isActive ? '' : 'none']
+                }}
+              >
+                <Favorite fontSize='inherit' color='primary' />
+              </StyledIconButton>
+              <DateOfTitle
+                isActive={!isActive}
+                isItemLiked={item.liked}
+                wasAdded={wasAdded}
+              />
+            </Grid>
           </Grid>
-        </Grid>
 
-        {/* image */}
-        <Hidden only={['xs']}>
-          <Grid
-            item
-            container
-            md={2}
-            sm={2}
-            xs={false}
-            justify='center'
-            alignItems='center'
-          >
-            <Box
-              className={classes.bgImage}
-              style={{
-                backgroundImage: 'url(' + logoUrl + ')'
-              }}
-            ></Box>
-          </Grid>
-        </Hidden>
-      </Grid>
-      <Divider
-        style={{
-          width: '100%',
-          margin: '0.5rem 0 1rem 0rem'
-        }}
-      />
-    </Box>
+          {/* image */}
+          <Hidden only={['xs']}>
+            <Grid
+              item
+              container
+              md={2}
+              sm={2}
+              xs={false}
+              justify='center'
+              alignItems='center'
+            >
+              <Box
+                className={classes.bgImage}
+                style={{
+                  backgroundImage: 'url(' + logoUrl + ')'
+                }}
+              ></Box>
+            </Grid>
+          </Hidden>
+        </Grid>
+        <Divider
+          style={{
+            width: '100%',
+            margin: '0.5rem 0 1rem 0rem'
+          }}
+        />
+      </Box>
+    </Fade>
   )
 }

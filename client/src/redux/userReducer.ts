@@ -2,6 +2,7 @@ import { createSelector, createSlice, Dispatch, PayloadAction } from '@reduxjs/t
 import { UserAPI } from '../API/UserAPI'
 import { State, Item, Folder, UpdateObjectType, ContentType, Category } from './userReducer.types'
 import { handleError } from './errorService'
+import { wait } from '../utils/awaiter'
 
 const initialState: State = {
   themeType: localStorage.getItem('theme') || 'light',
@@ -32,7 +33,26 @@ export const userReducer = createSlice({
     setItems(state: State, action: PayloadAction<Item[]>) {
       state.items = action.payload.reverse()
     },
+    toggleAnimation(state: State, action: PayloadAction<{ id: string | undefined, update: UpdateObjectType | undefined }>) {
+      const { id, update } = action.payload
+      let idx
 
+      if (id) {
+        idx = state.items.findIndex(item => item._id === id)
+      } else if (update) {
+        idx = state.items.findIndex(item => item._id === update.id)
+      }
+
+      if (idx !== undefined) {
+        // if (update.liked !== undefined && update.category !== 'home') {
+        if (!('markAsAnimated' in state.items[idx])) {
+          state.items[idx].markAsAnimated = true
+        } else {
+          state.items[idx].markAsAnimated = !state.items[idx].markAsAnimated
+        }
+        // }
+      }
+    },
     deleteItem(state: State, action: PayloadAction<string>) {
       state.items = state.items.filter(item => item._id !== action.payload)
     },
@@ -177,6 +197,8 @@ export const addItemThunk = (url: string) => async (dispatch: Dispatch) => {
 export const deleteItemThunk = (id: string) => async (dispatch: Dispatch) => {
   try {
     await new UserAPI().deleteItem(id)
+    dispatch(toggleAnimation({ id, update: undefined }))
+    await wait(950)
     dispatch(deleteItem(id))
   } catch (error) {
     handleError(error, dispatch)
@@ -188,7 +210,16 @@ export const updateItemStatusThunk = (payload: UpdateObjectType) => async (
 ) => {
   try {
     await new UserAPI().updateItemStatus(payload)
-    dispatch(updateItemStatus(payload))
+    if (
+      (payload.category && payload.category !== 'liked' && payload.folderId === undefined) ||
+      (payload.category && payload.category === 'liked' && payload.folderId !== undefined)) {
+      dispatch(updateItemStatus(payload))
+    } else {
+      dispatch(toggleAnimation({ id: undefined, update: payload }))
+      await wait(950)
+      dispatch(updateItemStatus(payload))
+      dispatch(toggleAnimation({ id: undefined, update: payload }))
+    }
   } catch (error) {
     handleError(error, dispatch)
   }
@@ -282,6 +313,7 @@ export const {
   deleteFolder,
   renameFolder,
   deleteItem,
+  toggleAnimation,
   updateItemStatus,
   updateItemContent,
   setLoader,

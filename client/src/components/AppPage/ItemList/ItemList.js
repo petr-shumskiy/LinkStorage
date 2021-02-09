@@ -14,12 +14,14 @@ import { NoContent } from './NoContent'
 import { Item } from './Item/Item'
 import { Box, Divider, Grid, Hidden, Typography } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
+// import { Fade } from 'react-awesome-reveal'
 
 export function ItemsList({ items }) {
   const currentCategory = useLocation().pathname.split('/')[1]
   const isLoading = useSelector(({ user }) => user.isLoading)
   const categories = useSelector(getCategories)
   const currentFolder = useSelector((state) => getCurrentFolder(currentCategory, state))
+  const allLikedItems = useSelector(getAllLikedItems)
   const isCategoryDefault = categories.includes(currentCategory)
 
   let currentCategoryItems = useSelector((state) => {
@@ -30,7 +32,7 @@ export function ItemsList({ items }) {
     return getCurrentFolderItems(currentCategory, state)
   })
 
-  const likedItems = useSelector(getAllLikedItems).map((item) => (
+  const likedItems = allLikedItems.map((item) => (
     <Item key={item._id} item={item} category='liked' />
   ))
 

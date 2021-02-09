@@ -15,6 +15,7 @@ export type Item = {
   folders: Array<Folder>
   currentFolder: string | null
   wasAdded: string
+  markAsAnimated?: boolean
 }
 
 export type AsideMenuItem = {
@@ -46,6 +47,7 @@ export type UpdateObjectType = {
   liked?: boolean
   archived?: boolean
   folderId?: string
+  category?: string
 }
 
 export type Folder = {
