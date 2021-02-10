@@ -17,11 +17,20 @@ const authStyle = makeStyles((theme) => ({
     justifyContent: 'space-between'
   },
   header: {
+    paddingTop: theme.spacing(1),
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  logo: {
+    fontSize: '2em'
+  },
+  video: {
+    [theme.breakpoints.down('lg')]: {
+      maxHeight: '60vh'
+    }
   },
   captureText: {
     [theme.breakpoints.down('sm')]: {
@@ -29,7 +38,7 @@ const authStyle = makeStyles((theme) => ({
     }
   },
   createAccBtn: {
-    marginTop: theme.spacing(2.5),
+    marginTop: theme.spacing(2),
     fontSize: '1.5em',
     color: theme.palette.primary.main,
     '&:hover': {
@@ -43,7 +52,7 @@ const authStyle = makeStyles((theme) => ({
 
   learnMore: {
     marginBottom: theme.spacing(0.5),
-    marginTop: 'auto',
+    marginTop: theme.spacing(1),
     color: '#7a7a7a',
     '&:hover': {
       color: theme.palette.primary.light
@@ -61,7 +70,7 @@ const Auth = () => {
       <SignUpContainer />
       <header className={classes.header}>
         <a href='/'>
-          <Typography component='span' className={classes.logo_first} variant='h1'>
+          <Typography component='span' className={classes.logo} variant='h1'>
             Link Storage
           </Typography>
         </a>
@@ -93,28 +102,35 @@ const Auth = () => {
           </video>
         </Box>
       </Hidden>
-      <Typography
-        variant='h2'
-        style={{ fontSize: '3.5rem', textAlign: 'center' }}
-        className={classes.captureText}
-      >
-        Save Anything. Read Anywhere.
-      </Typography>
-      <Button
-        variant='outlined'
-        className={classes.createAccBtn}
-        color='primary'
-        onClick={() => dispatch(showRegistrationModal(true))}
+      <Box
+        display='flex'
+        flexDirection='column'
+        justifyContent='center'
+        alignItems='center'
       >
         <Typography
-          color='inherit'
-          fontSize='inherit'
-          variant='h4'
-          style={{ textTransform: 'none' }}
+          variant='h2'
+          style={{ fontSize: '3.5rem', textAlign: 'center' }}
+          className={classes.captureText}
         >
-          Create an Account
+          Save Anything. Read Anywhere.
         </Typography>
-      </Button>
+        <Button
+          variant='outlined'
+          className={classes.createAccBtn}
+          color='primary'
+          onClick={() => dispatch(showRegistrationModal(true))}
+        >
+          <Typography
+            color='inherit'
+            fontSize='inherit'
+            variant='h4'
+            style={{ textTransform: 'none' }}
+          >
+            Create an Account
+          </Typography>
+        </Button>
+      </Box>
       <a href='https://github.com/MaxKalinin92/LinkStorage' className={classes.learnMore}>
         <Typography variant='subtitle2' color='inherit'>
           learn more
