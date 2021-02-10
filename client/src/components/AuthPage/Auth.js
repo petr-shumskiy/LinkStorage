@@ -131,7 +131,10 @@ const Auth = () => {
           </Typography>
         </Button>
       </Box>
-      <a href='https://github.com/MaxKalinin92/LinkStorage' className={classes.learnMore}>
+      <a
+        href='https://github.com/petr-shumskiy/LinkStorage'
+        className={classes.learnMore}
+      >
         <Typography variant='subtitle2' color='inherit'>
           learn more
         </Typography>

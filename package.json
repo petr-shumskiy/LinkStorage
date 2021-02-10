@@ -7,7 +7,7 @@
         "node": "14.x"
     },
     "scripts": {
-        "build": "cd server && npm install && npm test && cd ../client && npx yarn install && yarn build",
+        "build": "cd server && npm install && npm test && cd ../client && npx yarn install && npx yarn build",
         "start": "cd server && node index.js"
     },
     "repository": {
