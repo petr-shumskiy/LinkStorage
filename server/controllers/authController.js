@@ -8,30 +8,44 @@ const bcrypt = require('bcryptjs')
 const CLIENT_URL = config.get('clientUrl')
 const JWT_SECRET = process.env.JWT_SECRET
 
+const allowedEmails = [
+  'petechqa98@gmail.com',
+  'email-confirmation-test@protonmail.com',
+  'fwshumskiy@gmail.com',
+  'linkstorage@protonmail.com'
+]
+
 exports.registration = async (req, res) => {
   const MAILGUN_API_KEY = process.env.MAIL_GUN_API_KEY
   const DOMAIN = process.env.DOMAIN
 
   try {
     const { email, password } = req.body
-    const candidate = await User.findOne({ email })
+    const candidate = await User.findOne({ email: email.toLowerCase() })
     if (candidate) {
       return res
         .status(400)
         .json({ message: constants.REGISTRATION_ERROR_USER_EXISTS })
     }
     const hashedPassword = await bcrypt.hash(password, 1)
-    const newUser = new User({ email, password: hashedPassword })
+    const newUser = new User({
+      email: email.toLowerCase(),
+      password: hashedPassword
+    })
     await newUser.save()
-    if (email === 'linkstorage@protonmail.com') {
-      const activationToken = jwt.sign({ email, password }, JWT_SECRET, {
-        expiresIn: '1h'
-      })
+    if (allowedEmails.includes(email.toLowerCase())) {
+      const activationToken = jwt.sign(
+        { email: email.toLowerCase(), password },
+        JWT_SECRET,
+        {
+          expiresIn: '1h'
+        }
+      )
       const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: DOMAIN })
       try {
         mg.messages().send({
           from: 'no-reply@linkStorage.org',
-          to: email,
+          to: email.toLowerCase(),
           subject: 'Activation link',
           html: `
       <h2>Please click on given link to activate your account</h2>
@@ -74,7 +88,7 @@ exports.validateEmail = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email: email.toLowerCase() })
     if (!user) {
       return res
         .status(400)
@@ -88,7 +102,10 @@ exports.login = async (req, res) => {
         .json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
     }
 
-    if (user.email === 'linkstorage@protonmail.com' && !user.isEmailConfirmed) {
+    if (
+      allowedEmails.includes(user.email.toLowerCase()) &&
+      !user.isEmailConfirmed
+    ) {
       return res
         .status(400)
         .json({ message: constants.LOGIN_ERROR_UNCONFIRMED_EMAIL })
