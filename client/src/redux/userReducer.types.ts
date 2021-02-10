@@ -37,6 +37,7 @@ export interface State {
   themeType: string
   errors: AppError[]
   isLoading: boolean
+  fetchingDataInProgress: boolean
   items: Item[]
   categories: string[]
   folders: Folder[]

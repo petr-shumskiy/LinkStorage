@@ -8,9 +8,10 @@ import { useSnackbar } from 'notistack'
 import { checkErrors, getTheme, resetErrors } from '../redux/userReducer'
 import { Box, createMuiTheme, ThemeProvider } from '@material-ui/core'
 import { createTheme } from '../theme'
+import { getToken } from '../redux/authReducer'
 
 const App = () => {
-  const token = useSelector(({ auth }) => auth.token)
+  const token = useSelector(getToken)
   const dispatch = useDispatch()
   const { enqueueSnackbar } = useSnackbar()
   const [hasError, errorMessage] = useSelector(checkErrors)
@@ -26,7 +27,7 @@ const App = () => {
       },
       preventDuplicate: true
     })
-    //
+
     dispatch(resetErrors())
   }
 

@@ -25,7 +25,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import MenuIcon from '@material-ui/icons/Menu'
 import debounce from 'lodash.debounce'
 import { useDispatch, useSelector } from 'react-redux'
-import { logout } from '../../../redux/authReducer'
+import { getEmail, logout } from '../../../redux/authReducer'
 import { resetState } from '../../../redux/userReducer.ts'
 import {
   addItemThunk,
@@ -87,9 +87,6 @@ const useStyles = makeStyles((theme) =>
         }
       }
     },
-    addLinkInput: {
-      minWidth: '30vw'
-    },
     navBar: {
       maxWidth: 1200,
       position: 'fixed',
@@ -109,15 +106,16 @@ const useStyles = makeStyles((theme) =>
 
     navWrapper: {
       display: 'flex',
+      alignItems: 'flex-start',
       [theme.breakpoints.down('md')]: {
         minWidth: 210 - 12,
         width: '100%',
         minHeight: 45,
         position: 'relative',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end'
+        justifyContent: 'space-between'
       },
       [theme.breakpoints.down('sm')]: {
+        alignItems: 'flex-end',
         marginLeft: theme.spacing(8)
       }
     },
@@ -138,6 +136,19 @@ const useStyles = makeStyles((theme) =>
       top: 6,
       left: 20,
       color: 'black'
+    },
+    dialog: {
+      minWidth: 'calc(100% - 16px)',
+      margin: 0,
+      [theme.breakpoints.up('sm')]: {
+        minWidth: 'calc(80% - 16px)'
+      },
+      [theme.breakpoints.up('md')]: {
+        minWidth: 'calc(65% - 16px)'
+      },
+      [theme.breakpoints.up('md')]: {
+        minWidth: 'calc(55% - 16px)'
+      }
     }
   })
 )
@@ -213,7 +224,10 @@ function AddLinkDialog({ onClose, open }) {
       onClose={handleClose}
       aria-labelledby='form-dialog-title'
       aria-describedby='alert-dialog-description'
-      maxWidth='xl'
+      maxWidth='lg'
+      classes={{
+        paper: classes.dialog
+      }}
     >
       <DialogTitle
         disableTypography
@@ -240,6 +254,7 @@ function AddLinkDialog({ onClose, open }) {
         >
           <TextField
             variant='outlined'
+            fullWidth
             placeholder='www.example.com/article.html'
             autoFocus
             margin='dense'
@@ -265,7 +280,7 @@ function AddLinkDialog({ onClose, open }) {
             variant='contained'
             size='large'
             disabled={isItemExists || !inputUrl}
-            style={{ marginLeft: 16, marginTop: 4 }}
+            style={{ marginLeft: 16, marginTop: 4, padding: '4px 0px' }}
           >
             Add
           </Button>
@@ -277,7 +292,7 @@ function AddLinkDialog({ onClose, open }) {
 
 export function NavPanel({ openDrawer }) {
   const dispatch = useDispatch()
-  const email = useSelector(({ auth }) => auth.email)
+  const email = useSelector(getEmail)
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const theme = useSelector(getTheme)

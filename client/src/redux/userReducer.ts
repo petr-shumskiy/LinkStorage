@@ -13,6 +13,7 @@ const initialState: State = {
     { name: 'unknown', message: 'url is invalid', isActive: false }
   ],
   isLoading: false,
+  fetchingDataInProgress: false,
   items: [],
   categories: [
     'home',
@@ -116,6 +117,9 @@ export const userReducer = createSlice({
     setLoader(state: State, action: PayloadAction<boolean>) {
       state.isLoading = action.payload
     },
+    setFetchingData(state: State, action: PayloadAction<boolean>) {
+      state.fetchingDataInProgress = action.payload
+    },
     resetState(state: State) {
       state.items = []
       state.folders = []
@@ -147,7 +151,7 @@ export const renameFolderThunk = (folderId: string, folderName: string) => async
   dispatch: Dispatch
 ) => {
   try {
-    await new UserAPI().updateFolder(folderId, folderName)
+    new UserAPI().updateFolder(folderId, folderName)
     dispatch(renameFolder({ id: folderId, name: folderName }))
   } catch (error) {
     handleError(error, dispatch)
@@ -165,7 +169,7 @@ export const addFolderThunk = (name: string) => async (dispatch: Dispatch) => {
 
 export const deleteFolderThunk = (folderId: string) => async (dispatch: Dispatch) => {
   try {
-    await new UserAPI().deleteFolder(folderId)
+    new UserAPI().deleteFolder(folderId)
     dispatch(deleteFolder(folderId))
   } catch (error) {
     handleError(error, dispatch)
@@ -175,10 +179,13 @@ export const deleteFolderThunk = (folderId: string) => async (dispatch: Dispatch
 // Item Thunks
 export const fetchItemsThunk = () => async (dispatch: Dispatch) => {
   try {
+    dispatch(setFetchingData(true))
     const res = await new UserAPI().fetchAllItems()
     dispatch(setItems(res.data))
   } catch (error) {
     handleError(error, dispatch)
+  } finally {
+    dispatch(setFetchingData(false))
   }
 }
 
@@ -187,16 +194,16 @@ export const addItemThunk = (url: string) => async (dispatch: Dispatch) => {
     dispatch(setLoader(true))
     const res = await new UserAPI().addItem(url)
     dispatch(setItems(res.data))
-    dispatch(setLoader(false))
   } catch (error) {
     handleError(error, dispatch)
+  } finally {
     dispatch(setLoader(false))
   }
 }
 
 export const deleteItemThunk = (id: string) => async (dispatch: Dispatch) => {
   try {
-    await new UserAPI().deleteItem(id)
+    new UserAPI().deleteItem(id)
     dispatch(toggleAnimation({ id, update: undefined }))
     await wait(950)
     dispatch(deleteItem(id))
@@ -209,7 +216,7 @@ export const updateItemStatusThunk = (payload: UpdateObjectType) => async (
   dispatch: Dispatch
 ) => {
   try {
-    await new UserAPI().updateItemStatus(payload)
+    new UserAPI().updateItemStatus(payload)
     if (
       (payload.category && payload.category !== 'liked' && payload.folderId === undefined) ||
       (payload.category && payload.category === 'liked' && payload.folderId !== undefined)) {
@@ -251,6 +258,8 @@ export const searchItemsThunk = (searchPattern: string) => async (
 export const getTheme = ({ user }: { user: State }) => user.themeType
 export const getItems = ({ user }: { user: State }) => user.items
 export const getFolders = ({ user }: { user: State }) => user.folders
+export const getLoadingStatus = ({ user }: { user: State }) => user.isLoading
+export const getFetchingDataStatus = ({ user }: { user: State }) => user.fetchingDataInProgress
 export const getCategories = ({ user }: { user: State }) => user.categories
 export const getCurrentFolder = (category: string, { user }: { user: State }) => {
   return user.folders.find(folder => folder.name === category)
@@ -317,6 +326,7 @@ export const {
   updateItemStatus,
   updateItemContent,
   setLoader,
+  setFetchingData,
   setError,
   resetErrors,
   resetState

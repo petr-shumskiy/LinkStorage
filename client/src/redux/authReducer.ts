@@ -1,62 +1,67 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { createSlice } from '@reduxjs/toolkit'
-import { reset, stopSubmit } from 'redux-form'
+import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Dispatch } from 'react'
+import { Form, reset, stopSubmit } from 'redux-form'
 import { AuthAPI } from '../API/AuthAPI'
+import { State } from './authReducer.types'
 import { handleError } from './errorService'
+
+const initialState: State = {
+  isEmailSended: false,
+  validationError: null,
+  showRegistration: false,
+  showSignIn: false,
+  email: null || localStorage.getItem('email'),
+  token: null || localStorage.getItem('token'),
+  signInRequestInProgress: false,
+  signUpRequestInProgress: false
+}
 
 export const authReducer = createSlice({
   name: 'auth',
-  initialState: {
-    isEmailSended: false,
-    validationError: null,
-    showRegistration: false,
-    showSignIn: false,
-    email: null || localStorage.getItem('email'),
-    token: null || localStorage.getItem('token'),
-    signInRequestInProgress: false,
-    signInRequestUpProgress: false
-  },
+  initialState,
   reducers: {
-    showRegistrationModal(state, action) {
+    showRegistrationModal(state: State, action: PayloadAction<boolean>) {
       state.showRegistration = action.payload
     },
-    showSignInModal(state, action) {
+    showSignInModal(state: State, action: PayloadAction<boolean>) {
       state.showSignIn = action.payload
     },
-    setToken(state, action) {
+    setToken(state: State, action: PayloadAction<string>) {
       state.token = action.payload
     },
-    login(state, action) {
+    login(state: State, action: PayloadAction<string>) {
       state.email = action.payload
     },
-    logout(state) {
+    logout(state: State) {
       ;['token', 'theme', 'email'].forEach((item) => localStorage.removeItem(item))
       state.token = null
     },
-    toggleEmailSended(state, action) {
+    toggleEmailSended(state: State) {
       state.isEmailSended = !state.isEmailSended
     },
-    toggleProgressSignIn(state) {
+    toggleProgressSignIn(state: State) {
       state.signInRequestInProgress = !state.signInRequestInProgress
     },
-    toggleProgressSignUp(state) {
-      state.signInRequestUpProgress = !state.signInRequestUpProgress
+    toggleProgressSignUp(state: State) {
+      state.signUpRequestInProgress = !state.signUpRequestInProgress
     },
-    setValidationError(state, action) {
+    setValidationError(state: State, action: PayloadAction<string>) {
       state.validationError = action.payload
     }
   }
 })
 
-export const sendRegistrationData = (data) => async (dispatch) => {
+export const sendRegistrationData = (data: Form<{ email: string, password: string }>) => async (
+  dispatch: Dispatch<AnyAction>
+) => {
   dispatch(toggleProgressSignUp())
   try {
-    const res = await new AuthAPI().sendRegistrationData(data)
-    dispatch(toggleProgressSignUp())
-    dispatch(toggleEmailSended(res.data.message))
+    await new AuthAPI().sendRegistrationData(data)
+    dispatch(toggleEmailSended())
     dispatch(reset('registration'))
     setTimeout(() => {
-      dispatch(toggleEmailSended(false))
+      dispatch(toggleEmailSended())
     }, 10000)
   } catch (error) {
     if (error.response?.data) {
@@ -69,7 +74,9 @@ export const sendRegistrationData = (data) => async (dispatch) => {
   }
 }
 
-export const sendSignInData = (data) => async (dispatch) => {
+export const sendSignInData = (data: { email: string, password: string }) => async (
+  dispatch: Dispatch<AnyAction>
+) => {
   dispatch(toggleProgressSignIn())
   try {
     const res = await new AuthAPI().sendSignInData(data)
@@ -89,7 +96,7 @@ export const sendSignInData = (data) => async (dispatch) => {
   }
 }
 
-export const validateEmail = (confirmationToken) => async (dispatch) => {
+export const validateEmail = (confirmationToken: string) => async (dispatch: Dispatch<AnyAction>) => {
   try {
     const res = await new AuthAPI().sendConfirmationRequest(confirmationToken)
     dispatch(login(res.data.email))
@@ -103,6 +110,16 @@ export const validateEmail = (confirmationToken) => async (dispatch) => {
     handleError(error, dispatch)
   }
 }
+
+// Selectors
+export const getToken = ({ auth }: { auth: State }) => auth.token
+export const getError = ({ auth }: { auth: State }) => auth.validationError
+export const getEmail = ({ auth }: { auth: State }) => auth.email
+export const getShowSignIn = ({ auth }: { auth: State }) => auth.showSignIn
+export const getSignInRequestInProgress = ({ auth }: { auth: State }) => auth.signInRequestInProgress
+export const getSignUpRequestInProgress = ({ auth }: { auth: State }) => auth.signUpRequestInProgress
+export const getShowRegistrationWindow = ({ auth }: { auth: State }) => auth.showRegistration
+export const getIsEmailSended = ({ auth }: { auth: State }) => auth.isEmailSended
 
 export const {
   showRegistrationModal,

@@ -1,7 +1,7 @@
 {
     "name": "linkstorage",
     "version": "1.0.0",
-    "description": "pet project",
+    "description": "I'am looking for a job at present and this project was created for presentation my programming skills",
     "main": "server/index.js",
     "engines": {
         "node": "14.x"
@@ -12,16 +12,29 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/MaxKalinin92/LinkStorage.git"
+        "url": "git+https://github.com/petr-shumskiy/LinkStorage.git"
     },
     "keywords": [
-        "mern",
-        "material-ui"
+        "react",
+        "reactjs",
+        "react-hooks",
+        "mongodb",
+        "express",
+        "nodejs",
+        "redux",
+        "redux-toolkit",
+        "typescript",
+        "material-ui",
+        "supertest",
+        "mocha",
+        "crud application",
+        "single page application",
+        "SPA"
     ],
-    "author": "",
+    "author": "<fwshumskiy@gmail.com>",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/MaxKalinin92/LinkStorage/issues"
+        "url": "https://github.com/petr-shumskiy/LinkStorage/issues"
     },
-    "homepage": "https://github.com/MaxKalinin92/LinkStorage#readme"
+    "homepage": "https://github.com/petr-shumskiy/LinkStorage#readme"
 }

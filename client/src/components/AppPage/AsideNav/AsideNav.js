@@ -9,6 +9,7 @@ import { useDispatch } from 'react-redux'
 import { logout } from '../../../redux/authReducer'
 import { Folders } from './Folders'
 import { resetState } from '../../../redux/userReducer'
+import { Fade, Zoom } from 'react-awesome-reveal'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -65,9 +66,13 @@ export function AsideNav({ swipeable }) {
       </Grid>
       <Grid item>
         {isInputActive ? (
-          <AddFolderInput onAddFolderClicked={onAddFolderClicked} />
+          <Zoom duration={400}>
+            <AddFolderInput onAddFolderClicked={onAddFolderClicked} />
+          </Zoom>
         ) : (
-          <AddFolder onAddFolderClicked={onAddFolderClicked} />
+          <Fade duration={100}>
+            <AddFolder onAddFolderClicked={onAddFolderClicked} />
+          </Fade>
         )}
       </Grid>
       {swipeable ? (

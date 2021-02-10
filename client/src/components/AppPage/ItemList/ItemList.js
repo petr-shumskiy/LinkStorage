@@ -6,7 +6,9 @@ import {
   getCurrentFolder,
   getAllLikedItems,
   getCurrentCategoryItems,
-  getCurrentFolderItems
+  getCurrentFolderItems,
+  getLoadingStatus,
+  getFetchingDataStatus
 } from '../../../redux/userReducer'
 
 import { FolderTitle } from './FolderTitle'
@@ -14,11 +16,11 @@ import { NoContent } from './NoContent'
 import { Item } from './Item/Item'
 import { Box, Divider, Grid, Hidden, Typography } from '@material-ui/core'
 import Skeleton from '@material-ui/lab/Skeleton'
-// import { Fade } from 'react-awesome-reveal'
 
 export function ItemsList({ items }) {
   const currentCategory = useLocation().pathname.split('/')[1]
-  const isLoading = useSelector(({ user }) => user.isLoading)
+  const isLoading = useSelector(getLoadingStatus)
+  const isFetching = useSelector(getFetchingDataStatus)
   const categories = useSelector(getCategories)
   const currentFolder = useSelector((state) => getCurrentFolder(currentCategory, state))
   const allLikedItems = useSelector(getAllLikedItems)
@@ -31,6 +33,13 @@ export function ItemsList({ items }) {
   let currentFolderItems = useSelector((state) => {
     return getCurrentFolderItems(currentCategory, state)
   })
+
+  console.log(isFetching)
+  if (isFetching) {
+    return new Array(3)
+      .fill(0)
+      .map((el) => <PreviewLink key={Math.random().toString()} />)
+  }
 
   const likedItems = allLikedItems.map((item) => (
     <Item key={item._id} item={item} category='liked' />

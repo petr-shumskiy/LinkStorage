@@ -2,7 +2,12 @@ import React from 'react'
 // import './signIn.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { Field, Form, reduxForm } from 'redux-form'
-import { showSignInModal, sendSignInData } from '../../redux/authReducer'
+import {
+  showSignInModal,
+  sendSignInData,
+  getShowSignIn,
+  getSignInRequestInProgress
+} from '../../redux/authReducer'
 import {
   Avatar,
   Button,
@@ -18,12 +23,17 @@ import { RememberMe, StyledEmailField, StyledPassField } from './authStylesField
 import { formRequired } from '../../utils/validators'
 
 const SignIn = ({ handleSubmit, pristine, valid, error }) => {
-  const showSignIn = useSelector(({ auth }) => auth.showSignIn)
+  const showSignIn = useSelector(getShowSignIn)
   const dispatch = useDispatch()
-  const signInRequestInProgress = useSelector(({ auth }) => auth.signInRequestInProgress)
+  const signInRequestInProgress = useSelector(getSignInRequestInProgress)
   const classes = authStyles()
+
+  const handleClose = () => {
+    dispatch(showSignInModal(false))
+  }
+
   return (
-    <Dialog open={showSignIn} onClose={() => dispatch(showSignInModal(false))}>
+    <Dialog open={showSignIn} onClose={handleClose}>
       <Container component='main' maxWidth='xs' className={classes.main}>
         <CssBaseline />
         <div className={classes.paper}>

@@ -6,7 +6,12 @@ import { fetchItemsThunk } from '../../redux/userReducer.ts'
 import { ItemsList } from './ItemList/ItemList'
 import { NavPanel } from './NavPanel/NavPanel'
 import { AsideNav } from './AsideNav/AsideNav'
-import { fetchFoldersThunk, getPossiblePathes, getTheme } from '../../redux/userReducer'
+import {
+  fetchFoldersThunk,
+  getItems,
+  getPossiblePathes,
+  getTheme
+} from '../../redux/userReducer'
 import { Redirect, useHistory } from 'react-router-dom'
 
 const drawerWidth = 220
@@ -59,7 +64,7 @@ function App() {
   const theme = useSelector(getTheme)
   const classes = useStyles()
   const dispatch = useDispatch()
-  const items = useSelector(({ user }) => user.items)
+  const items = useSelector(getItems)
   const possiblePathes = useSelector(getPossiblePathes)
 
   useEffect(() => {

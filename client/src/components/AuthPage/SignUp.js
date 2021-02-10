@@ -2,7 +2,13 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Field, Form, reduxForm } from 'redux-form'
-import { sendRegistrationData, showRegistrationModal } from '../../redux/authReducer'
+import {
+  getIsEmailSended,
+  getShowRegistrationWindow,
+  getSignUpRequestInProgress,
+  sendRegistrationData,
+  showRegistrationModal
+} from '../../redux/authReducer'
 import {
   Avatar,
   Button,
@@ -25,19 +31,21 @@ import {
 } from '../../utils/validators'
 
 const SignUp = ({ handleSubmit, pristine, valid, error }) => {
-  const showRegistration = useSelector(({ auth }) => auth.showRegistration)
-  const signUpRequestInProgress = useSelector(({ auth }) => auth.signUpRequestInProgress)
-  const success = useSelector(({ auth }) => auth.isEmailSended)
+  const showRegistration = useSelector(getShowRegistrationWindow)
+  const signUpRequestInProgress = useSelector(getSignUpRequestInProgress)
+  const success = useSelector(getIsEmailSended)
 
   const dispatch = useDispatch()
 
   const classes = authStyles()
   const isButtonDisabled = pristine || !valid || signUpRequestInProgress
+
+  const handleClose = () => {
+    dispatch(showRegistrationModal(false))
+  }
+
   return (
-    <Dialog
-      open={showRegistration}
-      onClose={() => dispatch(showRegistrationModal(false))}
-    >
+    <Dialog open={showRegistration} onClose={handleClose}>
       <Container component='main' maxWidth='xs' className={classes.main}>
         <CssBaseline />
         <div className={classes.paper}>

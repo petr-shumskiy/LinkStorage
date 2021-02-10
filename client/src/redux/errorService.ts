@@ -1,9 +1,8 @@
 import AxiosError from 'axios-error'
-import { Dispatch } from '@reduxjs/toolkit'
 import { resetState, setError } from './userReducer'
 import { logout } from './authReducer'
 
-export function handleError(e: any, dispatch: Dispatch) {
+export function handleError(e: any, dispatch: any) {
   const error = new AxiosError(e)
   const { status } = error
   // newtwork error

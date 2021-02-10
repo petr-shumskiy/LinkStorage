@@ -22,16 +22,16 @@ export function EditButton({ isActive, item, onCloseEditDialog }) {
   const dispatch = useDispatch()
   const [isItemEditDialogOpen, setIsItemEditDialogOpen] = useState(false)
 
-  const editItemHandler = async (title, url, description) => {
+  const handleSave = async (title, url, description) => {
     dispatch(updateItemContentThunk(item._id, { title, url, description }))
     setIsItemEditDialogOpen(false)
   }
 
-  const openItemEditDialog = () => {
+  const handleClick = () => {
     setIsItemEditDialogOpen(true)
   }
 
-  const closeItemEditDialog = () => {
+  const handleClose = () => {
     setIsItemEditDialogOpen(false)
     onCloseEditDialog()
   }
@@ -41,12 +41,16 @@ export function EditButton({ isActive, item, onCloseEditDialog }) {
     <>
       <EditItemDialog
         open={isItemEditDialogOpen}
-        onClose={closeItemEditDialog}
-        onSave={editItemHandler}
+        onClose={handleClose}
+        onSave={handleSave}
         item={item}
       />
 
-      <StyledButton onClick={openItemEditDialog} className={classes.editButton}>
+      <StyledButton
+        onClick={handleClick}
+        className={classes.editButton}
+        style={{ display: isActive ? 'inline-block' : 'none' }}
+      >
         <Typography variant='body1' color='inherit'>
           edit
         </Typography>
