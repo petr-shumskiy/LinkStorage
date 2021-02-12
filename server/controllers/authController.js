@@ -33,31 +33,26 @@ exports.registration = async (req, res) => {
       password: hashedPassword
     })
     await newUser.save()
-    if (allowedEmails.includes(email.toLowerCase())) {
-      const activationToken = jwt.sign(
-        { email: email.toLowerCase(), password },
-        JWT_SECRET,
-        {
-          expiresIn: '1h'
-        }
-      )
-      const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: DOMAIN })
-      try {
-        mg.messages().send({
-          from: 'no-reply@linkStorage.org',
-          to: email.toLowerCase(),
-          subject: 'Activation link',
-          html: `
+    const activationToken = jwt.sign(
+      { email: email.toLowerCase(), password },
+      JWT_SECRET,
+      {
+        expiresIn: '1h'
+      }
+    )
+    const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: DOMAIN })
+    try {
+      mg.messages().send({
+        from: 'no-reply@linkStorage.org',
+        to: email.toLowerCase(),
+        subject: 'Activation link',
+        html: `
       <h2>Please click on given link to activate your account</h2>
       <a href="${CLIENT_URL}/reg-confirmation/${activationToken}"><button>confirm email</button></a>
       `
-        })
-      } catch (e) {
-        return res.status(500).json()
-      }
-      return res
-        .status(200)
-        .json({ message: constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL })
+      })
+    } catch (e) {
+      return res.status(500).json()
     }
     return res
       .status(200)
