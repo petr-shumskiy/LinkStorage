@@ -8,54 +8,46 @@ const bcrypt = require('bcryptjs')
 const CLIENT_URL = config.get('clientUrl')
 const JWT_SECRET = process.env.JWT_SECRET
 
-const allowedEmails = [
-  'petechqa98@gmail.com',
-  'email-confirmation-test@protonmail.com',
-  'fwshumskiy@gmail.com',
-  'linkstorage@protonmail.com'
-]
-
 exports.registration = async (req, res) => {
   try {
     const { email, password } = req.body
+
     const candidate = await User.findOne({ email: email.toLowerCase() })
     if (candidate) {
       return res
         .status(400)
         .json({ message: constants.REGISTRATION_ERROR_USER_EXISTS })
     }
+
+    const activationToken = jwt.sign(
+      { email: email.toLowerCase(), password },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    )
+
+    const pm = await ProtonMail.connect({
+      username: 'email-confirmation-test@protonmail.com',
+      password: 'linkstorage'
+    })
+
+    await pm.sendEmail({
+      from: 'no-reply@linkStorage.org',
+      to: email.toLowerCase(),
+      subject: 'Activation link',
+      body: `
+          <h2>Please click on given link to activate your account</h2>
+          <a href="${CLIENT_URL}/reg-confirmation/${activationToken}"><button>confirm email</button></a>
+          `
+    })
+
+    pm.close()
+
     const hashedPassword = await bcrypt.hash(password, 1)
     const newUser = new User({
       email: email.toLowerCase(),
       password: hashedPassword
     })
     await newUser.save()
-    const activationToken = jwt.sign(
-      { email: email.toLowerCase(), password },
-      JWT_SECRET,
-      {
-        expiresIn: '1h'
-      }
-    )
-
-    ;(async () => {
-      const pm = await ProtonMail.connect({
-        username: 'LinkStorage@protonmail.com',
-        password: 'LinkStorage'
-      })
-
-      await pm.sendEmail({
-        from: 'no-reply@linkStorage.org',
-        to: email.toLowerCase(),
-        subject: 'Activation link',
-        body: `
-          <h2>Please click on given link to activate your account</h2>
-          <a href="${CLIENT_URL}/reg-confirmation/${activationToken}"><button>confirm email</button></a>
-          `
-      })
-
-      pm.close()
-    })()
 
     return res
       .status(200)
@@ -100,10 +92,7 @@ exports.login = async (req, res) => {
         .json({ message: constants.LOGIN_ERROR_INCORRECT_DATA })
     }
 
-    if (
-      allowedEmails.includes(user.email.toLowerCase()) &&
-      !user.isEmailConfirmed
-    ) {
+    if (!user.isEmailConfirmed) {
       return res
         .status(400)
         .json({ message: constants.LOGIN_ERROR_UNCONFIRMED_EMAIL })
