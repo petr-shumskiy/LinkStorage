@@ -1,6 +1,6 @@
 const constants = require('../constants')
 const User = require('../models/User')
-const mailgun = require('mailgun-js')
+const ProtonMail = require('protonmail-api')
 const jwt = require('jsonwebtoken')
 const config = require('config')
 const bcrypt = require('bcryptjs')
@@ -16,9 +16,6 @@ const allowedEmails = [
 ]
 
 exports.registration = async (req, res) => {
-  const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY
-  const DOMAIN = process.env.DOMAIN
-
   try {
     const { email, password } = req.body
     const candidate = await User.findOne({ email: email.toLowerCase() })
@@ -40,20 +37,26 @@ exports.registration = async (req, res) => {
         expiresIn: '1h'
       }
     )
-    const mg = mailgun({ apiKey: MAILGUN_API_KEY, domain: DOMAIN })
-    try {
-      mg.messages().send({
+
+    ;(async () => {
+      const pm = await ProtonMail.connect({
+        username: 'LinkStorage@protonmail.com',
+        password: 'LinkStorage'
+      })
+
+      await pm.sendEmail({
         from: 'no-reply@linkStorage.org',
         to: email.toLowerCase(),
         subject: 'Activation link',
-        html: `
-      <h2>Please click on given link to activate your account</h2>
-      <a href="${CLIENT_URL}/reg-confirmation/${activationToken}"><button>confirm email</button></a>
-      `
+        body: `
+          <h2>Please click on given link to activate your account</h2>
+          <a href="${CLIENT_URL}/reg-confirmation/${activationToken}"><button>confirm email</button></a>
+          `
       })
-    } catch (e) {
-      return res.status(500).json()
-    }
+
+      pm.close()
+    })()
+
     return res
       .status(200)
       .json({ message: constants.REGISTRATION_SUCCESS_UNCONFIRMED_EMAIL })

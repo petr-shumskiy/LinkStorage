@@ -1,0 +1,18 @@
+diff --git a/node_modules/protonmail-api/lib/proton-mail.js b/node_modules/protonmail-api/lib/proton-mail.js
+index 026426f..4afd081 100644
+--- a/node_modules/protonmail-api/lib/proton-mail.js
++++ b/node_modules/protonmail-api/lib/proton-mail.js
+@@ -45,7 +45,12 @@ class ProtonMail {
+ 
+   async _connect () {
+     if (this._browser === undefined) {
+-      this._browser = await puppeteer.launch({ headless: true })
++      this._browser = await puppeteer.launch({
++        'args' : [
++          '--no-sandbox',
++          '--disable-setuid-sandbox'
++       ],
++         headless: true })
+       this._page = await this._browser.newPage()
+     }
+ 

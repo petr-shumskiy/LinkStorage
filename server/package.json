@@ -4,6 +4,7 @@
   "description": "link-storage-app",
   "main": "app.js",
   "scripts": {
+    "postinstall": "patch-package",
     "eslint": "eslint . ",
     "test": "cross-env NODE_ENV=test mocha --timeout 3500 tests",
     "start": "node index.js",
@@ -34,7 +35,6 @@
     "got": "^11.8.1",
     "greenlock-express": "^4.0.3",
     "jsonwebtoken": "^8.5.1",
-    "mailgun-js": "^0.22.0",
     "metascraper": "^5.17.0",
     "metascraper-description": "^5.16.16",
     "metascraper-image": "^5.16.16",
@@ -44,6 +44,8 @@
     "mocha": "^8.2.1",
     "mongoose": "^5.10.8",
     "node-fetch": "^2.6.1",
+    "patch-package": "^6.2.2",
+    "protonmail-api": "^2.1.0",
     "supertest": "^6.0.1",
     "validator": "^13.1.17"
   },
