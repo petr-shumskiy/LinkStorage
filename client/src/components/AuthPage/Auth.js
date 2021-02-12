@@ -25,7 +25,7 @@ const authStyle = makeStyles((theme) => ({
     alignItems: 'center'
   },
   logo: {
-    fontSize: '2em'
+    fontSize: '1.5rem'
   },
   video: {
     [theme.breakpoints.down('lg')]: {

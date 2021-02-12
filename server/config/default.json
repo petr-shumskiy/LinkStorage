@@ -5,5 +5,5 @@
     "useUnifiedTopology": true,
     "useFindAndModify": false
   },
-  "clientUrl": "http://localhost:3000"
+  "clientUrl": "https://links-storage.herokuapp.com"
 }

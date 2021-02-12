@@ -1,5 +1,4 @@
 const path = require('path')
-const sslRedirect = require('heroku-ssl-redirect').default
 const express = require('express')
 const mongoose = require('mongoose')
 const config = require('config')
@@ -19,7 +18,6 @@ const MONGO_OPTIONS = config.get('mongoOptions')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors({ origin: '*' }))
-app.use(sslRedirect())
 
 app.use('/api/auth', authRouter)
 app.use('/api/user', itemRouter)

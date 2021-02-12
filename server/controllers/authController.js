@@ -16,7 +16,7 @@ const allowedEmails = [
 ]
 
 exports.registration = async (req, res) => {
-  const MAILGUN_API_KEY = process.env.MAIL_GUN_API_KEY
+  const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY
   const DOMAIN = process.env.DOMAIN
 
   try {
